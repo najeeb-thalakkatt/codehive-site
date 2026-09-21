@@ -12,8 +12,8 @@ Source: `prototype/index.html`, keyframes prefixed `s2`, `s3`, `s4`, `s5`. Templ
 - [x] 02 Application development: tickets stack into a thread, amber reply with source line
 - [x] 03 Model work: model cards settle into a benchmark chart, EU-region badge
 - [x] 04 Production and MLOps: excuses drop away, dev/test/prod/monitor pipeline draws and turns green
-- [ ] 05 Enablement: one lit cell, knowledge ripples through two rings
-- [ ] Register each in `components/cells/index.ts`
+- [x] 05 Enablement: one lit cell, knowledge ripples through two rings
+- [x] Register each in `components/cells/index.ts`
 
 ## 3. Copy pass (founder, not Claude)
 - [ ] Read `content/cells.ts` aloud once; rewrite anything you would not say to a client
