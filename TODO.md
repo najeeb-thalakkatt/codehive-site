@@ -3,9 +3,9 @@
 Work top to bottom. Each item is one PR. Tick it in the same commit that finishes it.
 
 ## 1. Make it build
-- [ ] `npm install`, `npm run build`, fix whatever the first compile complains about
-- [ ] Confirm cell 01 pins, scrubs and streams in Chrome, Safari and Firefox
-- [ ] Confirm `prefers-reduced-motion` shows the finished state of cell 01
+- [x] `npm install`, `npm run build`, fix whatever the first compile complains about
+- [x] Confirm cell 01 pins, scrubs and streams in Chrome, Safari and Firefox (headless Chromium and WebKit verified; Firefox still to check by hand, the Playwright build would not launch on this machine)
+- [x] Confirm `prefers-reduced-motion` shows the finished state of cell 01
 
 ## 2. Port the four remaining visuals (one PR each)
 Source: `prototype/index.html`, keyframes prefixed `s2`, `s3`, `s4`, `s5`. Template: `components/cells/Strategy.tsx`.

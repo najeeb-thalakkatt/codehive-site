@@ -24,13 +24,19 @@ export function useScrub(sectionRef: RefObject<HTMLElement | null>, distance = 1
     if (!el) return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    const anims: Animation[] = [];
-    el.querySelectorAll<HTMLElement>(".anim, .w").forEach((node) => {
-      node.getAnimations().forEach((a) => { a.pause(); anims.push(a); });
-    });
+    // Pinning reparents `el` into a spacer, which cancels and recreates every CSS
+    // animation in the subtree. So the handles are (re)collected after the trigger
+    // exists and on every refresh, never before.
+    let anims: Animation[] = [];
+    const collect = () => {
+      anims = [];
+      el.querySelectorAll<HTMLElement>(".anim, .w").forEach((node) => {
+        node.getAnimations().forEach((a) => { a.pause(); anims.push(a); });
+      });
+    };
     const apply = (p: number) => { const t = p * 999; for (const a of anims) a.currentTime = t; };
 
-    if (reduce) { apply(1); return; }
+    if (reduce) { collect(); apply(1); return; }
 
     const st = ScrollTrigger.create({
       trigger: el,
@@ -38,10 +44,12 @@ export function useScrub(sectionRef: RefObject<HTMLElement | null>, distance = 1
       end: () => `+=${window.innerHeight * distance}`,
       pin: true,
       scrub: 0.6,           // seconds of smoothing; this is the "not jerky" knob
+      onRefresh: (self) => { collect(); apply(self.progress); },
       onUpdate: (self) => apply(self.progress),
       invalidateOnRefresh: true,
     });
-    apply(0);
+    collect();
+    apply(st.progress);
     return () => st.kill();
   }, [sectionRef, distance]);
 }
