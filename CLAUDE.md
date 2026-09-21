@@ -38,10 +38,11 @@ entry renders its text but an empty visual box. All five are registered.
   `animation-name` to participate. `.w` is the streamed-word variant (duration .04s, staggered via `animation-delay`).
 - Text streams via `components/Stream.tsx`: each word is a `.w` span with `animation-delay` spread between
   `t0` and `t1` (0–1 progress). All words are always in the DOM, so screen readers get the full text.
-- The cell timeline is two halves. Roughly 0–0.45 the "you" turn streams in; ~0.47–0.86 the "codehive" turn,
-  chips and CTA stream in, the column drifts up (`@keyframes col`), and the "you" turn dims. The visual is
-  compressed into the second half by `.viz :global(.anim) { animation-delay: .5s; animation-duration: .499s }`
-  in `Cell.module.css`, so visual keyframes are still authored on the full 0–100% and land in scroll 0.5–1.0.
+- The cell timeline: the question headline is partly visible at progress 0 (negative `t0`), the "you" turn is
+  in by 0.3, the visual box appears at 0.24–0.32 in its problem state, the "codehive" turn streams 0.36–0.62,
+  chips 0.63–0.72, action 0.74, and the column drifts up (`@keyframes col`, `colWide`). Visual keyframes are
+  authored on the full 0–100% and compressed into scroll 0.42–1.0 by `.viz :global(.anim)` in `Cell.module.css`.
+- Above 1100px the cell is two columns (text left, visual right); below, one column with the visual last.
 - Reduced motion: the hook applies progress 1 once and never creates the ScrollTrigger.
 
 ### Cell visuals

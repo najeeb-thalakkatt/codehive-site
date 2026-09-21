@@ -14,13 +14,14 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; letter-spacing:
 .act:hover { color: var(--ink1); } .act:hover::after { transform: scaleX(1); } .act:hover::before { transform: rotate(90deg); }
 .act.ghost { color: var(--ink2); } .act.ghost::before { background: var(--line2); } .act.ghost::after { background: var(--ink2); }
 .act:focus-visible { outline: none; } .act:focus-visible::after { transform: scaleX(1); }
-.chip { font-family: var(--font-mono); font-size: 12px; letter-spacing: .5px; color: var(--ink2); border: 1px solid var(--line2); padding: 8px 12px; border-radius: var(--radius-sm); white-space: nowrap; }
+.chip { font-family: var(--font-mono); font-size: 13px; letter-spacing: .3px; color: var(--ink1); border: 1px solid var(--line2); background: var(--bg1); padding: 8px 12px; border-radius: var(--radius-sm); white-space: nowrap; }
 .chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 /* scroll-scrubbed animation primitives (see lib/useScrub.ts) */
 .anim { animation-duration: 1s; animation-timing-function: linear; animation-fill-mode: both; animation-play-state: paused; will-change: transform, opacity; }
 .w { opacity: 0; animation-name: wd; animation-duration: .04s; animation-timing-function: linear; animation-fill-mode: both; animation-play-state: paused; display: inline-block; }
 .act.w { display: inline-flex; }
-@keyframes wd { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+/* visibility rides along so a not-yet-streamed action or chip is not a focusable invisible element */
+@keyframes wd { from { opacity: 0; transform: translateY(4px); visibility: hidden; } to { opacity: 1; transform: none; visibility: visible; } }
 .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s var(--ease-out), transform .7s var(--ease-out); }
 .reveal.in { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .reveal { opacity: 1; transform: none; transition: none; } }

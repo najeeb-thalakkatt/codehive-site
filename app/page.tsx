@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import Reveal from "@/components/Reveal";
 import { cells } from "@/content/cells";
 import { visuals } from "@/components/cells";
+import p from "./page.module.css";
 
 export default function Page() {
   return (
@@ -21,6 +22,11 @@ export default function Page() {
           <h2 style={{ fontSize: "clamp(34px,4.5vw,56px)" }}>
             Five things we do.<br /><span style={{ color: "var(--ink3)" }}>Each starts with what is broken.</span>
           </h2>
+          <nav aria-label="Services" className={`mono ${p.index}`}>
+            {cells.map((c) => (
+              <a key={c.id} href={`#cell-${c.id}`}><span>{c.id}</span>{c.label}</a>
+            ))}
+          </nav>
         </section>
         {/* Each cell in its own Suspense boundary: the HTML is already streamed, so no fallback ever
             shows, but React hydrates each boundary as a separate short task instead of the whole
