@@ -6,3 +6,6 @@
 @keyframes trace { 0%, 34% { opacity: .8; } 46%, 100% { opacity: 0; } }
 @keyframes tick { 0%, 90% { opacity: 0; transform: scale(.4); } 100% { opacity: 1; transform: scale(1); } }
 @keyframes fadeout { 0%, 34% { opacity: 1; } 46%, 100% { opacity: 0; } }
+.reply { position: absolute; left: 860px; top: 520px; width: 300px; padding: 12px 14px; border-radius: 12px 12px 4px 12px; background: var(--amber); color: var(--bg0); font-family: var(--font-mono); font-size: 12px; line-height: 1.5; }
+.badge { position: absolute; display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--ok); border: 1px solid var(--ok); border-radius: var(--radius-sm); padding: 8px 10px; }
+.log { position: absolute; left: 680px; top: 480px; width: 480px; padding: 12px 14px; border: 1px solid var(--line1); border-radius: var(--radius-sm); background: var(--bg1); font-size: 11px; line-height: 1.7; color: var(--ink3); }
