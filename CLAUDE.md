@@ -3,17 +3,18 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 Single-page marketing site for Codehive AB, an AI engineering consultancy in Stockholm.
-Next.js 15 App Router, React 19, TypeScript strict, GSAP ScrollTrigger. Deployed on Vercel. Dark theme only.
+Next.js 15 App Router, React 19, TypeScript strict, GSAP ScrollTrigger. Static export (`output: "export"`) deployed to GitHub Pages at codehives.se by `.github/workflows/pages.yml` on every push to `main`. Dark theme only.
 
 ## Commands
 ```
 npm install
 npm run dev      # http://localhost:3000
-npm run build    # the check. Run it before claiming anything works; fix type errors, never `any` them away
+npm run build    # the check. Run it before claiming anything works; fix type errors, never `any` them away. Writes the static site to out/
 npm run lint     # next lint (eslint-config-next)
 ```
 There is no test suite. Verification is `npm run build` plus a look in the browser, including with
 `prefers-reduced-motion` on (it must render every cell's finished state).
+No server features: no API routes, no `next/image` optimisation, no middleware. Everything must survive `output: "export"`.
 
 `@/*` maps to the repo root (`@/content/cells`, `@/lib/useScrub`).
 
@@ -94,4 +95,4 @@ entry renders its text but an empty visual box. All five are registered.
 - Do not add dependencies without a reason written in the PR. The site should stay a small static page.
   "Not doing" in `TODO.md` applies: no blog, team page, client logos, light theme, or animation libs beyond GSAP.
 - Do not touch `prototype/index.html`; it is the reference the visuals were ported from.
-- Contact is currently a `mailto`; no analytics yet. Both are `TODO.md` items, not oversights.
+- Contact is a click-to-load Calendly frame in `components/Booking.tsx`; analytics is Umami behind an env var set as a GitHub Actions variable.

@@ -1,13 +1,13 @@
 # codehives.se
 
-Next.js 15 (App Router) + GSAP ScrollTrigger. One page. Dark only.
+Next.js 15 (App Router) + GSAP ScrollTrigger. One page. Dark only. Static export, served by GitHub Pages at codehives.se.
 
 ## Run
 ```
 npm install
 npm run dev        # http://localhost:3000
 ```
-Deploy: import the repo in Vercel, no config needed. Fonts are self-hosted by `next/font` at build time.
+Deploy: every push to `main` runs `.github/workflows/pages.yml`, which builds the static export (`out/`) and publishes it to GitHub Pages. `public/CNAME` pins the custom domain. Fonts are self-hosted by `next/font` at build time. Analytics: set the repository variable `NEXT_PUBLIC_UMAMI_WEBSITE_ID`; unset means no analytics script.
 
 ## How the scroll works
 Each service cell is `components/Cell.tsx`. Its motion is plain CSS `@keyframes`, authored on a 0–100% timeline that equals the cell's scroll progress. `lib/useScrub.ts` pins the section with ScrollTrigger and, on every scroll update, sets `currentTime` on every paused animation inside it (Web Animations API). ScrollTrigger's `scrub: 1.2` is the smoothing; raise it for lazier motion, lower for tighter. Each cell pins for 1.8 viewport heights (`useScrub(ref, 1.8)`); more distance means slower, calmer streaming.

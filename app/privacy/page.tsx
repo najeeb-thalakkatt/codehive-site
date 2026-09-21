@@ -18,7 +18,7 @@ export default function Privacy() {
 
         <h2 style={h2}>What the site collects</h2>
         <p style={p}>The site sets no cookies of its own and loads nothing from third parties until you ask for it. It counts page views with Umami, a cookie-free analytics tool. Umami records the page, the referrer, browser and device type, and country. It does not store your IP address and cannot follow you across sites. Analytics data is processed on our behalf by Umami Software, Inc.</p>
-        <p style={p}>The site is hosted by Vercel, Inc. Like any host, Vercel may keep short-lived request logs (IP address, time, URL) to run and protect the service.</p>
+        <p style={p}>The site is hosted on GitHub Pages by GitHub, Inc. Like any host, GitHub may keep short-lived request logs (IP address, time, URL) to run and protect the service.</p>
 
         <h2 style={h2}>If you book a call</h2>
         <p style={p}>Choosing Book a call loads a booking form from Calendly, LLC (USA) in a frame. What you enter there, your name, email and the time you pick, goes to Calendly and to us, and Calendly may set cookies inside that frame under its own privacy policy. Nothing from Calendly loads before you click. If you would rather not use it, email us instead.</p>
