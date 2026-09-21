@@ -16,7 +16,7 @@ Source: `prototype/index.html`, keyframes prefixed `s2`, `s3`, `s4`, `s5`. Templ
 - [x] Register each in `components/cells/index.ts`
 
 ## 3. Copy pass (founder, not Claude)
-- [ ] Read `content/cells.ts` aloud once; rewrite anything you would not say to a client
+- [x] Read `content/cells.ts` aloud once; rewrite anything you would not say to a client (founder, 2026-09-21)
 - [x] Decide the five CTAs: all "Start a project", all "Book a call", or as is (all "Book a call", hero too: every action opens the same Calendly)
 - [ ] Hero subline and contact paragraph: confirm or rewrite
 

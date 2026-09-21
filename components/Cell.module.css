@@ -33,6 +33,16 @@
   .msg p { max-width: 560px; }
 }
 @keyframes colWide { 0%, 34% { transform: translate(-50%, 0); } 100% { transform: translate(-50%, -14%); } }
+/* Wide but short (13" laptops, 1280×800, 1366×768): tighter type and a longer end drift so the dimmed
+   question slides under the nav and the action stays on screen. */
+@media (min-width: 1100px) and (max-height: 860px) {
+  .col { top: 9vh; animation-name: colWideShort; }
+  .text { gap: 16px; }
+  .msg h2 { font-size: clamp(28px, 3.4vw, 42px); }
+  .msg p { font-size: 16px; }
+  .eyebrow { font-size: 15px; }
+}
+@keyframes colWideShort { 0%, 34% { transform: translate(-50%, 0); } 100% { transform: translate(-50%, -28%); } }
 
 @media (max-width: 820px) {
   .col { top: max(10vh, 96px); gap: 20px; } /* nav is 80px tall; keep the eyebrow below it on short phones */

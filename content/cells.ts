@@ -11,39 +11,49 @@ export type CellData = {
 
 // Copy is the site's content. Edit here, nowhere else.
 export const cells: CellData[] = [
-  { id: "01", label: "Strategy and advisory",
+  {
+    id: "01", label: "Strategy and advisory",
     question: "Which of your AI pilots deserves a budget?",
-    questionBody: "Marketing has a chatbot. Support tried a vendor. The board is asking whether the company is behind. Nobody owns the answer, so every pilot gets a little money and none gets a decision.",
+    questionBody: "Marketing has a chatbot. Support tried a vendor. The board wants to know if the company is behind. Nobody owns the answer, so every pilot gets a little money and none gets a decision.",
     answer: "A plan the board can fund.",
-    answerBody: "We assess where AI actually pays off for your business, quantify each case, compare building against buying, name the risks, and hand you a roadmap with data, people and change work in order.",
+    answerBody: "We work out where AI pays off in your business and put a number on each case. Build or buy, which vendor, what can go wrong. Then a roadmap in the order it has to happen: data first, then people, then the change itself.",
     chips: ["AI strategy engagement", "Build vs buy and vendor evaluation", "AI risk assessment", "Implementation roadmap", "Executive and board briefings"],
-    cta: "Book a call" },
-  { id: "02", label: "Application development",
+    cta: "Book a call"
+  },
+  {
+    id: "02", label: "Application development",
     question: "How many tabs does support open per ticket?",
-    questionBody: "Your team answers the same questions by hand, from PDFs, Confluence and the one person who remembers. Every AI pilot so far was a demo nobody dared to put in front of a customer.",
-    answer: "Assistants your customers actually talk to.",
-    answerBody: "Chatbots and support agents grounded in your own documents, agents that transcribe, research and prospect, MCP servers so your tools can talk to each other. Built on the framework that fits your stack and shipped with evals.",
+    questionBody: "Your team answers the same questions by hand, from PDFs, Confluence and the one person who remembers. The last AI pilot was a demo. Nobody dared put it in front of a customer.",
+    answer: "Assistants your customers can talk to.",
+    answerBody: "Chatbots and support agents that answer from your own documents. Agents that transcribe meetings, do research, find prospects. MCP servers so your tools can call each other. Built on whatever framework fits your stack, and shipped with an eval set so you know when it breaks.",
     chips: ["Custom chatbots and RAG assistants", "Multimodal support agents", "SDR and deep-research agents", "Meeting transcription and action items", "MCP servers and multi-agent systems"],
-    cta: "Book a call" },
-  { id: "03", label: "Model work",
+    cta: "Book a call"
+  },
+  {
+    id: "03", label: "Model work",
     question: "Which model, and on whose servers?",
-    questionBody: "The API bill grows every month, legal will not let customer data leave the EU, and nobody can say whether the newest model is actually better for your task. So the prompt gets another edit.",
+    questionBody: "The API bill grows every month. Legal will not let customer data leave the EU. Nobody can say if the newest model is better for your task, so the prompt gets another edit.",
     answer: "The right model, measured, where your data is allowed to go.",
-    answerBody: "We benchmark candidates on your own data, deploy open models privately when compliance needs it, curate the dataset, and fine-tune with QLoRA or at the frontier when a prompt is not enough.",
+    answerBody: "We benchmark candidates on your data, not a leaderboard. When compliance needs it, we run open models on your infrastructure. When a prompt is not enough, we curate a dataset and fine-tune, QLoRA on open models or at the frontier.",
     chips: ["Model selection and benchmarking", "Private open-source deployment", "Dataset curation", "Frontier fine-tuning", "QLoRA fine-tuning of open models"],
-    cta: "Book a call" },
-  { id: "04", label: "Production and MLOps",
+    cta: "Book a call"
+  },
+  {
+    id: "04", label: "Production and MLOps",
     question: "It works on the laptop. Then what?",
-    questionBody: "The prototype is a notebook and a demo page. No tracing, no cost limit, no auth, and one prompt injection away from an incident. It cannot be handed to anyone.",
+    questionBody: "The prototype is a notebook and a demo page. There is no tracing, no cost cap, no login, and a prompt injection would make the news. You cannot hand it to anyone.",
     answer: "A system your team can run without you.",
-    answerBody: "Terraform environments with automated promotion, Bedrock or self-hosted inference, production RAG on managed vector storage, LangFuse tracing and cost control, JWT-secured frontends, and a migration path for what you already built.",
+    answerBody: "Terraform environments that promote dev to test to prod on their own. Bedrock or self-hosted inference. Production RAG on managed vector storage. LangFuse tracing with a cost ceiling. JWT on the front door. And a migration path for the thing you already built.",
     chips: ["Cloud architecture on AWS, Azure, GCP", "Terraform and CI/CD", "Bedrock, SageMaker, AgentCore", "Production RAG pipelines", "Observability and guardrails", "Security hardening", "Prototype to production migration"],
-    cta: "Book a call" },
-  { id: "05", label: "Enablement",
+    cta: "Book a call"
+  },
+  {
+    id: "05", label: "Enablement",
     question: "What happens when the one person who knows leaves?",
-    questionBody: "One engineer understands the pipeline. The vendor who built the pilot is gone. The board hears about AI from the news, not from your own team.",
+    questionBody: "One engineer understands the pipeline. The vendor who built the pilot has moved on. Your board learns about AI from the news instead of from you.",
     answer: "A team that owns it.",
-    answerBody: "Training on every layer above, from board briefings to hands-on sessions for engineers, and pairing during the build so the knowledge stays in your company when we leave.",
+    answerBody: "Training at every layer, from a board briefing to hands-on sessions for engineers. During the build we pair with your team, so when we leave the knowledge does not.",
     chips: ["Executive and board workshops", "Engineer training on LLM and agent stacks", "Pairing during delivery", "Runbooks and handover"],
-    cta: "Book a call" },
+    cta: "Book a call"
+  },
 ];
