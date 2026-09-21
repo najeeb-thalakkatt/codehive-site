@@ -21,6 +21,7 @@ Source: `prototype/index.html`, keyframes prefixed `s2`, `s3`, `s4`, `s5`. Templ
 - [ ] Hero subline and contact paragraph: confirm or rewrite
 
 ## 4. Contact path
+Decision 2026-09-21: keep the `mailto` for launch. Revisit when there is volume.
 - [ ] Replace the `mailto` in `components/Contact.tsx` with Cal.com (or Calendly) embed, or a form posting to a serverless route that emails dev@codehives.se
 - [ ] Spam protection on the form if a form (honeypot + rate limit is enough)
 - [ ] Confirmation state: same wording as the action ("Booked" / "Sent")
