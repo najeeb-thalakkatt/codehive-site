@@ -35,11 +35,11 @@ Decision 2026-09-21: keep the `mailto` for launch. Revisit when there is volume.
 ## 6. Launch plumbing
 - [ ] Domain: point codehives.se at Vercel, www redirect, HTTPS
 - [ ] Email: SPF, DKIM, DMARC for dev@codehives.se (do this before any outreach)
-- [ ] OG image (1200×630) from the design system cover, wired in `app/layout.tsx`
-- [ ] Favicon set: svg in place; add 32px png and apple-touch-icon from `codehive-favicon.svg`
-- [ ] Privacy page (`/privacy`), linked from the footer; required once a form or analytics exists
-- [ ] Cookie-free analytics (Plausible or Umami) in `app/layout.tsx`
-- [ ] 404 page in brand
+- [x] OG image (1200×630) from the design system cover, wired in `app/layout.tsx` (built from the hero, source in the commit message; swap for the real cover art if there is one)
+- [x] Favicon set: svg in place; add 32px png and apple-touch-icon from `codehive-favicon.svg`
+- [x] Privacy page (`/privacy`), linked from the footer; required once a form or analytics exists (street address is a [PLACEHOLDER])
+- [x] Cookie-free analytics (Plausible or Umami) in `app/layout.tsx` (Umami Cloud; set NEXT_PUBLIC_UMAMI_WEBSITE_ID in Vercel, see .env.example)
+- [x] 404 page in brand
 - [ ] Lighthouse: performance and accessibility both above 90 on mobile
 
 ## 7. Polish, after launch
