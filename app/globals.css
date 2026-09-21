@@ -8,6 +8,7 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; letter-spacing:
 .wrap { max-width: 1280px; margin: 0 auto; padding: 0 clamp(20px, 5vw, 64px); }
 .eyebrow { display: flex; align-items: center; gap: 10px; font-family: var(--font-mono); font-size: 13px; letter-spacing: 1px; color: var(--amber); text-transform: uppercase; }
 .eyebrow::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--amber); }
+button.act { background: none; border: 0; padding: 10px 0; font: inherit; }
 .act { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink1); font-family: var(--font-display); font-weight: 700; font-size: 18px; padding: 10px 0; min-height: 44px; position: relative; }
 .act::before { content: ""; width: 10px; height: 10px; background: var(--amber); clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); transition: transform .25s var(--ease-out); }
 .act::after { content: ""; position: absolute; left: 22px; right: 0; bottom: 6px; height: 1.5px; background: var(--amber); transform: scaleX(0); transform-origin: left; transition: transform .35s var(--ease-out); }

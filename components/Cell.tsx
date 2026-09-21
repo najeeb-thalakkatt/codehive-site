@@ -49,7 +49,7 @@ export default function Cell({ data, mobileCrop, children }: { data: CellData; m
                   <span key={c} className="chip w" style={{ animationDelay: `${(0.63 + (0.09 * i) / data.chips.length).toFixed(3)}s` }}>{c}</span>
                 ))}
               </div>
-              <a className="act w" style={{ animationDelay: ".74s" }} href="#contact">{data.cta}</a>
+              <a className="act w" style={{ animationDelay: ".74s" }} href="#book">{data.cta}</a>
             </div>
           </div>
           <div ref={wrap} className={`${s.vizWrap} anim`}>

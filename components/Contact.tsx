@@ -1,4 +1,5 @@
 import s from "./Contact.module.css";
+import Booking from "./Booking";
 
 const HEX = "0,-58 50,-29 50,29 0,58 -50,29 -50,-29";
 const cells: [number, number, "solid" | "line" | "dash"][] = [
@@ -11,8 +12,7 @@ export default function Contact() {
       <div>
         <div className="eyebrow">Contact</div>
         <h2 className={s.h2}>Tell us what is stuck between demo and production.</h2>
-        <p className={s.p}>A twenty-minute call, no deck. If it is not a fit we will say so and point you somewhere better. Email is the door for now; we reply with two or three times that suit.</p>
-        <a className="act" href="mailto:dev@codehives.se?subject=Codehive%20call">Email dev@codehives.se</a>
+        <p className={s.p}>A thirty-minute call, no deck. If it is not a fit we will say so and point you somewhere better.</p>
       </div>
       <svg className={s.hive} viewBox="110 90 340 380" aria-hidden="true">
         {cells.map(([x, y, st]) => (
@@ -23,6 +23,7 @@ export default function Contact() {
           </g>
         ))}
       </svg>
+      <div className={s.booking}><Booking /></div>
     </section>
   );
 }
