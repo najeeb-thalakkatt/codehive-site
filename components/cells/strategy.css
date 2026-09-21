@@ -1,0 +1,15 @@
+/* Cell 01, Strategy: scattered problem cards fly in and become a hive. */
+@keyframes s1c0 { 0% { transform: translate(155px,103px) rotate(-12deg); opacity: 1; } 44% { transform: translate(795px,267px) rotate(0); opacity: 1; } 51%, 100% { transform: translate(795px,267px) scale(.7); opacity: 0; } }
+@keyframes s1c1 { 0% { transform: translate(1057px,93px) rotate(8deg); opacity: 1; } 47% { transform: translate(937px,325px) rotate(0); opacity: 1; } 54%, 100% { transform: translate(937px,325px) scale(.7); opacity: 0; } }
+@keyframes s1c2 { 0% { transform: translate(72px,643px) rotate(6deg); opacity: 1; } 50% { transform: translate(792px,383px) rotate(0); opacity: 1; } 57%, 100% { transform: translate(792px,383px) scale(.7); opacity: 0; } }
+@keyframes s1c3 { 0% { transform: translate(935px,673px) rotate(-7deg); opacity: 1; } 46% { transform: translate(895px,441px) rotate(0); opacity: 1; } 53%, 100% { transform: translate(895px,441px) scale(.7); opacity: 0; } }
+@keyframes s1c4 { 0% { transform: translate(581px,43px) rotate(4deg); opacity: 1; } 49% { transform: translate(741px,325px) rotate(0); opacity: 1; } 56%, 100% { transform: translate(741px,325px) scale(.7); opacity: 0; } }
+@keyframes s1c5 { 0% { transform: translate(712px,543px) rotate(11deg); opacity: 1; } 45% { transform: translate(752px,441px) rotate(0); opacity: 1; } 52%, 100% { transform: translate(752px,441px) scale(.7); opacity: 0; } }
+@keyframes s1c6 { 0% { transform: translate(350px,413px) rotate(-3deg); opacity: 1; } 48% { transform: translate(780px,499px) rotate(0); opacity: 1; } 55%, 100% { transform: translate(780px,499px) scale(.7); opacity: 0; } }
+@keyframes s1h0 { 0%, 48% { opacity: 0; transform: scale(.55); } 58%, 100% { opacity: 1; transform: scale(1); } }
+@keyframes s1h1 { 0%, 49% { opacity: 0; transform: scale(.55); } 59%, 100% { opacity: 1; transform: scale(1); } }
+@keyframes s1h2 { 0%, 50% { opacity: 0; transform: scale(.55); } 60%, 100% { opacity: 1; transform: scale(1); } }
+@keyframes s1h3 { 0%, 51% { opacity: 0; transform: scale(.55); } 61%, 100% { opacity: 1; transform: scale(1); } }
+@keyframes s1h4 { 0%, 52% { opacity: 0; transform: scale(.55); } 62%, 100% { opacity: 1; transform: scale(1); } }
+@keyframes s1h5 { 0%, 53% { opacity: 0; transform: scale(.55); } 63%, 100% { opacity: 1; transform: scale(1); } }
+@keyframes s1h6 { 0%, 54% { opacity: 0; transform: scale(.55); } 64%, 100% { opacity: 1; transform: scale(1); } }

@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Codehive · AI engineering as a service</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&family=Schibsted+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{--bg0:#0b0d10;--bg1:#14171c;--bg2:#1c2026;--line1:#2a2d33;--line2:#3a3d44;--ink1:#f4f1ea;--ink2:#b8b3a8;--ink3:#8a867e;--amber:#f2b84b;--amber2:#e0a030;--ok:#6fcf97;--alert:#f26d5b;
+ --display:'Familjen Grotesk','Helvetica Neue',Arial,sans-serif;--body:'Schibsted Grotesk','Helvetica Neue',Arial,sans-serif;--mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg0:#0b0d10;--bg1:#14171c;--bg2:#1c2026;--line1:#2a2d33;--line2:#3a3d44;--ink1:#f4f1ea;--ink2:#b8b3a8;--ink3:#8a867e}}
+:root[data-theme="dark"]{--bg0:#0b0d10;--bg1:#14171c;--bg2:#1c2026;--line1:#2a2d33;--line2:#3a3d44;--ink1:#f4f1ea;--ink2:#b8b3a8;--ink3:#8a867e}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg0);color:var(--ink1);font-family:var(--body);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+#hive{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+body>*:not(#hive){position:relative;z-index:1}
+a{color:var(--amber)}a:hover{color:var(--amber2)}
+img,svg{max-width:100%}
+.mono{font-family:var(--mono)}
+h1,h2,h3{font-family:var(--display);font-weight:700;letter-spacing:-.02em;line-height:1.04;margin:0}
+.wrap{max-width:1280px;margin:0 auto;padding:0 clamp(20px,5vw,64px)}
+.eyebrow{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:13px;letter-spacing:1px;color:var(--amber);text-transform:uppercase}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--amber)}
+.btn{display:inline-flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink1);font-family:var(--display);font-weight:700;font-size:18px;padding:10px 0;min-height:44px;position:relative}
+.btn::before{content:"";width:10px;height:10px;background:var(--amber);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);transition:transform .25s cubic-bezier(.22,1,.36,1)}
+.btn::after{content:"";position:absolute;left:22px;right:0;bottom:6px;height:1.5px;background:var(--amber);transform:scaleX(0);transform-origin:left;transition:transform .35s cubic-bezier(.22,1,.36,1)}
+.btn:hover{color:var(--ink1)}.btn:hover::after{transform:scaleX(1)}.btn:hover::before{transform:rotate(90deg)}
+.btn.ghost{color:var(--ink2)}.btn.ghost::before{background:var(--line2)}.btn.ghost::after{background:var(--ink2)}
+.btn:focus-visible{outline:none}.btn:focus-visible::after{transform:scaleX(1)}
+.chip{font-family:var(--mono);font-size:12px;letter-spacing:.5px;color:var(--ink2);border:1px solid var(--line2);padding:8px 12px;border-radius:6px;white-space:nowrap}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+/* nav */
+.nav{position:fixed;left:0;right:0;top:env(safe-area-inset-top,0px);z-index:20;pointer-events:none}
+.nav .wrap{height:80px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.nav a{pointer-events:auto}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink1);font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:-.5px}
+.mark{width:30px;height:33px;flex-shrink:0}
+.links{display:flex;align-items:center;gap:28px;font-family:var(--mono);font-size:12px;letter-spacing:1px;text-transform:uppercase}
+.links a{color:var(--ink2);text-decoration:none;padding:12px 0;position:relative}
+.links a::after{content:"";position:absolute;left:0;right:0;bottom:6px;height:1px;background:var(--amber);transform:scaleX(0);transform-origin:left;transition:transform .3s cubic-bezier(.22,1,.36,1)}
+.links a:hover{color:var(--ink1)}.links a:hover::after{transform:scaleX(1)}
+@media (max-width:820px){.links a:not(.keep){display:none}}
+/* hero */
+.hero .wrap{min-height:100vh;min-height:100svh;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:48px;align-items:center;padding-top:40px;padding-bottom:40px}
+.hero h1{font-size:clamp(44px,7vw,84px);letter-spacing:-.03em;margin:24px 0 24px}
+.hero h1 span{color:var(--amber)}
+.hero p{font-size:clamp(17px,1.6vw,20px);color:var(--ink2);max-width:520px;margin:0 0 28px}
+.hero .cta{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:28px}
+.hero .facts{display:flex;flex-wrap:wrap;gap:8px 20px;font-family:var(--mono);font-size:13px;color:var(--ink3)}
+.hero-viz{position:relative;width:100%;aspect-ratio:1/1;max-width:560px;justify-self:center}
+.hero-viz .hero-h polygon{filter:drop-shadow(0 0 10px rgba(242,184,75,.25))}
+.hero-viz .hero-h{transform-box:fill-box;transform-origin:center;transform:scale(.55);opacity:0;animation:heroin .8s cubic-bezier(.22,1,.36,1) forwards}
+.hero-viz text{text-anchor:middle;font-family:var(--mono);font-size:12px;font-weight:500}
+@keyframes heroin{to{transform:scale(1);opacity:1}}
+@media (max-width:820px){.hero .wrap{grid-template-columns:1fr;min-height:0}.hero-viz{max-width:360px}}
+/* cells */
+.services-intro .wrap{padding-top:96px;padding-bottom:24px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:24px;border-top:1px solid var(--line1)}
+.services-intro h2{font-size:clamp(34px,4.5vw,56px)}
+.services-intro h2 span{color:var(--ink3)}
+.services-intro .note{font-family:var(--mono);font-size:12px;color:var(--ink3);line-height:1.7;text-align:right}
+.cell{height:220vh;position:relative}
+.stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+.stage::before,.stage::after{content:"";position:absolute;left:0;right:0;height:110px;z-index:3;pointer-events:none}
+.stage::before{top:0;background:linear-gradient(var(--bg0),transparent)}
+.stage::after{bottom:0;background:linear-gradient(transparent,var(--bg0))}
+.col{position:absolute;left:50%;top:14vh;width:min(760px,calc(100vw - 40px));transform:translateX(-50%);display:flex;flex-direction:column;gap:28px;will-change:transform}
+.msg{display:flex;flex-direction:column;gap:14px}
+.who{font-family:var(--mono);font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);display:flex;align-items:center;gap:8px}
+.msg.us .who{color:var(--amber)}
+.msg h2{font-size:clamp(30px,4.2vw,52px)}
+.msg p{font-size:clamp(16px,1.5vw,19px);color:var(--ink2);margin:0;max-width:640px}
+.msg.us{padding-left:0}
+.w{opacity:0;animation-name:wd;animation-duration:.04s;animation-timing-function:linear;animation-fill-mode:both;animation-play-state:paused;display:inline-block}
+.w.chip{display:inline-block}.btn.w{display:inline-flex}
+@keyframes wd{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.caret{display:inline-block;width:8px;height:14px;background:var(--amber);margin-left:2px;vertical-align:-2px}
+@keyframes caret{0%{opacity:0}45%{opacity:0}47%{opacity:1}74%{opacity:1}76%{opacity:0}100%{opacity:0}}
+@keyframes who{0%{opacity:0}44%{opacity:0}47%{opacity:1}100%{opacity:1}}
+@keyframes dim{0%{opacity:1}44%{opacity:1}56%{opacity:.45}100%{opacity:.45}}
+@keyframes col{0%{transform:translate(-50%,0)}42%{transform:translate(-50%,0)}100%{transform:translate(-50%,-46%)}}
+@keyframes vizin{0%{opacity:0;transform:translateY(20px)}50%{opacity:0;transform:translateY(20px)}58%{opacity:1;transform:none}100%{opacity:1;transform:none}}
+.chips{margin-top:6px}
+.viz-wrap{position:relative;width:100%;overflow:hidden;border-radius:12px;border:1px solid var(--line1);background:rgba(20,23,28,.6)}
+.viz{position:absolute;left:0;top:0;width:1280px;height:800px;transform-origin:560px 100px}
+.viz .anim{animation-duration:.499s;animation-delay:.5s}
+.viz-svg{position:absolute;left:0;top:0;width:1280px;height:800px;pointer-events:none}
+.hx{position:absolute;transform-origin:center;font-family:var(--mono);font-size:12px;font-weight:500}
+.hx text{text-anchor:middle;font-family:var(--mono);font-size:12px;font-weight:500}
+.card{position:absolute;left:0;top:0;height:34px;padding:0 10px;line-height:32px;text-align:center;white-space:nowrap;border:1.5px dashed var(--line2);border-radius:6px;background:var(--bg0);color:var(--ink3);font-family:var(--mono);font-size:12px;transform-origin:center}
+.reply{position:absolute;left:860px;top:520px;width:300px;padding:12px 14px;border-radius:12px 12px 4px 12px;background:var(--amber);color:var(--bg0);font-family:var(--mono);font-size:12px;line-height:1.5}
+.badge{position:absolute;display:flex;align-items:center;gap:8px;font-size:11px;color:var(--ok);border:1px solid var(--ok);border-radius:6px;padding:8px 10px}
+.log{position:absolute;left:680px;top:480px;width:480px;padding:12px 14px;border:1px solid var(--line1);border-radius:6px;background:var(--bg1);font-size:11px;line-height:1.7;color:var(--ink3)}
+.anim{animation-duration:1s;animation-timing-function:linear;animation-fill-mode:both;animation-play-state:paused;will-change:transform,opacity}
+@keyframes fadeout{0%{opacity:1}34%{opacity:1}46%{opacity:0}100%{opacity:0}}
+@keyframes trace{0%{opacity:.8}34%{opacity:.8}46%{opacity:0}100%{opacity:0}}
+@keyframes tick{0%{opacity:0;transform:scale(.4)}90%{opacity:0;transform:scale(.4)}100%{opacity:1;transform:scale(1)}}
+@media (max-width:820px){
+ .cell{height:200vh}
+ .col{top:10vh;gap:20px}
+ .msg h2{font-size:clamp(26px,7.5vw,34px)}
+ .chip{font-size:11px;padding:6px 10px}
+ .btn{padding:10px 0;font-size:16px}
+}
+/* static sections */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
+.reveal.in{opacity:1;transform:none}
+.hint{position:absolute;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);font-family:var(--mono);font-size:11px;letter-spacing:1px;color:var(--ink3);display:flex;flex-direction:column;align-items:center;gap:8px}
+.hint i{display:block;width:1px;height:28px;background:linear-gradient(var(--amber),transparent);animation:hint 1.8s ease-in-out infinite}
+@keyframes hint{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+.section .wrap{padding-top:96px;padding-bottom:96px;border-top:1px solid var(--line1);display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:48px;align-items:start}
+.section h2{font-size:clamp(32px,4vw,44px);margin-top:14px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.cardx{background:var(--bg1);border:1px solid var(--line1);border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:10px}
+.cardx .k{font-family:var(--mono);font-size:11px;letter-spacing:1px;color:var(--ink3)}
+.cardx h3{font-size:20px}
+.cardx p{margin:0;font-size:14px;color:var(--ink2)}
+.about-body{display:flex;gap:32px;flex-wrap:wrap}
+.about-body p{margin:0 0 16px;font-size:17px;color:var(--ink2);max-width:560px}
+.contact .wrap{grid-template-columns:minmax(0,1fr) auto;align-items:center}
+.contact h2{font-size:clamp(36px,5vw,56px);max-width:640px}
+.contact p{font-size:18px;color:var(--ink2);max-width:560px}
+.contact .row{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:center}
+.contact .row a.mail{color:var(--ink1);text-decoration:none;font-family:var(--mono);font-size:14px}
+.contact-hive{width:240px;height:240px}
+@media (max-width:820px){.section .wrap{grid-template-columns:1fr;gap:24px;padding-top:64px;padding-bottom:64px}.contact-hive{display:none}}
+footer .wrap{border-top:1px solid var(--line1);padding:32px 0;display:flex;flex-wrap:wrap;gap:16px 24px;align-items:center;justify-content:space-between;font-family:var(--mono);font-size:12px;color:var(--ink3);margin-left:clamp(20px,5vw,64px);margin-right:clamp(20px,5vw,64px);padding-left:0;padding-right:0}
+footer a{color:var(--ink3);text-decoration:none}
+footer .l{display:flex;align-items:center;gap:10px}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}.reveal{opacity:1;transform:none;transition:none}.hint i{animation:none}.hero-viz .hero-h{animation:none;transform:none;opacity:1}}
+@keyframes s1c0{0%{transform:translate(155px,103px) rotate(-12deg);opacity:1}44%{transform:translate(795px,267px) rotate(0);opacity:1}51%{transform:translate(795px,267px) scale(.7);opacity:0}100%{transform:translate(795px,267px) scale(.7);opacity:0}}
+@keyframes s1c1{0%{transform:translate(1057px,93px) rotate(8deg);opacity:1}47%{transform:translate(937px,325px) rotate(0);opacity:1}54%{transform:translate(937px,325px) scale(.7);opacity:0}100%{transform:translate(937px,325px) scale(.7);opacity:0}}
+@keyframes s1c2{0%{transform:translate(72px,643px) rotate(6deg);opacity:1}50%{transform:translate(792px,383px) rotate(0);opacity:1}57%{transform:translate(792px,383px) scale(.7);opacity:0}100%{transform:translate(792px,383px) scale(.7);opacity:0}}
+@keyframes s1c3{0%{transform:translate(935px,673px) rotate(-7deg);opacity:1}46%{transform:translate(895px,441px) rotate(0);opacity:1}53%{transform:translate(895px,441px) scale(.7);opacity:0}100%{transform:translate(895px,441px) scale(.7);opacity:0}}
+@keyframes s1c4{0%{transform:translate(581px,43px) rotate(4deg);opacity:1}49%{transform:translate(741px,325px) rotate(0);opacity:1}56%{transform:translate(741px,325px) scale(.7);opacity:0}100%{transform:translate(741px,325px) scale(.7);opacity:0}}
+@keyframes s1c5{0%{transform:translate(712px,543px) rotate(11deg);opacity:1}45%{transform:translate(752px,441px) rotate(0);opacity:1}52%{transform:translate(752px,441px) scale(.7);opacity:0}100%{transform:translate(752px,441px) scale(.7);opacity:0}}
+@keyframes s1c6{0%{transform:translate(350px,413px) rotate(-3deg);opacity:1}48%{transform:translate(780px,499px) rotate(0);opacity:1}55%{transform:translate(780px,499px) scale(.7);opacity:0}100%{transform:translate(780px,499px) scale(.7);opacity:0}}
+@keyframes s1h0{0%{opacity:0;transform:scale(.55)}48%{opacity:0;transform:scale(.55)}58%{opacity:1;transform:scale(1)}100%{opacity:1;transform:scale(1)}}
+@keyframes s1h1{0%{opacity:0;transform:scale(.55)}49%{opacity:0;transform:scale(.55)}59%{opacity:1;transform:scale(1)}100%{opacity:1;transform:scale(1)}}
+@keyframes s1h2{0%{opacity:0;transform:scale(.55)}50%{opacity:0;transform:scale(.55)}60%{opacity:1;transform:scale(1)}100%{opacity:1;transform:scale(1)}}
+@keyframes s1h3{0%{opacity:0;transform:scale(.55)}51%{opacity:0;transform:scale(.55)}61%{opacity:1;transform:scale(1)}100%{opacity:1;transform:scale(1)}}
+@keyframes s1h4{0%{opacity:0;transform:scale(.55)}52%{opacity:0;transform:scale(.55)}62%{opacity:1;transform:scale(1)}100%{opacity:1;transform:scale(1)}}
+@keyframes s1h5{0%{opacity:0;transform:scale(.55)}53%{opacity:0;transform:scale(.55)}63%{opacity:1;transform:scale(1)}100%{opacity:1;transform:scale(1)}}
+@keyframes s1h6{0%{opacity:0;transform:scale(.55)}54%{opacity:0;transform:scale(.55)}64%{opacity:1;transform:scale(1)}100%{opacity:1;transform:scale(1)}}
+@keyframes s2b0{0%{transform:translate(188px,90px) rotate(-9deg);border-style:dashed;border-color:var(--line2);color:var(--ink3);background:var(--bg0)}40%{transform:translate(760px,200px) rotate(0);border-style:dashed;border-color:var(--line2);color:var(--ink3);background:var(--bg0)}48%{transform:translate(760px,200px) rotate(0);border-style:solid;border-color:var(--line2);color:var(--ink1);background:var(--bg1)}100%{transform:translate(760px,200px) rotate(0);border-style:solid;border-color:var(--line2);color:var(--ink1);background:var(--bg1)}}
+@keyframes s2b1{0%{transform:translate(980px,120px) rotate(7deg);border-style:dashed;border-color:var(--line2);color:var(--ink3);background:var(--bg0)}43%{transform:translate(760px,252px) rotate(0);border-style:dashed;border-color:var(--line2);color:var(--ink3);background:var(--bg0)}51%{transform:translate(760px,252px) rotate(0);border-style:solid;border-color:var(--line2);color:var(--ink1);background:var(--bg1)}100%{transform:translate(760px,252px) rotate(0);border-style:solid;border-color:var(--line2);color:var(--ink1);background:var(--bg1)}}
+@keyframes s2b2{0%{transform:translate(60px,600px) rotate(5deg);border-style:dashed;border-color:var(--line2);color:var(--ink3);background:var(--bg0)}46%{transform:translate(760px,304px) rotate(0);border-style:dashed;border-color:var(--line2);color:var(--ink3);background:var(--bg0)}54%{transform:translate(760px,304px) rotate(0);border-style:solid;border-color:var(--line2);color:var(--ink1);background:var(--bg1)}100%{transform:translate(760px,304px) rotate(0);border-style:solid;border-color:var(--line2);color:var(--ink1);background:var(--bg1)}}
+@keyframes s2b3{0%{transform:translate(912px,660px) rotate(-6deg);border-style:dashed;border-color:var(--line2);color:var(--ink3);background:var(--bg0)}49%{transform:translate(760px,356px) rotate(0);border-style:dashed;border-color:var(--line2);color:var(--ink3);background:var(--bg0)}57%{transform:translate(760px,356px) rotate(0);border-style:solid;border-color:var(--line2);color:var(--ink1);background:var(--bg1)}100%{transform:translate(760px,356px) rotate(0);border-style:solid;border-color:var(--line2);color:var(--ink1);background:var(--bg1)}}
+@keyframes s2b4{0%{transform:translate(500px,60px) rotate(3deg);border-style:dashed;border-color:var(--line2);color:var(--ink3);background:var(--bg0)}52%{transform:translate(760px,408px) rotate(0);border-style:dashed;border-color:var(--line2);color:var(--ink3);background:var(--bg0)}60%{transform:translate(760px,408px) rotate(0);border-style:solid;border-color:var(--line2);color:var(--ink1);background:var(--bg1)}100%{transform:translate(760px,408px) rotate(0);border-style:solid;border-color:var(--line2);color:var(--ink1);background:var(--bg1)}}
+@keyframes s2b5{0%{transform:translate(595px,540px) rotate(10deg);border-style:dashed;border-color:var(--line2);color:var(--ink3);background:var(--bg0)}55%{transform:translate(760px,460px) rotate(0);border-style:dashed;border-color:var(--line2);color:var(--ink3);background:var(--bg0)}63%{transform:translate(760px,460px) rotate(0);border-style:solid;border-color:var(--line2);color:var(--ink1);background:var(--bg1)}100%{transform:translate(760px,460px) rotate(0);border-style:solid;border-color:var(--line2);color:var(--ink1);background:var(--bg1)}}
+@keyframes s2reply{0%{opacity:0;transform:translateY(8px)}68%{opacity:0;transform:translateY(8px)}78%{opacity:1;transform:translateY(0)}100%{opacity:1;transform:translateY(0)}}
+@keyframes s2cite{0%{opacity:0}84%{opacity:0}94%{opacity:1}100%{opacity:1}}
+@keyframes s3m0{0%{transform:translate(157px,110px) rotate(-8deg)}8%{transform:translate(163px,107px) rotate(-5deg)}16%{transform:translate(152px,112px) rotate(-10deg)}24%{transform:translate(160px,110px) rotate(-7deg)}38%{transform:translate(740px,236px) rotate(0);border-style:dashed;border-color:var(--line2);color:var(--ink3)}44%{transform:translate(740px,236px) rotate(0);border-style:solid;border-color:var(--line2);color:var(--ink2)}100%{transform:translate(740px,236px) rotate(0);border-style:solid;border-color:var(--line2);color:var(--ink2)}}
+@keyframes s3bar0{0%{transform:scaleX(0)}58%{transform:scaleX(0)}72%{transform:scaleX(1)}100%{transform:scaleX(1)}}
+@keyframes s3m1{0%{transform:translate(1017px,90px) rotate(6deg)}8%{transform:translate(1023px,87px) rotate(9deg)}16%{transform:translate(1012px,92px) rotate(4deg)}24%{transform:translate(1020px,90px) rotate(7deg)}41%{transform:translate(740px,300px) rotate(0);border-style:dashed;border-color:var(--line2);color:var(--ink3)}47%{transform:translate(740px,300px) rotate(0);border-style:solid;border-color:var(--line2);color:var(--ink2)}100%{transform:translate(740px,300px) rotate(0);border-style:solid;border-color:var(--line2);color:var(--ink2)}}
+@keyframes s3bar1{0%{transform:scaleX(0)}62%{transform:scaleX(0)}76%{transform:scaleX(1)}100%{transform:scaleX(1)}}
+@keyframes s3m2{0%{transform:translate(71px,640px) rotate(4deg)}8%{transform:translate(77px,637px) rotate(7deg)}16%{transform:translate(66px,642px) rotate(2deg)}24%{transform:translate(74px,640px) rotate(5deg)}44%{transform:translate(740px,364px) rotate(0);border-style:dashed;border-color:var(--line2);color:var(--ink3)}50%{transform:translate(740px,364px) rotate(0);border-style:solid;border-color:var(--line2);color:var(--ink2)}100%{transform:translate(740px,364px) rotate(0);border-style:solid;border-color:var(--line2);color:var(--ink2)}}
+@keyframes s3bar2{0%{transform:scaleX(0)}66%{transform:scaleX(0)}80%{transform:scaleX(1)}100%{transform:scaleX(1)}}
+@keyframes s3m3{0%{transform:translate(1042px,600px) rotate(-9deg)}8%{transform:translate(1048px,597px) rotate(-6deg)}16%{transform:translate(1037px,602px) rotate(-11deg)}24%{transform:translate(1045px,600px) rotate(-8deg)}47%{transform:translate(740px,428px) rotate(0);border-style:dashed;border-color:var(--line2);color:var(--ink3)}53%{transform:translate(740px,428px) rotate(0);border-style:solid;border-color:var(--line2);color:var(--ink2)}100%{transform:translate(740px,428px) rotate(0);border-style:solid;border-color:var(--line2);color:var(--ink2)}}
+@keyframes s3bar3{0%{transform:scaleX(0)}70%{transform:scaleX(0)}84%{transform:scaleX(1)}100%{transform:scaleX(1)}}
+@keyframes s3m4{0%{transform:translate(505px,70px) rotate(2deg)}8%{transform:translate(511px,67px) rotate(5deg)}16%{transform:translate(500px,72px) rotate(0deg)}24%{transform:translate(508px,70px) rotate(3deg)}50%{transform:translate(740px,492px) rotate(0);border-style:dashed;border-color:var(--line2);color:var(--ink3)}56%{transform:translate(740px,492px) rotate(0);border-style:solid;border-color:var(--amber);color:var(--ink1)}100%{transform:translate(740px,492px) rotate(0);border-style:solid;border-color:var(--amber);color:var(--ink1)}}
+@keyframes s3bar4{0%{transform:scaleX(0)}74%{transform:scaleX(0)}88%{transform:scaleX(1)}100%{transform:scaleX(1)}}
+@keyframes s3axis{0%{opacity:0}56%{opacity:0}66%{opacity:1}100%{opacity:1}}
+@keyframes s3lock{0%{opacity:0;transform:translateY(6px)}88%{opacity:0;transform:translateY(6px)}100%{opacity:1;transform:translateY(0)}}
+@keyframes s4d0{0%{opacity:1;transform:rotate(-10deg)}38%{opacity:1;transform:rotate(-10deg)}56%{opacity:0;transform:translateY(120px) rotate(2deg)}100%{opacity:0;transform:translateY(120px) rotate(2deg)}}
+@keyframes s4d1{0%{opacity:1;transform:rotate(7deg)}38%{opacity:1;transform:rotate(7deg)}56%{opacity:0;transform:translateY(120px) rotate(19deg)}100%{opacity:0;transform:translateY(120px) rotate(19deg)}}
+@keyframes s4d2{0%{opacity:1;transform:rotate(4deg)}38%{opacity:1;transform:rotate(4deg)}56%{opacity:0;transform:translateY(120px) rotate(16deg)}100%{opacity:0;transform:translateY(120px) rotate(16deg)}}
+@keyframes s4d3{0%{opacity:1;transform:rotate(-8deg)}38%{opacity:1;transform:rotate(-8deg)}56%{opacity:0;transform:translateY(120px) rotate(4deg)}100%{opacity:0;transform:translateY(120px) rotate(4deg)}}
+@keyframes s4d4{0%{opacity:1;transform:rotate(3deg)}38%{opacity:1;transform:rotate(3deg)}56%{opacity:0;transform:translateY(120px) rotate(15deg)}100%{opacity:0;transform:translateY(120px) rotate(15deg)}}
+@keyframes s4wire{0%{stroke-dashoffset:420;opacity:0}44%{stroke-dashoffset:420;opacity:1}70%{stroke-dashoffset:0;opacity:1}100%{stroke-dashoffset:0;opacity:1}}
+@keyframes s4n0{0%{opacity:0;transform:scale(.6)}46%{opacity:0;transform:scale(.6)}54%{opacity:1;transform:scale(1)}100%{opacity:1;transform:scale(1)}}
+@keyframes s4g0{0%{stroke:var(--amber)}76%{stroke:var(--amber)}80%{stroke:var(--ok)}100%{stroke:var(--ok)}}
+@keyframes s4o0{0%{opacity:0}76%{opacity:0}80%{opacity:1}100%{opacity:1}}
+@keyframes s4n1{0%{opacity:0;transform:scale(.6)}52%{opacity:0;transform:scale(.6)}60%{opacity:1;transform:scale(1)}100%{opacity:1;transform:scale(1)}}
+@keyframes s4g1{0%{stroke:var(--amber)}82%{stroke:var(--amber)}86%{stroke:var(--ok)}100%{stroke:var(--ok)}}
+@keyframes s4o1{0%{opacity:0}82%{opacity:0}86%{opacity:1}100%{opacity:1}}
+@keyframes s4n2{0%{opacity:0;transform:scale(.6)}58%{opacity:0;transform:scale(.6)}66%{opacity:1;transform:scale(1)}100%{opacity:1;transform:scale(1)}}
+@keyframes s4g2{0%{stroke:var(--amber)}88%{stroke:var(--amber)}92%{stroke:var(--ok)}100%{stroke:var(--ok)}}
+@keyframes s4o2{0%{opacity:0}88%{opacity:0}92%{opacity:1}100%{opacity:1}}
+@keyframes s4n3{0%{opacity:0;transform:scale(.6)}64%{opacity:0;transform:scale(.6)}72%{opacity:1;transform:scale(1)}100%{opacity:1;transform:scale(1)}}
+@keyframes s4g3{0%{stroke:var(--amber)}94%{stroke:var(--amber)}98%{stroke:var(--ok)}100%{stroke:var(--ok)}}
+@keyframes s4o3{0%{opacity:0}94%{opacity:0}98%{opacity:1}100%{opacity:1}}
+@keyframes s4log{0%{opacity:0}92%{opacity:0}100%{opacity:1}}
+@keyframes s5r0{0%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}48%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}54%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}100%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}}
+@keyframes s5t0{0%{opacity:0}50%{opacity:0}56%{opacity:1}100%{opacity:1}}
+@keyframes s5r1{0%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}51%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}57%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}100%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}}
+@keyframes s5t1{0%{opacity:0}53%{opacity:0}59%{opacity:1}100%{opacity:1}}
+@keyframes s5r2{0%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}54%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}60%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}100%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}}
+@keyframes s5t2{0%{opacity:0}56%{opacity:0}62%{opacity:1}100%{opacity:1}}
+@keyframes s5r3{0%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}57%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}63%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}100%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}}
+@keyframes s5t3{0%{opacity:0}59%{opacity:0}65%{opacity:1}100%{opacity:1}}
+@keyframes s5r4{0%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}60%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}66%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}100%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}}
+@keyframes s5t4{0%{opacity:0}62%{opacity:0}68%{opacity:1}100%{opacity:1}}
+@keyframes s5r5{0%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}63%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}69%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}100%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}}
+@keyframes s5t5{0%{opacity:0}65%{opacity:0}71%{opacity:1}100%{opacity:1}}
+@keyframes s5r6{0%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}70%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}76%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}100%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}}
+@keyframes s5t6{0%{opacity:0}72%{opacity:0}78%{opacity:1}100%{opacity:1}}
+@keyframes s5r7{0%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}72%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}78%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}100%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}}
+@keyframes s5t7{0%{opacity:0}74%{opacity:0}80%{opacity:1}100%{opacity:1}}
+@keyframes s5r8{0%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}74%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}80%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}100%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}}
+@keyframes s5t8{0%{opacity:0}76%{opacity:0}82%{opacity:1}100%{opacity:1}}
+@keyframes s5r9{0%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}76%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}82%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}100%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}}
+@keyframes s5t9{0%{opacity:0}78%{opacity:0}84%{opacity:1}100%{opacity:1}}
+@keyframes s5r10{0%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}78%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}84%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}100%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}}
+@keyframes s5t10{0%{opacity:0}80%{opacity:0}86%{opacity:1}100%{opacity:1}}
+@keyframes s5r11{0%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}80%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}86%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}100%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}}
+@keyframes s5t11{0%{opacity:0}82%{opacity:0}88%{opacity:1}100%{opacity:1}}
+@keyframes s5r12{0%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}82%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}88%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}100%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}}
+@keyframes s5t12{0%{opacity:0}84%{opacity:0}90%{opacity:1}100%{opacity:1}}
+@keyframes s5r13{0%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}84%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}90%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}100%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}}
+@keyframes s5t13{0%{opacity:0}86%{opacity:0}92%{opacity:1}100%{opacity:1}}
+@keyframes s5r14{0%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}86%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}92%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}100%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}}
+@keyframes s5t14{0%{opacity:0}88%{opacity:0}94%{opacity:1}100%{opacity:1}}
+@keyframes s5r15{0%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}88%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}94%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}100%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}}
+@keyframes s5t15{0%{opacity:0}90%{opacity:0}96%{opacity:1}100%{opacity:1}}
+@keyframes s5r16{0%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}90%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}96%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}100%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}}
+@keyframes s5t16{0%{opacity:0}92%{opacity:0}98%{opacity:1}100%{opacity:1}}
+@keyframes s5r17{0%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}92%{fill:var(--bg0);stroke:var(--line2);stroke-dasharray:6 5}98%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}100%{fill:var(--bg1);stroke:var(--amber);stroke-dasharray:0 0}}
+@keyframes s5t17{0%{opacity:0}94%{opacity:0}100%{opacity:1}100%{opacity:1}}
+</style>
+</head>
+<body>
+<canvas id="hive" aria-hidden="true"></canvas>
+<header class="nav"><div class="wrap">
+ <a class="brand" href="#top"><svg class="mark" viewBox="0 0 80 88" fill="none" aria-hidden="true"><polygon points="40,8 71.2,26 71.2,62 40,80 8.8,62 8.8,26" stroke="var(--amber)" stroke-width="4" stroke-linejoin="round"/><g fill="none" stroke="var(--ink1)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" transform="translate(40,44)"><path transform="translate(-9,0)" d="M6,-16 C1,-16 2,-11 2,-6 C2,-2 0,-1 -3,0 C0,1 2,2 2,6 C2,11 1,16 6,16"/><path transform="translate(9,0) scale(-1,1)" d="M6,-16 C1,-16 2,-11 2,-6 C2,-2 0,-1 -3,0 C0,1 2,2 2,6 C2,11 1,16 6,16"/></g></svg>codehive</a>
+ <nav class="links"><a href="#services">Services</a><a class="keep" href="#contact">Contact</a></nav>
+</div></header>
+
+<section class="hero" id="top" style="position:relative"><div class="wrap">
+ <div>
+  <div class="eyebrow"><span class="dot"></span>AI engineering as a service · Stockholm</div>
+  <h1>Ship the <span>AI feature.</span></h1>
+  <p>Backend engineering for teams adding LLM features without an ML team. Based in Stockholm, working with companies across Europe, the UK and the US.</p>
+  <div class="cta"><a class="btn" href="#contact">Start a project</a><a class="btn ghost" href="#services">See the services</a></div>
+  <div class="facts"><span>Senior backend engineers only</span><span>·</span><span>Python, Go</span><span>·</span><span>AWS, GCP, Azure</span></div>
+ </div>
+ <div class="hint" aria-hidden="true">SCROLL<i></i></div>
+ <div class="hero-viz"><svg viewBox="0 0 560 560" width="100%" height="100%" aria-hidden="true"><g class="hero-g"><g transform="translate(280,280)"><g class="hero-h" style="animation-delay:0.9s"><polygon points="0,-58 50,-29 50,29 0,58 -50,29 -50,-29" fill="var(--amber)"/><text y="4" fill="var(--bg0)">prod</text></g></g><g transform="translate(280,164)"><g class="hero-h" style="animation-delay:0.3s"><polygon points="0,-58 50,-29 50,29 0,58 -50,29 -50,-29" fill="var(--bg1)" stroke="var(--amber)" stroke-width="2"/><text y="4" fill="var(--ink1)">RAG</text></g></g><g transform="translate(380,222)"><g class="hero-h" style="animation-delay:0.45s"><polygon points="0,-58 50,-29 50,29 0,58 -50,29 -50,-29" fill="var(--bg1)" stroke="var(--amber)" stroke-width="2"/><text y="4" fill="var(--ink1)">agents</text></g></g><g transform="translate(380,338)"><g class="hero-h" style="animation-delay:0.6s"><polygon points="0,-58 50,-29 50,29 0,58 -50,29 -50,-29" fill="var(--bg1)" stroke="var(--amber)" stroke-width="2"/><text y="4" fill="var(--ink1)">evals</text></g></g><g transform="translate(280,396)"><g class="hero-h" style="animation-delay:0.1s"><polygon points="0,-58 50,-29 50,29 0,58 -50,29 -50,-29" fill="none" stroke="var(--line2)" stroke-width="2" stroke-dasharray="6 5"/></g></g><g transform="translate(180,338)"><g class="hero-h" style="animation-delay:0.2s"><polygon points="0,-58 50,-29 50,29 0,58 -50,29 -50,-29" fill="none" stroke="var(--line2)" stroke-width="2" stroke-dasharray="6 5"/></g></g><g transform="translate(180,222)"><g class="hero-h" style="animation-delay:0.75s"><polygon points="0,-58 50,-29 50,29 0,58 -50,29 -50,-29" fill="var(--bg1)" stroke="var(--amber)" stroke-width="2"/><text y="4" fill="var(--ink1)">API</text></g></g></g></svg></div>
+</div></section>
+
+<section class="services-intro" id="services"><div class="wrap reveal">
+ <h2>Five things we do.<br><span>Each starts with what is broken.</span></h2>
+ <div class="note">keep scrolling through each one</div>
+</div></section>
+
+<section class="cell" id="cell-01" aria-label="Strategy and advisory">
+ <div class="stage">
+  <div class="col anim" style="animation-name:col">
+   <div class="eyebrow"><span class="dot"></span>01 / STRATEGY AND ADVISORY</div>
+   <div class="msg you anim" style="animation-name:dim">
+    <div class="who">you</div>
+    <h2><span class="w" style="animation-delay:0.020s">Which</span> <span class="w" style="animation-delay:0.043s">of</span> <span class="w" style="animation-delay:0.065s">your</span> <span class="w" style="animation-delay:0.088s">AI</span> <span class="w" style="animation-delay:0.110s">pilots</span> <span class="w" style="animation-delay:0.133s">deserves</span> <span class="w" style="animation-delay:0.155s">a</span> <span class="w" style="animation-delay:0.178s">budget?</span></h2>
+    <p><span class="w" style="animation-delay:0.210s">Marketing</span> <span class="w" style="animation-delay:0.216s">has</span> <span class="w" style="animation-delay:0.222s">a</span> <span class="w" style="animation-delay:0.227s">chatbot.</span> <span class="w" style="animation-delay:0.233s">Support</span> <span class="w" style="animation-delay:0.239s">tried</span> <span class="w" style="animation-delay:0.245s">a</span> <span class="w" style="animation-delay:0.250s">vendor.</span> <span class="w" style="animation-delay:0.256s">The</span> <span class="w" style="animation-delay:0.262s">board</span> <span class="w" style="animation-delay:0.268s">is</span> <span class="w" style="animation-delay:0.273s">asking</span> <span class="w" style="animation-delay:0.279s">whether</span> <span class="w" style="animation-delay:0.285s">the</span> <span class="w" style="animation-delay:0.291s">company</span> <span class="w" style="animation-delay:0.296s">is</span> <span class="w" style="animation-delay:0.302s">behind.</span> <span class="w" style="animation-delay:0.308s">Nobody</span> <span class="w" style="animation-delay:0.314s">owns</span> <span class="w" style="animation-delay:0.319s">the</span> <span class="w" style="animation-delay:0.325s">answer,</span> <span class="w" style="animation-delay:0.331s">so</span> <span class="w" style="animation-delay:0.337s">every</span> <span class="w" style="animation-delay:0.342s">pilot</span> <span class="w" style="animation-delay:0.348s">gets</span> <span class="w" style="animation-delay:0.354s">a</span> <span class="w" style="animation-delay:0.360s">little</span> <span class="w" style="animation-delay:0.365s">money</span> <span class="w" style="animation-delay:0.371s">and</span> <span class="w" style="animation-delay:0.377s">none</span> <span class="w" style="animation-delay:0.383s">gets</span> <span class="w" style="animation-delay:0.388s">a</span> <span class="w" style="animation-delay:0.394s">decision.</span></p>
+   </div>
+   <div class="msg us">
+    <div class="who anim" style="animation-name:who">codehive<span class="caret anim" style="animation-name:caret"></span></div>
+    <h2><span class="w" style="animation-delay:0.470s">A</span> <span class="w" style="animation-delay:0.488s">plan</span> <span class="w" style="animation-delay:0.507s">the</span> <span class="w" style="animation-delay:0.525s">board</span> <span class="w" style="animation-delay:0.543s">can</span> <span class="w" style="animation-delay:0.562s">fund.</span></h2>
+    <p><span class="w" style="animation-delay:0.590s">We</span> <span class="w" style="animation-delay:0.595s">assess</span> <span class="w" style="animation-delay:0.599s">where</span> <span class="w" style="animation-delay:0.604s">AI</span> <span class="w" style="animation-delay:0.608s">actually</span> <span class="w" style="animation-delay:0.613s">pays</span> <span class="w" style="animation-delay:0.617s">off</span> <span class="w" style="animation-delay:0.622s">for</span> <span class="w" style="animation-delay:0.626s">your</span> <span class="w" style="animation-delay:0.631s">business,</span> <span class="w" style="animation-delay:0.635s">quantify</span> <span class="w" style="animation-delay:0.640s">each</span> <span class="w" style="animation-delay:0.645s">case,</span> <span class="w" style="animation-delay:0.649s">compare</span> <span class="w" style="animation-delay:0.654s">building</span> <span class="w" style="animation-delay:0.658s">against</span> <span class="w" style="animation-delay:0.663s">buying,</span> <span class="w" style="animation-delay:0.667s">name</span> <span class="w" style="animation-delay:0.672s">the</span> <span class="w" style="animation-delay:0.676s">risks,</span> <span class="w" style="animation-delay:0.681s">and</span> <span class="w" style="animation-delay:0.685s">hand</span> <span class="w" style="animation-delay:0.690s">you</span> <span class="w" style="animation-delay:0.695s">a</span> <span class="w" style="animation-delay:0.699s">roadmap</span> <span class="w" style="animation-delay:0.704s">with</span> <span class="w" style="animation-delay:0.708s">data,</span> <span class="w" style="animation-delay:0.713s">people</span> <span class="w" style="animation-delay:0.717s">and</span> <span class="w" style="animation-delay:0.722s">change</span> <span class="w" style="animation-delay:0.726s">work</span> <span class="w" style="animation-delay:0.731s">in</span> <span class="w" style="animation-delay:0.735s">order.</span></p>
+    <div class="chips"><span class="chip w" style="animation-delay:0.750s">AI strategy engagement</span><span class="chip w" style="animation-delay:0.768s">Build vs buy and vendor evaluation</span><span class="chip w" style="animation-delay:0.786s">AI risk assessment</span><span class="chip w" style="animation-delay:0.804s">Implementation roadmap</span><span class="chip w" style="animation-delay:0.822s">Executive and board briefings</span></div>
+    <a class="btn w" style="animation-delay:.86s" href="#contact">Book a call</a>
+   </div>
+   <div class="viz-wrap anim" style="animation-name:vizin"><div class="viz"><div class="card anim" style="animation-name:s1c0;width:210px">chatbot pilot · marketing</div><div class="card anim" style="animation-name:s1c1;width:126px">vendor demo #4</div><div class="card anim" style="animation-name:s1c2;width:217px">board deck: are we behind?</div><div class="card anim" style="animation-name:s1c3;width:210px">GPT wrapper or own model?</div><div class="card anim" style="animation-name:s1c4;width:118px">no data owner</div><div class="card anim" style="animation-name:s1c5;width:96px">EU AI Act?</div><div class="card anim" style="animation-name:s1c6;width:240px">three pilots, one budget line</div><svg class="hx animation-name:s1h0" style="left:840px;top:340px;" width="120" height="120" viewBox="-60 -60 120 120" aria-hidden="true"><polygon points="anim" fill="var(--amber)"/><text y="4" fill="var(--bg0)">assess</text></svg><svg class="hx animation-name:s1h1" style="left:840px;top:224px;" width="120" height="120" viewBox="-60 -60 120 120" aria-hidden="true"><polygon points="anim" fill="var(--bg1)" stroke="var(--amber)" stroke-width="2"/><text y="4" fill="var(--ink1)">brief the board</text></svg><svg class="hx animation-name:s1h2" style="left:940px;top:282px;" width="120" height="120" viewBox="-60 -60 120 120" aria-hidden="true"><polygon points="anim" fill="var(--bg1)" stroke="var(--amber)" stroke-width="2"/><text y="4" fill="var(--ink1)">build vs buy</text></svg><svg class="hx animation-name:s1h3" style="left:940px;top:398px;" width="120" height="120" viewBox="-60 -60 120 120" aria-hidden="true"><polygon points="anim" fill="var(--bg1)" stroke="var(--amber)" stroke-width="2"/><text y="4" fill="var(--ink1)">roadmap</text></svg><svg class="hx animation-name:s1h4" style="left:840px;top:456px;" width="120" height="120" viewBox="-60 -60 120 120" aria-hidden="true"><polygon points="anim" fill="var(--bg1)" stroke="var(--amber)" stroke-width="2"/><text y="4" fill="var(--ink1)">data readiness</text></svg><svg class="hx animation-name:s1h5" style="left:740px;top:398px;" width="120" height="120" viewBox="-60 -60 120 120" aria-hidden="true"><polygon points="anim" fill="var(--bg1)" stroke="var(--amber)" stroke-width="2"/><text y="4" fill="var(--ink1)">risks</text></svg><svg class="hx animation-name:s1h6" style="left:740px;top:282px;" width="120" height="120" viewBox="-60 -60 120 120" aria-hidden="true"><polygon points="anim" fill="var(--bg1)" stroke="var(--amber)" stroke-width="2"/><text y="4" fill="var(--ink1)">business case</text></svg><svg class="viz-svg" viewBox="0 0 1280 800" aria-hidden="true"><path class="anim" style="animation-name:trace" d="M 240 660 C 400 600, 520 470, 470 445" stroke="var(--alert)" stroke-width="1.5" stroke-dasharray="4 4" fill="none"/></svg><svg class="anim" style="animation-name:tick;position:absolute;left:936px;top:350px" width="26" height="26" viewBox="-13 -13 26 26" aria-hidden="true"><circle r="11" fill="var(--bg0)" stroke="var(--ok)" stroke-width="2"/><path d="M -5 0 L -1.5 3.5 L 5 -4" stroke="var(--ok)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+  </div>
+ </div>
+</section>
+<section class="cell" id="cell-02" aria-label="Application development">
+ <div class="stage">
+  <div class="col anim" style="animation-name:col">
+   <div class="eyebrow"><span class="dot"></span>02 / APPLICATION DEVELOPMENT</div>
+   <div class="msg you anim" style="animation-name:dim">
+    <div class="who">you</div>
+    <h2><span class="w" style="animation-delay:0.020s">How</span> <span class="w" style="animation-delay:0.043s">many</span> <span class="w" style="animation-delay:0.065s">tabs</span> <span class="w" style="animation-delay:0.088s">does</span> <span class="w" style="animation-delay:0.110s">support</span> <span class="w" style="animation-delay:0.133s">open</span> <span class="w" style="animation-delay:0.155s">per</span> <span class="w" style="animation-delay:0.178s">ticket?</span></h2>
+    <p><span class="w" style="animation-delay:0.210s">Your</span> <span class="w" style="animation-delay:0.216s">team</span> <span class="w" style="animation-delay:0.221s">answers</span> <span class="w" style="animation-delay:0.227s">the</span> <span class="w" style="animation-delay:0.232s">same</span> <span class="w" style="animation-delay:0.238s">questions</span> <span class="w" style="animation-delay:0.244s">by</span> <span class="w" style="animation-delay:0.249s">hand,</span> <span class="w" style="animation-delay:0.255s">from</span> <span class="w" style="animation-delay:0.260s">PDFs,</span> <span class="w" style="animation-delay:0.266s">Confluence</span> <span class="w" style="animation-delay:0.271s">and</span> <span class="w" style="animation-delay:0.277s">the</span> <span class="w" style="animation-delay:0.283s">one</span> <span class="w" style="animation-delay:0.288s">person</span> <span class="w" style="animation-delay:0.294s">who</span> <span class="w" style="animation-delay:0.299s">remembers.</span> <span class="w" style="animation-delay:0.305s">Every</span> <span class="w" style="animation-delay:0.311s">AI</span> <span class="w" style="animation-delay:0.316s">pilot</span> <span class="w" style="animation-delay:0.322s">so</span> <span class="w" style="animation-delay:0.327s">far</span> <span class="w" style="animation-delay:0.333s">was</span> <span class="w" style="animation-delay:0.339s">a</span> <span class="w" style="animation-delay:0.344s">demo</span> <span class="w" style="animation-delay:0.350s">nobody</span> <span class="w" style="animation-delay:0.355s">dared</span> <span class="w" style="animation-delay:0.361s">to</span> <span class="w" style="animation-delay:0.366s">put</span> <span class="w" style="animation-delay:0.372s">in</span> <span class="w" style="animation-delay:0.378s">front</span> <span class="w" style="animation-delay:0.383s">of</span> <span class="w" style="animation-delay:0.389s">a</span> <span class="w" style="animation-delay:0.394s">customer.</span></p>
+   </div>
+   <div class="msg us">
+    <div class="who anim" style="animation-name:who">codehive<span class="caret anim" style="animation-name:caret"></span></div>
+    <h2><span class="w" style="animation-delay:0.470s">Assistants</span> <span class="w" style="animation-delay:0.488s">your</span> <span class="w" style="animation-delay:0.507s">customers</span> <span class="w" style="animation-delay:0.525s">actually</span> <span class="w" style="animation-delay:0.543s">talk</span> <span class="w" style="animation-delay:0.562s">to.</span></h2>
+    <p><span class="w" style="animation-delay:0.590s">Chatbots</span> <span class="w" style="animation-delay:0.594s">and</span> <span class="w" style="animation-delay:0.598s">support</span> <span class="w" style="animation-delay:0.602s">agents</span> <span class="w" style="animation-delay:0.606s">grounded</span> <span class="w" style="animation-delay:0.610s">in</span> <span class="w" style="animation-delay:0.614s">your</span> <span class="w" style="animation-delay:0.618s">own</span> <span class="w" style="animation-delay:0.622s">documents,</span> <span class="w" style="animation-delay:0.626s">agents</span> <span class="w" style="animation-delay:0.631s">that</span> <span class="w" style="animation-delay:0.635s">transcribe,</span> <span class="w" style="animation-delay:0.639s">research</span> <span class="w" style="animation-delay:0.643s">and</span> <span class="w" style="animation-delay:0.647s">prospect,</span> <span class="w" style="animation-delay:0.651s">MCP</span> <span class="w" style="animation-delay:0.655s">servers</span> <span class="w" style="animation-delay:0.659s">so</span> <span class="w" style="animation-delay:0.663s">your</span> <span class="w" style="animation-delay:0.667s">tools</span> <span class="w" style="animation-delay:0.671s">can</span> <span class="w" style="animation-delay:0.675s">talk</span> <span class="w" style="animation-delay:0.679s">to</span> <span class="w" style="animation-delay:0.683s">each</span> <span class="w" style="animation-delay:0.687s">other.</span> <span class="w" style="animation-delay:0.691s">Built</span> <span class="w" style="animation-delay:0.695s">on</span> <span class="w" style="animation-delay:0.699s">the</span> <span class="w" style="animation-delay:0.704s">framework</span> <span class="w" style="animation-delay:0.708s">that</span> <span class="w" style="animation-delay:0.712s">fits</span> <span class="w" style="animation-delay:0.716s">your</span> <span class="w" style="animation-delay:0.720s">stack</span> <span class="w" style="animation-delay:0.724s">and</span> <span class="w" style="animation-delay:0.728s">shipped</span> <span class="w" style="animation-delay:0.732s">with</span> <span class="w" style="animation-delay:0.736s">evals.</span></p>
+    <div class="chips"><span class="chip w" style="animation-delay:0.750s">Custom chatbots and RAG assistants</span><span class="chip w" style="animation-delay:0.768s">Multimodal support agents</span><span class="chip w" style="animation-delay:0.786s">SDR and deep-research agents</span><span class="chip w" style="animation-delay:0.804s">Meeting transcription and action items</span><span class="chip w" style="animation-delay:0.822s">MCP servers and multi-agent systems</span></div>
+    <a class="btn w" style="animation-delay:.86s" href="#contact">Start a project</a>
+   </div>
+   <div class="viz-wrap anim" style="animation-name:vizin"><div class="viz"><div class="card anim" style="animation-name:s2b0;width:225px;border-radius:12px 12px 12px 4px">how do I reset the API key?</div><div class="card anim" style="animation-name:s2b1;width:240px;border-radius:12px 12px 12px 4px">is the invoice VAT inclusive?</div><div class="card anim" style="animation-name:s2b2;width:240px;border-radius:12px 12px 12px 4px">same question as ticket #4411</div><div class="card anim" style="animation-name:s2b3;width:217px;border-radius:12px 12px 12px 4px">where is the SLA document?</div><div class="card anim" style="animation-name:s2b4;width:240px;border-radius:12px 12px 12px 4px">copy-paste into ChatGPT again</div><div class="card anim" style="animation-name:s2b5;width:210px;border-radius:12px 12px 12px 4px">the intern's chatbot demo</div><div class="anim reply" style="animation-name:s2reply">Reset keys under Settings, API. Admin role required. Your last reset was 14 days ago.</div><div class="anim mono" style="animation-name:s2cite;position:absolute;left:860px;top:598px;font-size:11px;color:var(--ink3)">source: handbook.pdf, p.12 · confidence high · handed to human: no</div></div></div>
+  </div>
+ </div>
+</section>
+<section class="cell" id="cell-03" aria-label="Model work">
+ <div class="stage">
+  <div class="col anim" style="animation-name:col">
+   <div class="eyebrow"><span class="dot"></span>03 / MODEL WORK</div>
+   <div class="msg you anim" style="animation-name:dim">
+    <div class="who">you</div>
+    <h2><span class="w" style="animation-delay:0.020s">Which</span> <span class="w" style="animation-delay:0.050s">model,</span> <span class="w" style="animation-delay:0.080s">and</span> <span class="w" style="animation-delay:0.110s">on</span> <span class="w" style="animation-delay:0.140s">whose</span> <span class="w" style="animation-delay:0.170s">servers?</span></h2>
+    <p><span class="w" style="animation-delay:0.210s">The</span> <span class="w" style="animation-delay:0.215s">API</span> <span class="w" style="animation-delay:0.221s">bill</span> <span class="w" style="animation-delay:0.226s">grows</span> <span class="w" style="animation-delay:0.232s">every</span> <span class="w" style="animation-delay:0.237s">month,</span> <span class="w" style="animation-delay:0.243s">legal</span> <span class="w" style="animation-delay:0.248s">will</span> <span class="w" style="animation-delay:0.253s">not</span> <span class="w" style="animation-delay:0.259s">let</span> <span class="w" style="animation-delay:0.264s">customer</span> <span class="w" style="animation-delay:0.270s">data</span> <span class="w" style="animation-delay:0.275s">leave</span> <span class="w" style="animation-delay:0.281s">the</span> <span class="w" style="animation-delay:0.286s">EU,</span> <span class="w" style="animation-delay:0.291s">and</span> <span class="w" style="animation-delay:0.297s">nobody</span> <span class="w" style="animation-delay:0.302s">can</span> <span class="w" style="animation-delay:0.308s">say</span> <span class="w" style="animation-delay:0.313s">whether</span> <span class="w" style="animation-delay:0.319s">the</span> <span class="w" style="animation-delay:0.324s">newest</span> <span class="w" style="animation-delay:0.329s">model</span> <span class="w" style="animation-delay:0.335s">is</span> <span class="w" style="animation-delay:0.340s">actually</span> <span class="w" style="animation-delay:0.346s">better</span> <span class="w" style="animation-delay:0.351s">for</span> <span class="w" style="animation-delay:0.357s">your</span> <span class="w" style="animation-delay:0.362s">task.</span> <span class="w" style="animation-delay:0.367s">So</span> <span class="w" style="animation-delay:0.373s">the</span> <span class="w" style="animation-delay:0.378s">prompt</span> <span class="w" style="animation-delay:0.384s">gets</span> <span class="w" style="animation-delay:0.389s">another</span> <span class="w" style="animation-delay:0.395s">edit.</span></p>
+   </div>
+   <div class="msg us">
+    <div class="who anim" style="animation-name:who">codehive<span class="caret anim" style="animation-name:caret"></span></div>
+    <h2><span class="w" style="animation-delay:0.470s">The</span> <span class="w" style="animation-delay:0.480s">right</span> <span class="w" style="animation-delay:0.490s">model,</span> <span class="w" style="animation-delay:0.500s">measured,</span> <span class="w" style="animation-delay:0.510s">where</span> <span class="w" style="animation-delay:0.520s">your</span> <span class="w" style="animation-delay:0.530s">data</span> <span class="w" style="animation-delay:0.540s">is</span> <span class="w" style="animation-delay:0.550s">allowed</span> <span class="w" style="animation-delay:0.560s">to</span> <span class="w" style="animation-delay:0.570s">go.</span></h2>
+    <p><span class="w" style="animation-delay:0.590s">We</span> <span class="w" style="animation-delay:0.595s">benchmark</span> <span class="w" style="animation-delay:0.599s">candidates</span> <span class="w" style="animation-delay:0.604s">on</span> <span class="w" style="animation-delay:0.609s">your</span> <span class="w" style="animation-delay:0.613s">own</span> <span class="w" style="animation-delay:0.618s">data,</span> <span class="w" style="animation-delay:0.623s">deploy</span> <span class="w" style="animation-delay:0.627s">open</span> <span class="w" style="animation-delay:0.632s">models</span> <span class="w" style="animation-delay:0.637s">privately</span> <span class="w" style="animation-delay:0.642s">when</span> <span class="w" style="animation-delay:0.646s">compliance</span> <span class="w" style="animation-delay:0.651s">needs</span> <span class="w" style="animation-delay:0.656s">it,</span> <span class="w" style="animation-delay:0.660s">curate</span> <span class="w" style="animation-delay:0.665s">the</span> <span class="w" style="animation-delay:0.670s">dataset,</span> <span class="w" style="animation-delay:0.674s">and</span> <span class="w" style="animation-delay:0.679s">fine-tune</span> <span class="w" style="animation-delay:0.684s">with</span> <span class="w" style="animation-delay:0.688s">QLoRA</span> <span class="w" style="animation-delay:0.693s">or</span> <span class="w" style="animation-delay:0.698s">at</span> <span class="w" style="animation-delay:0.703s">the</span> <span class="w" style="animation-delay:0.707s">frontier</span> <span class="w" style="animation-delay:0.712s">when</span> <span class="w" style="animation-delay:0.717s">a</span> <span class="w" style="animation-delay:0.721s">prompt</span> <span class="w" style="animation-delay:0.726s">is</span> <span class="w" style="animation-delay:0.731s">not</span> <span class="w" style="animation-delay:0.735s">enough.</span></p>
+    <div class="chips"><span class="chip w" style="animation-delay:0.750s">Model selection and benchmarking</span><span class="chip w" style="animation-delay:0.768s">Private open-source deployment</span><span class="chip w" style="animation-delay:0.786s">Dataset curation</span><span class="chip w" style="animation-delay:0.804s">Frontier fine-tuning</span><span class="chip w" style="animation-delay:0.822s">QLoRA fine-tuning of open models</span></div>
+    <a class="btn w" style="animation-delay:.86s" href="#contact">Start a project</a>
+   </div>
+   <div class="viz-wrap anim" style="animation-name:vizin"><div class="viz"><div class="card anim" style="animation-name:s3m0;width:126px;text-align:left">gpt-4o via API</div><div class="anim" style="animation-name:s3bar0;transform-origin:left;position:absolute;left:740px;top:276px;width:173px;height:8px;border-radius:4px;background:var(--line2)"></div><div class="card anim" style="animation-name:s3m1;width:126px;text-align:left">claude via API</div><div class="anim" style="animation-name:s3bar1;transform-origin:left;position:absolute;left:740px;top:340px;width:184px;height:8px;border-radius:4px;background:var(--line2)"></div><div class="card anim" style="animation-name:s3m2;width:179px;text-align:left">llama 70b, prompt v37</div><div class="anim" style="animation-name:s3bar2;transform-origin:left;position:absolute;left:740px;top:404px;width:134px;height:8px;border-radius:4px;background:var(--line2)"></div><div class="card anim" style="animation-name:s3m3;width:156px;text-align:left">mistral, zero-shot</div><div class="anim" style="animation-name:s3bar3;transform-origin:left;position:absolute;left:740px;top:468px;width:114px;height:8px;border-radius:4px;background:var(--line2)"></div><div class="card anim" style="animation-name:s3m4;width:270px;text-align:left">llama 8b, fine-tuned on your data</div><div class="anim" style="animation-name:s3bar4;transform-origin:left;position:absolute;left:740px;top:532px;width:232px;height:8px;border-radius:4px;background:var(--amber)"></div><div class="anim mono" style="animation-name:s3axis;position:absolute;left:740px;top:560px;width:280px;border-top:1px solid var(--line1);padding-top:8px;font-size:11px;color:var(--ink3)">score on your eval set, same 200 cases for every model</div><div class="anim mono badge" style="animation-name:s3lock;left:1040px;top:520px"><svg width="12" height="14" viewBox="0 0 12 14" fill="none" stroke="var(--ok)" stroke-width="1.5" aria-hidden="true"><rect x="1" y="6" width="10" height="7" rx="1.5"/><path d="M3 6 V4 a3 3 0 0 1 6 0 V6"/></svg>runs in your EU region</div></div></div>
+  </div>
+ </div>
+</section>
+<section class="cell" id="cell-04" aria-label="Production and MLOps">
+ <div class="stage">
+  <div class="col anim" style="animation-name:col">
+   <div class="eyebrow"><span class="dot"></span>04 / PRODUCTION AND MLOPS</div>
+   <div class="msg you anim" style="animation-name:dim">
+    <div class="who">you</div>
+    <h2><span class="w" style="animation-delay:0.020s">It</span> <span class="w" style="animation-delay:0.046s">works</span> <span class="w" style="animation-delay:0.071s">on</span> <span class="w" style="animation-delay:0.097s">the</span> <span class="w" style="animation-delay:0.123s">laptop.</span> <span class="w" style="animation-delay:0.149s">Then</span> <span class="w" style="animation-delay:0.174s">what?</span></h2>
+    <p><span class="w" style="animation-delay:0.210s">The</span> <span class="w" style="animation-delay:0.216s">prototype</span> <span class="w" style="animation-delay:0.223s">is</span> <span class="w" style="animation-delay:0.229s">a</span> <span class="w" style="animation-delay:0.235s">notebook</span> <span class="w" style="animation-delay:0.242s">and</span> <span class="w" style="animation-delay:0.248s">a</span> <span class="w" style="animation-delay:0.254s">demo</span> <span class="w" style="animation-delay:0.261s">page.</span> <span class="w" style="animation-delay:0.267s">No</span> <span class="w" style="animation-delay:0.273s">tracing,</span> <span class="w" style="animation-delay:0.280s">no</span> <span class="w" style="animation-delay:0.286s">cost</span> <span class="w" style="animation-delay:0.292s">limit,</span> <span class="w" style="animation-delay:0.299s">no</span> <span class="w" style="animation-delay:0.305s">auth,</span> <span class="w" style="animation-delay:0.311s">and</span> <span class="w" style="animation-delay:0.318s">one</span> <span class="w" style="animation-delay:0.324s">prompt</span> <span class="w" style="animation-delay:0.330s">injection</span> <span class="w" style="animation-delay:0.337s">away</span> <span class="w" style="animation-delay:0.343s">from</span> <span class="w" style="animation-delay:0.349s">an</span> <span class="w" style="animation-delay:0.356s">incident.</span> <span class="w" style="animation-delay:0.362s">It</span> <span class="w" style="animation-delay:0.368s">cannot</span> <span class="w" style="animation-delay:0.375s">be</span> <span class="w" style="animation-delay:0.381s">handed</span> <span class="w" style="animation-delay:0.387s">to</span> <span class="w" style="animation-delay:0.394s">anyone.</span></p>
+   </div>
+   <div class="msg us">
+    <div class="who anim" style="animation-name:who">codehive<span class="caret anim" style="animation-name:caret"></span></div>
+    <h2><span class="w" style="animation-delay:0.470s">A</span> <span class="w" style="animation-delay:0.484s">system</span> <span class="w" style="animation-delay:0.497s">your</span> <span class="w" style="animation-delay:0.511s">team</span> <span class="w" style="animation-delay:0.525s">can</span> <span class="w" style="animation-delay:0.539s">run</span> <span class="w" style="animation-delay:0.552s">without</span> <span class="w" style="animation-delay:0.566s">you.</span></h2>
+    <p><span class="w" style="animation-delay:0.590s">Terraform</span> <span class="w" style="animation-delay:0.595s">environments</span> <span class="w" style="animation-delay:0.600s">with</span> <span class="w" style="animation-delay:0.605s">automated</span> <span class="w" style="animation-delay:0.609s">promotion,</span> <span class="w" style="animation-delay:0.614s">Bedrock</span> <span class="w" style="animation-delay:0.619s">or</span> <span class="w" style="animation-delay:0.624s">self-hosted</span> <span class="w" style="animation-delay:0.629s">inference,</span> <span class="w" style="animation-delay:0.634s">production</span> <span class="w" style="animation-delay:0.638s">RAG</span> <span class="w" style="animation-delay:0.643s">on</span> <span class="w" style="animation-delay:0.648s">managed</span> <span class="w" style="animation-delay:0.653s">vector</span> <span class="w" style="animation-delay:0.658s">storage,</span> <span class="w" style="animation-delay:0.663s">LangFuse</span> <span class="w" style="animation-delay:0.667s">tracing</span> <span class="w" style="animation-delay:0.672s">and</span> <span class="w" style="animation-delay:0.677s">cost</span> <span class="w" style="animation-delay:0.682s">control,</span> <span class="w" style="animation-delay:0.687s">JWT-secured</span> <span class="w" style="animation-delay:0.692s">frontends,</span> <span class="w" style="animation-delay:0.696s">and</span> <span class="w" style="animation-delay:0.701s">a</span> <span class="w" style="animation-delay:0.706s">migration</span> <span class="w" style="animation-delay:0.711s">path</span> <span class="w" style="animation-delay:0.716s">for</span> <span class="w" style="animation-delay:0.721s">what</span> <span class="w" style="animation-delay:0.725s">you</span> <span class="w" style="animation-delay:0.730s">already</span> <span class="w" style="animation-delay:0.735s">built.</span></p>
+    <div class="chips"><span class="chip w" style="animation-delay:0.750s">Cloud architecture on AWS, Azure, GCP</span><span class="chip w" style="animation-delay:0.763s">Terraform and CI/CD</span><span class="chip w" style="animation-delay:0.776s">Bedrock, SageMaker, AgentCore</span><span class="chip w" style="animation-delay:0.789s">Production RAG pipelines</span><span class="chip w" style="animation-delay:0.801s">Observability and guardrails</span><span class="chip w" style="animation-delay:0.814s">Security hardening</span><span class="chip w" style="animation-delay:0.827s">Prototype to production migration</span></div>
+    <a class="btn w" style="animation-delay:.86s" href="#contact">Start a project</a>
+   </div>
+   <div class="viz-wrap anim" style="animation-name:vizin"><div class="viz"><div class="card anim" style="animation-name:s4d0;width:156px;left:182px;top:110px">works on my laptop</div><div class="card anim" style="animation-name:s4d1;width:96px;left:992px;top:120px">no tracing</div><div class="card anim" style="animation-name:s4d2;width:202px;left:79px;top:610px">streamlit demo, one user</div><div class="card anim" style="animation-name:s4d3;width:141px;left:1050px;top:640px">prompt injection</div><div class="card anim" style="animation-name:s4d4;width:172px;left:614px;top:80px">who pays for tokens?</div><svg class="viz-svg" viewBox="0 0 1280 800" aria-hidden="true"><path class="anim" style="animation-name:s4wire" d="M 758 400 L 812 400 M 888 400 L 942 400 M 1018 400 L 1072 400" stroke="var(--amber)" stroke-width="2" stroke-dasharray="420" fill="none"/></svg><svg class="hx anim" style="left:660px;top:340px;animation-name:s4n0" width="120" height="120" viewBox="-60 -60 120 120" aria-hidden="true"><polygon class="anim" style="animation-name:s4g0" points="0,-44 38,-22 38,22 0,44 -38,22 -38,-22" fill="var(--bg1)" stroke-width="2"/><text y="4" fill="var(--ink1)">dev</text><circle class="anim" style="animation-name:s4o0" cx="24" cy="-30" r="4" fill="var(--ok)"/></svg><svg class="hx anim" style="left:790px;top:340px;animation-name:s4n1" width="120" height="120" viewBox="-60 -60 120 120" aria-hidden="true"><polygon class="anim" style="animation-name:s4g1" points="0,-44 38,-22 38,22 0,44 -38,22 -38,-22" fill="var(--bg1)" stroke-width="2"/><text y="4" fill="var(--ink1)">test</text><circle class="anim" style="animation-name:s4o1" cx="24" cy="-30" r="4" fill="var(--ok)"/></svg><svg class="hx anim" style="left:920px;top:340px;animation-name:s4n2" width="120" height="120" viewBox="-60 -60 120 120" aria-hidden="true"><polygon class="anim" style="animation-name:s4g2" points="0,-44 38,-22 38,22 0,44 -38,22 -38,-22" fill="var(--bg1)" stroke-width="2"/><text y="4" fill="var(--ink1)">prod</text><circle class="anim" style="animation-name:s4o2" cx="24" cy="-30" r="4" fill="var(--ok)"/></svg><svg class="hx anim" style="left:1050px;top:340px;animation-name:s4n3" width="120" height="120" viewBox="-60 -60 120 120" aria-hidden="true"><polygon class="anim" style="animation-name:s4g3" points="0,-44 38,-22 38,22 0,44 -38,22 -38,-22" fill="var(--bg1)" stroke-width="2"/><text y="4" fill="var(--ink1)">monitor</text><circle class="anim" style="animation-name:s4o3" cx="24" cy="-30" r="4" fill="var(--ok)"/></svg><div class="anim mono log" style="animation-name:s4log">trace  POST /v1/assist  · 214 ms · 1,120 tokens · cost within daily cap<br>guard  injection check passed · pii redacted · auth jwt ok<br>deploy terraform plan: 0 to add, 0 to change · prod = test</div></div></div>
+  </div>
+ </div>
+</section>
+<section class="cell" id="cell-05" aria-label="Enablement">
+ <div class="stage">
+  <div class="col anim" style="animation-name:col">
+   <div class="eyebrow"><span class="dot"></span>05 / ENABLEMENT</div>
+   <div class="msg you anim" style="animation-name:dim">
+    <div class="who">you</div>
+    <h2><span class="w" style="animation-delay:0.020s">What</span> <span class="w" style="animation-delay:0.040s">happens</span> <span class="w" style="animation-delay:0.060s">when</span> <span class="w" style="animation-delay:0.080s">the</span> <span class="w" style="animation-delay:0.100s">one</span> <span class="w" style="animation-delay:0.120s">person</span> <span class="w" style="animation-delay:0.140s">who</span> <span class="w" style="animation-delay:0.160s">knows</span> <span class="w" style="animation-delay:0.180s">leaves?</span></h2>
+    <p><span class="w" style="animation-delay:0.210s">One</span> <span class="w" style="animation-delay:0.217s">engineer</span> <span class="w" style="animation-delay:0.225s">understands</span> <span class="w" style="animation-delay:0.232s">the</span> <span class="w" style="animation-delay:0.239s">pipeline.</span> <span class="w" style="animation-delay:0.247s">The</span> <span class="w" style="animation-delay:0.254s">vendor</span> <span class="w" style="animation-delay:0.261s">who</span> <span class="w" style="animation-delay:0.268s">built</span> <span class="w" style="animation-delay:0.276s">the</span> <span class="w" style="animation-delay:0.283s">pilot</span> <span class="w" style="animation-delay:0.290s">is</span> <span class="w" style="animation-delay:0.298s">gone.</span> <span class="w" style="animation-delay:0.305s">The</span> <span class="w" style="animation-delay:0.312s">board</span> <span class="w" style="animation-delay:0.320s">hears</span> <span class="w" style="animation-delay:0.327s">about</span> <span class="w" style="animation-delay:0.334s">AI</span> <span class="w" style="animation-delay:0.342s">from</span> <span class="w" style="animation-delay:0.349s">the</span> <span class="w" style="animation-delay:0.356s">news,</span> <span class="w" style="animation-delay:0.363s">not</span> <span class="w" style="animation-delay:0.371s">from</span> <span class="w" style="animation-delay:0.378s">your</span> <span class="w" style="animation-delay:0.385s">own</span> <span class="w" style="animation-delay:0.393s">team.</span></p>
+   </div>
+   <div class="msg us">
+    <div class="who anim" style="animation-name:who">codehive<span class="caret anim" style="animation-name:caret"></span></div>
+    <h2><span class="w" style="animation-delay:0.470s">A</span> <span class="w" style="animation-delay:0.492s">team</span> <span class="w" style="animation-delay:0.514s">that</span> <span class="w" style="animation-delay:0.536s">owns</span> <span class="w" style="animation-delay:0.558s">it.</span></h2>
+    <p><span class="w" style="animation-delay:0.590s">Training</span> <span class="w" style="animation-delay:0.595s">on</span> <span class="w" style="animation-delay:0.601s">every</span> <span class="w" style="animation-delay:0.606s">layer</span> <span class="w" style="animation-delay:0.611s">above,</span> <span class="w" style="animation-delay:0.617s">from</span> <span class="w" style="animation-delay:0.622s">board</span> <span class="w" style="animation-delay:0.627s">briefings</span> <span class="w" style="animation-delay:0.633s">to</span> <span class="w" style="animation-delay:0.638s">hands-on</span> <span class="w" style="animation-delay:0.644s">sessions</span> <span class="w" style="animation-delay:0.649s">for</span> <span class="w" style="animation-delay:0.654s">engineers,</span> <span class="w" style="animation-delay:0.660s">and</span> <span class="w" style="animation-delay:0.665s">pairing</span> <span class="w" style="animation-delay:0.670s">during</span> <span class="w" style="animation-delay:0.676s">the</span> <span class="w" style="animation-delay:0.681s">build</span> <span class="w" style="animation-delay:0.686s">so</span> <span class="w" style="animation-delay:0.692s">the</span> <span class="w" style="animation-delay:0.697s">knowledge</span> <span class="w" style="animation-delay:0.703s">stays</span> <span class="w" style="animation-delay:0.708s">in</span> <span class="w" style="animation-delay:0.713s">your</span> <span class="w" style="animation-delay:0.719s">company</span> <span class="w" style="animation-delay:0.724s">when</span> <span class="w" style="animation-delay:0.729s">we</span> <span class="w" style="animation-delay:0.735s">leave.</span></p>
+    <div class="chips"><span class="chip w" style="animation-delay:0.750s">Executive and board workshops</span><span class="chip w" style="animation-delay:0.772s">Engineer training on LLM and agent stacks</span><span class="chip w" style="animation-delay:0.795s">Pairing during delivery</span><span class="chip w" style="animation-delay:0.818s">Runbooks and handover</span></div>
+    <a class="btn w" style="animation-delay:.86s" href="#contact">Book a call</a>
+   </div>
+   <div class="viz-wrap anim" style="animation-name:vizin"><div class="viz"><div class="card anim" style="animation-name:fadeout;width:225px;left:128px;top:100px;transform:rotate(-8deg)">vendor left, took the notes</div><div class="card anim" style="animation-name:fadeout;width:232px;left:944px;top:110px;transform:rotate(6deg)">two people know how it works</div><div class="card anim" style="animation-name:fadeout;width:149px;left:126px;top:630px;transform:rotate(5deg)">new hire, no docs</div><div class="card anim" style="animation-name:fadeout;width:263px;left:889px;top:660px;transform:rotate(-7deg)">board reads about AI in the news</div><svg class="hx" style="left:840px;top:340px" width="120" height="120" viewBox="-60 -60 120 120" aria-hidden="true"><polygon points="0,-58 50,-29 50,29 0,58 -50,29 -50,-29" fill="var(--amber)"/><text y="-2" fill="var(--bg0)" font-size="11">the one</text><text y="12" fill="var(--bg0)" font-size="11">who knows</text></svg><svg class="hx" style="left:840px;top:224px" width="120" height="120" viewBox="-60 -60 120 120" aria-hidden="true"><polygon class="anim" style="animation-name:s5r0" points="0,-58 50,-29 50,29 0,58 -50,29 -50,-29" stroke-width="2"/><text class="anim" style="animation-name:s5t0" y="4" fill="var(--ink1)">eng</text></svg><svg class="hx" style="left:940px;top:282px" width="120" height="120" viewBox="-60 -60 120 120" aria-hidden="true"><polygon class="anim" style="animation-name:s5r1" points="0,-58 50,-29 50,29 0,58 -50,29 -50,-29" stroke-width="2"/><text class="anim" style="animation-name:s5t1" y="4" fill="var(--ink1)">product</text></svg><svg class="hx" style="left:940px;top:398px" width="120" height="120" viewBox="-60 -60 120 120" aria-hidden="true"><polygon class="anim" style="animation-name:s5r2" points="0,-58 50,-29 50,29 0,58 -50,29 -50,-29" stroke-width="2"/><text class="anim" style="animation-name:s5t2" y="4" fill="var(--ink1)">ops</text></svg><svg class="hx" style="left:840px;top:456px" width="120" height="120" viewBox="-60 -60 120 120" aria-hidden="true"><polygon class="anim" style="animation-name:s5r3" points="0,-58 50,-29 50,29 0,58 -50,29 -50,-29" stroke-width="2"/><text class="anim" style="animation-name:s5t3" y="4" fill="var(--ink1)">support</text></svg><svg class="hx" style="left:740px;top:398px" width="120" height="120" viewBox="-60 -60 120 120" aria-hidden="true"><polygon class="anim" style="animation-name:s5r4" points="0,-58 50,-29 50,29 0,58 -50,29 -50,-29" stroke-width="2"/><text class="anim" style="animation-name:s5t4" y="4" fill="var(--ink1)">sales</text></svg><svg class="hx" style="left:740px;top:282px" width="120" height="120" viewBox="-60 -60 120 120" aria-hidden="true"><polygon class="anim" style="animation-name:s5r5" points="0,-58 50,-29 50,29 0,58 -50,29 -50,-29" stroke-width="2"/><text class="anim" style="animation-name:s5t5" y="4" fill="var(--ink1)">board</text></svg><svg class="hx" style="left:840px;top:108px" width="120" height="120" viewBox="-60 -60 120 120" aria-hidden="true"><polygon class="anim" style="animation-name:s5r6" points="0,-58 50,-29 50,29 0,58 -50,29 -50,-29" stroke-width="2"/></svg><svg class="hx" style="left:940px;top:166px" width="120" height="120" viewBox="-60 -60 120 120" aria-hidden="true"><polygon class="anim" style="animation-name:s5r7" points="0,-58 50,-29 50,29 0,58 -50,29 -50,-29" stroke-width="2"/></svg><svg class="hx" style="left:1040px;top:224px" width="120" height="120" viewBox="-60 -60 120 120" aria-hidden="true"><polygon class="anim" style="animation-name:s5r8" points="0,-58 50,-29 50,29 0,58 -50,29 -50,-29" stroke-width="2"/></svg><svg class="hx" style="left:1040px;top:340px" width="120" height="120" viewBox="-60 -60 120 120" aria-hidden="true"><polygon class="anim" style="animation-name:s5r9" points="0,-58 50,-29 50,29 0,58 -50,29 -50,-29" stroke-width="2"/></svg><svg class="hx" style="left:1040px;top:456px" width="120" height="120" viewBox="-60 -60 120 120" aria-hidden="true"><polygon class="anim" style="animation-name:s5r10" points="0,-58 50,-29 50,29 0,58 -50,29 -50,-29" stroke-width="2"/></svg><svg class="hx" style="left:940px;top:514px" width="120" height="120" viewBox="-60 -60 120 120" aria-hidden="true"><polygon class="anim" style="animation-name:s5r11" points="0,-58 50,-29 50,29 0,58 -50,29 -50,-29" stroke-width="2"/></svg><svg class="hx" style="left:840px;top:572px" width="120" height="120" viewBox="-60 -60 120 120" aria-hidden="true"><polygon class="anim" style="animation-name:s5r12" points="0,-58 50,-29 50,29 0,58 -50,29 -50,-29" stroke-width="2"/></svg><svg class="hx" style="left:740px;top:514px" width="120" height="120" viewBox="-60 -60 120 120" aria-hidden="true"><polygon class="anim" style="animation-name:s5r13" points="0,-58 50,-29 50,29 0,58 -50,29 -50,-29" stroke-width="2"/></svg><svg class="hx" style="left:640px;top:456px" width="120" height="120" viewBox="-60 -60 120 120" aria-hidden="true"><polygon class="anim" style="animation-name:s5r14" points="0,-58 50,-29 50,29 0,58 -50,29 -50,-29" stroke-width="2"/></svg><svg class="hx" style="left:640px;top:340px" width="120" height="120" viewBox="-60 -60 120 120" aria-hidden="true"><polygon class="anim" style="animation-name:s5r15" points="0,-58 50,-29 50,29 0,58 -50,29 -50,-29" stroke-width="2"/></svg><svg class="hx" style="left:640px;top:224px" width="120" height="120" viewBox="-60 -60 120 120" aria-hidden="true"><polygon class="anim" style="animation-name:s5r16" points="0,-58 50,-29 50,29 0,58 -50,29 -50,-29" stroke-width="2"/></svg><svg class="hx" style="left:740px;top:166px" width="120" height="120" viewBox="-60 -60 120 120" aria-hidden="true"><polygon class="anim" style="animation-name:s5r17" points="0,-58 50,-29 50,29 0,58 -50,29 -50,-29" stroke-width="2"/></svg></div></div>
+  </div>
+ </div>
+</section>
+
+<section class="section contact" id="contact"><div class="wrap reveal">
+ <div>
+  <div class="eyebrow"><span class="dot"></span>Contact</div>
+  <h2>Tell us what is stuck between demo and production.</h2>
+  <p>A twenty-minute call, no deck. If it is not a fit we will say so and point you somewhere better.</p>
+  <div class="row"><a class="btn" href="mailto:dev@codehives.se?subject=Codehive%20call">Book a call</a><a class="mail" href="mailto:dev@codehives.se">dev@codehives.se</a></div>
+ </div>
+ <svg class="contact-hive" viewBox="0 0 240 240" fill="none" aria-hidden="true"><g transform="translate(120,120)"><polygon points="0,-58 50,-29 50,29 0,58 -50,29 -50,-29" fill="var(--amber)"/><text y="4" text-anchor="middle" fill="var(--bg0)" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="500">you</text></g><g fill="none" stroke="var(--line2)" stroke-width="2" stroke-dasharray="6 5"><polygon transform="translate(120,4)" points="0,-58 50,-29 50,29 0,58 -50,29 -50,-29"/><polygon transform="translate(220,62)" points="0,-58 50,-29 50,29 0,58 -50,29 -50,-29"/><polygon transform="translate(220,178)" points="0,-58 50,-29 50,29 0,58 -50,29 -50,-29"/><polygon transform="translate(120,236)" points="0,-58 50,-29 50,29 0,58 -50,29 -50,-29"/><polygon transform="translate(20,178)" points="0,-58 50,-29 50,29 0,58 -50,29 -50,-29"/><polygon transform="translate(20,62)" points="0,-58 50,-29 50,29 0,58 -50,29 -50,-29"/></g></svg>
+</div></section>
+
+<footer><div class="wrap">
+ <div class="l"><svg class="mark" viewBox="0 0 80 88" fill="none" aria-hidden="true"><polygon points="40,8 71.2,26 71.2,62 40,80 8.8,62 8.8,26" stroke="var(--amber)" stroke-width="4" stroke-linejoin="round"/><g fill="none" stroke="var(--ink1)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" transform="translate(40,44)"><path transform="translate(-9,0)" d="M6,-16 C1,-16 2,-11 2,-6 C2,-2 0,-1 -3,0 C0,1 2,2 2,6 C2,11 1,16 6,16"/><path transform="translate(9,0) scale(-1,1)" d="M6,-16 C1,-16 2,-11 2,-6 C2,-2 0,-1 -3,0 C0,1 2,2 2,6 C2,11 1,16 6,16"/></g></svg><span>Codehive AB · Org.nr 559392-7576 · VAT SE559392757601 · Stockholm</span></div>
+ <div class="l"><a href="mailto:dev@codehives.se">dev@codehives.se</a><span>codehives.se</span></div>
+</div></footer>
+
+<script>
+(function(){
+ var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ var cells = Array.prototype.slice.call(document.querySelectorAll('.cell'));
+ var data = cells.map(function(c){
+   var anims = Array.prototype.slice.call(c.querySelectorAll('.anim'));
+   return {el:c, anims:anims, wa:null, viz:c.querySelector('.viz'), wrap:c.querySelector('.viz-wrap'), stage:c.querySelector('.stage'), p:0, target:0};
+ });
+ function collect(d){
+   var list=[];
+   d.anims=d.anims.concat(Array.prototype.slice.call(d.el.querySelectorAll('.w')));
+   d.anims.forEach(function(el){ try{ el.getAnimations().forEach(function(a){ a.pause(); list.push(a); }); }catch(e){} });
+   d.wa = list.length ? list : null;
+ }
+ function apply(d,p){
+   if (d.wa){ var t=p*999; for (var i=0;i<d.wa.length;i++) d.wa[i].currentTime=t; }
+   else { var delay=(-(p)*0.999).toFixed(3)+'s'; for (var j=0;j<d.anims.length;j++) d.anims[j].style.animationDelay=delay; }
+ }
+ function fit(){
+   data.forEach(function(d){
+     var w=d.wrap.clientWidth, s=w/720;
+     d.wrap.style.height=Math.round(520*s)+'px';
+     d.viz.style.transformOrigin='560px 100px';
+     d.viz.style.transform='translate(-560px,-100px) scale('+s+')';
+   });
+ }
+ function targets(){
+   var vh=window.innerHeight, y=window.scrollY;
+   data.forEach(function(d){
+     if (reduce){ d.target=1; return; }
+     var top=d.el.offsetTop, h=d.el.offsetHeight;
+     d.target=Math.max(0,Math.min(1,(y-top)/(h-vh)));
+   });
+ }
+ var running=false;
+ function loop(){
+   var busy=false;
+   data.forEach(function(d){
+     var diff=d.target-d.p;
+     if (Math.abs(diff)>0.0005){ d.p+=diff*0.14; busy=true; } else if (d.p!==d.target){ d.p=d.target; } else return;
+     apply(d,d.p);
+   });
+   if (busy) requestAnimationFrame(loop); else running=false;
+ }
+ function kick(){ targets(); if(!running){ running=true; requestAnimationFrame(loop); } }
+ window.addEventListener('scroll', kick, {passive:true});
+ window.addEventListener('resize', function(){ fit(); kick(); });
+ data.forEach(collect);
+ try{ var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); },{threshold:0.15}); document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); }); }catch(e){ document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('in'); }); }
+ fit(); data.forEach(function(d){ d.p=-1; }); targets(); data.forEach(function(d){ d.p=d.target; apply(d,d.p); });
+
+ /* ---- background hive with flowing glow ---- */
+ var cv=document.getElementById('hive'); if(!cv) return;
+ var ctx=cv.getContext('2d'); var R=46, W=0, H=0, dpr=1, grid=null, cells=[];
+ var SQ3=Math.sqrt(3), COLS=0, ROWS=0;
+ function resize(){
+   dpr=Math.min(2,window.devicePixelRatio||1); W=window.innerWidth; H=window.innerHeight;
+   cv.width=W*dpr; cv.height=H*dpr; cv.style.width=W+'px'; cv.style.height=H+'px';
+   grid=document.createElement('canvas'); grid.width=cv.width; grid.height=cv.height;
+   var g=grid.getContext('2d'); g.scale(dpr,dpr); g.strokeStyle='#1a1d23'; g.lineWidth=1;
+   cells=[];
+   var w=SQ3*R, h=1.5*R; COLS=Math.ceil(W/w)+2; ROWS=Math.ceil(H/h)+2;
+   for (var r=-1;r<ROWS;r++) for (var c=-1;c<COLS;c++){
+     var x=c*w+(r%2?w/2:0), y=r*h; cells.push([x,y]);
+     g.beginPath(); for (var k=0;k<6;k++){ var a=Math.PI/6+k*Math.PI/3; var px=x+R*Math.cos(a), py=y+R*Math.sin(a); k?g.lineTo(px,py):g.moveTo(px,py); } g.closePath(); g.stroke();
+   }
+ }
+
+ /* neighbours of a cell index in the staggered grid */
+ function neighbours(i){
+   var out=[]; var w=SQ3*R, h=1.5*R; var x=cells[i][0], y=cells[i][1];
+   for (var j=0;j<cells.length;j++){ if(j===i) continue; var dx=cells[j][0]-x, dy=cells[j][1]-y; if (dx*dx+dy*dy < (w*1.05)*(w*1.05)) out.push(j); }
+   return out;
+ }
+ var flows=[], lit={}, cellsEnd=0;
+ function measure(){ var last=document.querySelector('.cell:last-of-type'); cellsEnd = last ? last.offsetTop+last.offsetHeight : 0; }
+ measure(); window.addEventListener('resize', measure);
+ function light(i,strength,hue){ lit[i]={t:0, d:2.2+Math.random()*1.6, s:strength, hue:hue}; }
+ function newFlow(){
+   var i=Math.floor(Math.random()*cells.length);
+   return {at:i, hops:3+Math.floor(Math.random()*6), wait:0, hue:Math.random()<0.88?'242,184,75':'111,207,151', prev:-1};
+ }
+ function drawHex(x,y,r){ ctx.beginPath(); for (var k=0;k<6;k++){ var a=Math.PI/6+k*Math.PI/3; var px=x+r*Math.cos(a), py=y+r*Math.sin(a); k?ctx.lineTo(px,py):ctx.moveTo(px,py); } ctx.closePath(); }
+ var last=0, hidden=false;
+ document.addEventListener('visibilitychange', function(){ hidden=document.hidden; if(!hidden){ last=0; requestAnimationFrame(frame); } });
+ function frame(ts){
+   if (hidden) return;
+   if (!last) last=ts; var dt=Math.min(0.05,(ts-last)/1000); last=ts;
+   ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,W,H); ctx.drawImage(grid,0,0,W,H);
+   /* density: alive on the hero, quiet behind the cells, medium after */
+   var y=window.scrollY, hh=window.innerHeight;
+   var dens = y < hh*0.8 ? 1 : (y < cellsEnd ? 0.22 : 0.55);
+   if (flows.length<Math.round(6*dens)+1 && Math.random()<0.03*dens) flows.push(newFlow());
+   for (var f=flows.length-1;f>=0;f--){
+     var fl=flows[f]; fl.wait-=dt;
+     if (fl.wait<=0){
+       light(fl.at, 1, fl.hue);
+       var nb=neighbours(fl.at).filter(function(n){ return n!==fl.prev; });
+       fl.prev=fl.at; fl.at=nb.length? nb[Math.floor(Math.random()*nb.length)] : -1;
+       fl.hops--; fl.wait=0.45+Math.random()*0.5;
+       if (fl.hops<=0 || fl.at<0) flows.splice(f,1);
+     }
+   }
+   /* occasional lone sparks */
+   if (Math.random()<0.02*dens) light(Math.floor(Math.random()*cells.length), 0.6, '242,184,75');
+   ctx.lineJoin='round';
+   for (var key in lit){
+     var L=lit[key]; L.t+=dt; if (L.t>=L.d){ delete lit[key]; continue; }
+     var u=L.t/L.d; var env=Math.sin(Math.PI*u); env=env*env; var a=env*L.s*(0.55+0.45*dens);
+     var c=cells[key]; if(!c) continue;
+     ctx.shadowColor='rgba('+L.hue+','+(0.9*a).toFixed(3)+')'; ctx.shadowBlur=22;
+     ctx.strokeStyle='rgba('+L.hue+','+(0.85*a).toFixed(3)+')'; ctx.lineWidth=1.6;
+     ctx.fillStyle='rgba('+L.hue+','+(0.07*a).toFixed(3)+')';
+     drawHex(c[0],c[1],R-1); ctx.fill(); ctx.stroke();
+   }
+   ctx.shadowBlur=0;
+   requestAnimationFrame(frame);
+ }
+ resize(); window.addEventListener('resize', resize);
+ if (reduce){ ctx.setTransform(dpr,0,0,dpr,0,0); ctx.drawImage(grid,0,0,W,H); } else requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+Single-page marketing site for Codehive AB, an AI engineering consultancy in Stockholm.
+Next.js 15 App Router, React 19, TypeScript strict, GSAP ScrollTrigger. Deployed on Vercel. Dark theme only.
+
+## Commands
+```
+npm install
+npm run dev      # http://localhost:3000
+npm run build    # the check. Run it before claiming anything works; fix type errors, never `any` them away
+npm run lint     # next lint (eslint-config-next)
+```
+There is no test suite. Verification is `npm run build` plus a look in the browser, including with
+`prefers-reduced-motion` on (it must render every cell's finished state).
+
+`@/*` maps to the repo root (`@/content/cells`, `@/lib/useScrub`).
+
+## Read first
+- `README.md` for how the scroll scrub works and what is wired vs not.
+- `TODO.md` is the ordered backlog; one item per PR, tick it in the same commit that finishes it.
+- `content/cells.ts` before touching any copy. All words for the five service cells live there.
+- `styles/tokens.css` before choosing any colour, spacing or radius. Never write a raw hex in a component; use the variable.
+
+## How the page fits together
+`app/page.tsx` mounts, in order: `HiveCanvas` (fixed background), `Reveal`, `Nav`, then `Hero`, the
+"Five things we do" intro, one `Cell` per entry in `content/cells.ts`, `Contact`, `Footer`. It looks
+up each cell's visual in the `visuals` map in `components/cells/index.ts` by cell id; a cell with no
+entry renders its text but an empty visual box. Only `"01"` (`Strategy.tsx`) is registered today.
+
+### The scroll scrub (the one non-obvious mechanism)
+- Every `Cell` is pinned for 1.2 viewport heights by `lib/useScrub.ts` (GSAP ScrollTrigger, `scrub: 0.6`).
+- Motion is NOT GSAP tweens. It is plain CSS `@keyframes` whose 0–100% equals the cell's scroll progress.
+  On each scroll update the hook sets `currentTime = progress * 999ms` on every paused Web Animation
+  found under `.anim` and `.w` elements. Keyframes stay the single source of truth; GSAP only pins and smooths.
+- `.anim` (in `app/globals.css`) sets duration 1s, linear, fill both, paused. An element needs `.anim` plus an
+  `animation-name` to participate. `.w` is the streamed-word variant (duration .04s, staggered via `animation-delay`).
+- Text streams via `components/Stream.tsx`: each word is a `.w` span with `animation-delay` spread between
+  `t0` and `t1` (0–1 progress). All words are always in the DOM, so screen readers get the full text.
+- The cell timeline is two halves. Roughly 0–0.45 the "you" turn streams in; ~0.47–0.86 the "codehive" turn,
+  chips and CTA stream in, the column drifts up (`@keyframes col`), and the "you" turn dims. The visual is
+  compressed into the second half by `.viz :global(.anim) { animation-delay: .5s; animation-duration: .499s }`
+  in `Cell.module.css`, so visual keyframes are still authored on the full 0–100% and land in scroll 0.5–1.0.
+- Reduced motion: the hook applies progress 1 once and never creates the ScrollTrigger.
+
+### Cell visuals
+- Authored on a 1280×800 canvas (same coordinates as the design mockups and `prototype/index.html`).
+  `Cell.tsx` shows the 720×520 region at (560,100), scaled to the column width on resize. Keep important
+  elements inside that region, or let them enter from outside on purpose.
+- Shared primitives are in `components/cells/viz.css` (`.hx` hexagon, `.card`, `.vizSvg`, `trace`, `tick`, `fadeout`).
+  Per-cell keyframes go in their own css file next to the component (`strategy.css`).
+- Recipe for porting cells 02–05: copy the `s2`..`s5` markup and keyframes from `prototype/index.html`
+  into `components/cells/<Name>.tsx` + `<name>.css` following `Strategy.tsx` (inline `animationName` per element,
+  `aria-hidden` on decorative svg), then register the id in `components/cells/index.ts`. Do not edit the prototype.
+- `components/HiveCanvas.tsx` is a canvas hex lattice with glow "flows" that hop between cells; its density
+  follows scroll position (full on hero, quiet behind cells, medium after). It reads the last `section[id^=cell-]`
+  to know where the cells end, so keep that id pattern.
+- `components/Reveal.tsx` is a plain IntersectionObserver that adds `.in` to `.reveal` elements for fade-ups
+  outside the pinned cells.
+
+## Animation contract
+- Anything scrubbed has class `anim` (or `w`), an `animation-name`, and total delay+duration ≤ 1s.
+- Prefer transform and opacity. Colour, stroke and border animations are allowed sparingly.
+- Do not replace the keyframe scrub with GSAP tweens; extend it.
+- `prefers-reduced-motion` must always render the finished state. Test it.
+
+## Brand rules that are not negotiable
+- Colours: near-black ground (`--bg0`), off-white text, one amber accent. Amber is a fill (`--amber` with dark text on it) or `--amber` as text on dark. No gradients. No new accent colours. `--ok` and `--alert` are for solved/broken states in the animations and real errors only.
+- Type: Familjen Grotesk for headlines, wordmark and actions; Schibsted Grotesk for body; IBM Plex Mono for eyebrows, chips, code and annotations. No other fonts. They are self-hosted by `next/font` in `app/layout.tsx` and exposed as `--font-display`, `--font-body`, `--font-mono`.
+- Logo: hexagon with `{ }` inside, `components/Mark.tsx`. Wordmark is the typed word `codehive`, lowercase, never drawn.
+- No pill buttons, no title bar. Actions are text with the hexagon marker and an underline on hover (`.act`). Nav is the floating layer in `components/Nav.tsx`.
+- No personal information anywhere on the site: no founder name, photo, LinkedIn, past employer names. Company voice only.
+
+## Copy rules
+- Short sentences. Concrete nouns. Name the stack and the trade-off.
+- No: leverage, unlock, empower, seamless, cutting-edge, "AI-powered", exclamation marks, em dashes, arrows appended to button text, headlines shaped as "X. Now Y."
+- Each cell is a conversation: the "you" turn is a question about the reader's situation; the "codehive" turn is a plain statement.
+- Never invent numbers, clients, case studies or claims. If a fact is missing, leave a `[PLACEHOLDER]`, do not fill it.
+
+## Working agreements
+- Keep components small and colocated: `Foo.tsx` + `Foo.module.css`. Global CSS only in `app/globals.css`
+  (and the cell visual css files, which are plain global css imported by their component).
+- Do not add dependencies without a reason written in the PR. The site should stay a small static page.
+  "Not doing" in `TODO.md` applies: no blog, team page, client logos, light theme, or animation libs beyond GSAP.
+- Do not touch `prototype/index.html`; it is the reference the visuals were ported from.
+- Contact is currently a `mailto`; no analytics yet. Both are `TODO.md` items, not oversights.

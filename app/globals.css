@@ -1,0 +1,26 @@
+@import "../styles/tokens.css";
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: env(safe-area-inset-top, 0px); }
+body { margin: 0; background: var(--bg0); color: var(--ink1); font-family: var(--font-body); font-size: 16px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+a { color: var(--amber); } a:hover { color: var(--amber2); }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 700; letter-spacing: -.02em; line-height: 1.04; margin: 0; }
+.mono { font-family: var(--font-mono); }
+.wrap { max-width: 1280px; margin: 0 auto; padding: 0 clamp(20px, 5vw, 64px); }
+.eyebrow { display: flex; align-items: center; gap: 10px; font-family: var(--font-mono); font-size: 13px; letter-spacing: 1px; color: var(--amber); text-transform: uppercase; }
+.eyebrow::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--amber); }
+.act { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink1); font-family: var(--font-display); font-weight: 700; font-size: 18px; padding: 10px 0; min-height: 44px; position: relative; }
+.act::before { content: ""; width: 10px; height: 10px; background: var(--amber); clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); transition: transform .25s var(--ease-out); }
+.act::after { content: ""; position: absolute; left: 22px; right: 0; bottom: 6px; height: 1.5px; background: var(--amber); transform: scaleX(0); transform-origin: left; transition: transform .35s var(--ease-out); }
+.act:hover { color: var(--ink1); } .act:hover::after { transform: scaleX(1); } .act:hover::before { transform: rotate(90deg); }
+.act.ghost { color: var(--ink2); } .act.ghost::before { background: var(--line2); } .act.ghost::after { background: var(--ink2); }
+.act:focus-visible { outline: none; } .act:focus-visible::after { transform: scaleX(1); }
+.chip { font-family: var(--font-mono); font-size: 12px; letter-spacing: .5px; color: var(--ink2); border: 1px solid var(--line2); padding: 8px 12px; border-radius: var(--radius-sm); white-space: nowrap; }
+.chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+/* scroll-scrubbed animation primitives (see lib/useScrub.ts) */
+.anim { animation-duration: 1s; animation-timing-function: linear; animation-fill-mode: both; animation-play-state: paused; will-change: transform, opacity; }
+.w { opacity: 0; animation-name: wd; animation-duration: .04s; animation-timing-function: linear; animation-fill-mode: both; animation-play-state: paused; display: inline-block; }
+.act.w { display: inline-flex; }
+@keyframes wd { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s var(--ease-out), transform .7s var(--ease-out); }
+.reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .reveal { opacity: 1; transform: none; transition: none; } }

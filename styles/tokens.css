@@ -1,0 +1,12 @@
+/* Codehive design tokens. Source of truth: the Codehive design system artifact. */
+:root {
+  --bg0: #0b0d10; --bg1: #14171c; --bg2: #1c2026;
+  --line1: #2a2d33; --line2: #3a3d44;
+  --ink1: #f4f1ea; --ink2: #b8b3a8; --ink3: #8a867e;
+  --amber: #f2b84b; --amber2: #e0a030; --ok: #6fcf97; --alert: #f26d5b;
+  --space-1: 4px; --space-2: 8px; --space-3: 16px; --space-4: 24px; --space-5: 40px; --space-6: 64px; --space-7: 120px;
+  --radius-sm: 6px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 999px;
+  --glow-amber: 0 0 0 1px #f2b84b, 0 0 32px 0 rgba(242,184,75,.35);
+  --focus-ring: 0 0 0 3px rgba(242,184,75,.6);
+  --ease-out: cubic-bezier(.22, 1, .36, 1);
+}

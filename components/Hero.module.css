@@ -1,0 +1,15 @@
+.hero { position: relative; }
+.grid { min-height: 100vh; min-height: 100svh; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 48px; align-items: center; padding-top: 40px; padding-bottom: 40px; }
+.grid h1 { font-size: clamp(44px, 7vw, 84px); letter-spacing: -.03em; margin: 24px 0; }
+.grid p { font-size: clamp(17px, 1.6vw, 20px); color: var(--ink2); max-width: 520px; margin: 0 0 28px; }
+.cta { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 28px; }
+.viz { position: relative; width: 100%; aspect-ratio: 1; max-width: 560px; justify-self: center; }
+.h { transform-box: fill-box; transform-origin: center; transform: scale(.55); opacity: 0; animation: heroin .8s var(--ease-out) forwards; }
+.h polygon { filter: drop-shadow(0 0 10px rgba(242,184,75,.25)); }
+.viz text { text-anchor: middle; font-family: var(--font-mono); font-size: 12px; font-weight: 500; }
+@keyframes heroin { to { transform: scale(1); opacity: 1; } }
+.hint { position: absolute; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); font-family: var(--font-mono); font-size: 11px; letter-spacing: 1px; color: var(--ink3); display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.hint i { display: block; width: 1px; height: 28px; background: linear-gradient(var(--amber), transparent); animation: hint 1.8s ease-in-out infinite; }
+@keyframes hint { 0% { transform: scaleY(0); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; } 51% { transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
+@media (max-width: 820px) { .grid { grid-template-columns: 1fr; min-height: 0; } .viz { max-width: 360px; } }
+@media (prefers-reduced-motion: reduce) { .h { animation: none; transform: none; opacity: 1; } .hint i { animation: none; } }
