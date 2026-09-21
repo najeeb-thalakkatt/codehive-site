@@ -2,6 +2,9 @@
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; scroll-padding-top: env(safe-area-inset-top, 0px); }
 body { margin: 0; background: var(--bg0); color: var(--ink1); font-family: var(--font-body); font-size: 16px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+/* The hive canvas is position: fixed at z-index 0. Page content must sit in its own layer above it,
+   otherwise the lattice paints over every headline and form field. */
+main, footer { position: relative; z-index: 1; }
 a { color: var(--amber); } a:hover { color: var(--amber2); }
 h1, h2, h3 { font-family: var(--font-display); font-weight: 700; letter-spacing: -.02em; line-height: 1.04; margin: 0; }
 .mono { font-family: var(--font-mono); }
