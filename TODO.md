@@ -24,7 +24,7 @@ Source: `prototype/index.html`, keyframes prefixed `s2`, `s3`, `s4`, `s5`. Templ
 - [x] Replace the `mailto` in `components/Contact.tsx` with Cal.com (or Calendly) embed, or a form posting to a serverless route that emails dev@codehives.se (Calendly, click-to-load frame in `components/Booking.tsx`; every "Book a call" / "Start a project" links to `#book`)
 - [x] Spam protection on the form if a form (honeypot + rate limit is enough) (not needed, no form of our own)
 - [x] Confirmation state: same wording as the action ("Booked" / "Sent") (Calendly's own confirmation)
-- [ ] Calendly URL is a personal handle and the form shows the host name; move to a company-named Calendly event when convenient (brand rule: company voice only)
+- [x] Calendly URL is a personal handle and the form shows the host name; move to a company-named Calendly event when convenient (brand rule: company voice only) (now calendly.com/dev-codehives; check the display name inside the form is the company, not a person)
 
 ## 5. Mobile
 - [ ] Test on a real mid-range Android and an iPhone, not DevTools

@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import s from "./Booking.module.css";
 
-const CALENDLY = "https://calendly.com/najeeb-1989/30min";
+const CALENDLY = "https://calendly.com/dev-codehives/30min";
 
 /** Click-to-load Calendly. Nothing from calendly.com loads until the visitor asks for it, so the
  *  page stays cookie-free by default and the privacy page can say so. Any link to #book opens it. */
