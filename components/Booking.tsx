@@ -13,7 +13,7 @@ const CALENDLY = "https://calendly.com/dev-codehive/30min";
 export default function Booking() {
   const [open, setOpen] = useState<false | string>(false);
   useEffect(() => {
-    const scroll = () => document.getElementById("book")?.scrollIntoView({ block: "start" });
+    const scroll = () => document.getElementById("book")?.scrollIntoView({ block: "start", behavior: "instant" });
     const check = () => {
       const m = location.hash.match(/^#book(?:-(\d\d))?$/);
       if (!m) return;
