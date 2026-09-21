@@ -22,8 +22,8 @@ Text streams in via `components/Stream.tsx`: each word is a span with an `animat
 The cell visual is authored on a 1280×800 canvas (same coordinates as the design mockups). `Cell.tsx` shows the 720×520 region at (560,100) scaled to the column width, and compresses the visual's timeline into the second half of the scroll (`.viz .anim { animation-delay: .5s; animation-duration: .499s }`).
 
 ## What is wired and what is not
-- `components/cells/Strategy.tsx` (cell 01) is complete: use it as the template.
-- Cells 02–05 render text but no visual until you add a component to `components/cells/index.ts`. Their keyframes and markup are in `prototype/index.html` (search for `s2`, `s3`, `s4`, `s5`), a straight port to JSX like `Strategy.tsx`.
+- All five cell visuals are ported and registered in `components/cells/index.ts`. Each is `<Name>.tsx` + `<name>.css` next to it; `Strategy.tsx` is the simplest one to copy for a new cell.
+- Mobile is still the cropped desktop scene for every cell (see TODO 5).
 - Contact is a `mailto`. Replace with Cal.com or a form before launch.
 - No analytics. Add Plausible or Umami in `app/layout.tsx`.
 - Mobile: the visual is a crop of the desktop scene. A re-choreographed mobile variant per cell is still to do.

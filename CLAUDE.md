@@ -27,7 +27,7 @@ There is no test suite. Verification is `npm run build` plus a look in the brows
 `app/page.tsx` mounts, in order: `HiveCanvas` (fixed background), `Reveal`, `Nav`, then `Hero`, the
 "Five things we do" intro, one `Cell` per entry in `content/cells.ts`, `Contact`, `Footer`. It looks
 up each cell's visual in the `visuals` map in `components/cells/index.ts` by cell id; a cell with no
-entry renders its text but an empty visual box. Only `"01"` (`Strategy.tsx`) is registered today.
+entry renders its text but an empty visual box. All five are registered.
 
 ### The scroll scrub (the one non-obvious mechanism)
 - Every `Cell` is pinned for 1.2 viewport heights by `lib/useScrub.ts` (GSAP ScrollTrigger, `scrub: 0.6`).
@@ -50,9 +50,12 @@ entry renders its text but an empty visual box. Only `"01"` (`Strategy.tsx`) is 
   elements inside that region, or let them enter from outside on purpose.
 - Shared primitives are in `components/cells/viz.css` (`.hx` hexagon, `.card`, `.vizSvg`, `trace`, `tick`, `fadeout`).
   Per-cell keyframes go in their own css file next to the component (`strategy.css`).
-- Recipe for porting cells 02–05: copy the `s2`..`s5` markup and keyframes from `prototype/index.html`
-  into `components/cells/<Name>.tsx` + `<name>.css` following `Strategy.tsx` (inline `animationName` per element,
-  `aria-hidden` on decorative svg), then register the id in `components/cells/index.ts`. Do not edit the prototype.
+- Recipe for a cell visual: `components/cells/<Name>.tsx` + `<name>.css` following `Strategy.tsx` (inline
+  `animationName` per element, `aria-hidden` on decorative svg), registered by id in `components/cells/index.ts`.
+  The prototype is the reference for coordinates and timing; do not edit it.
+- Pinning reparents the section, which recreates every CSS animation inside it. `useScrub` therefore collects
+  its handles after the trigger exists and again on every ScrollTrigger refresh. Keep it that way.
+- `.w` word spans are inline-block; the inter-word space must sit between spans, not inside them.
 - `components/HiveCanvas.tsx` is a canvas hex lattice with glow "flows" that hop between cells; its density
   follows scroll position (full on hero, quiet behind cells, medium after). It reads the last `section[id^=cell-]`
   to know where the cells end, so keep that id pattern.
