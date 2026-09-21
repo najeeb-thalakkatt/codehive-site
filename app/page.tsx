@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import HiveCanvas from "@/components/HiveCanvas";
 import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
@@ -21,9 +22,16 @@ export default function Page() {
             Five things we do.<br /><span style={{ color: "var(--ink3)" }}>Each starts with what is broken.</span>
           </h2>
         </section>
+        {/* Each cell in its own Suspense boundary: the HTML is already streamed, so no fallback ever
+            shows, but React hydrates each boundary as a separate short task instead of the whole
+            page in one long one. That is what keeps the main thread free on a phone. */}
         {cells.map((c) => {
           const v = visuals[c.id];
-          return <Cell key={c.id} data={c} mobileCrop={v?.mobile}>{v ? <v.Component /> : null}</Cell>;
+          return (
+            <Suspense key={c.id} fallback={null}>
+              <Cell data={c} mobileCrop={v?.mobile}>{v ? <v.Component /> : null}</Cell>
+            </Suspense>
+          );
         })}
         <Contact />
       </main>
