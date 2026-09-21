@@ -55,7 +55,13 @@ entry renders its text but an empty visual box. All five are registered.
   The prototype is the reference for coordinates and timing; do not edit it.
 - Pinning reparents the section, which recreates every CSS animation inside it. `useScrub` therefore collects
   its handles after the trigger exists and again on every ScrollTrigger refresh. Keep it that way.
-- `.w` word spans are inline-block; the inter-word space must sit between spans, not inside them.
+- `.w` word spans are inline-block; the inter-word space must sit between spans, not inside them, and
+  with no wrapper element per word: every node in a cell is hydration work on a phone.
+- Never call `getAnimations()` per element. One `el.getAnimations({ subtree: true })` per cell. The per-element
+  version forced hundreds of style recalcs inside React's effect flush and cost a second of main-thread time on
+  mobile (Lighthouse blamed the framework chunk, which is misleading).
+- Perf budget: Lighthouse mobile performance and accessibility both above 90. Re-run after touching
+  `useScrub`, `Stream`, `HiveCanvas` or anything that adds DOM nodes to a cell.
 - `components/HiveCanvas.tsx` is a canvas hex lattice with glow "flows" that hop between cells; its density
   follows scroll position (full on hero, quiet behind cells, medium after). It reads the last `section[id^=cell-]`
   to know where the cells end, so keep that id pattern.

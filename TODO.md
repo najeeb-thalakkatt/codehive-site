@@ -40,7 +40,7 @@ Decision 2026-09-21: keep the `mailto` for launch. Revisit when there is volume.
 - [x] Privacy page (`/privacy`), linked from the footer; required once a form or analytics exists (street address is a [PLACEHOLDER])
 - [x] Cookie-free analytics (Plausible or Umami) in `app/layout.tsx` (Umami Cloud; set NEXT_PUBLIC_UMAMI_WEBSITE_ID in Vercel, see .env.example)
 - [x] 404 page in brand
-- [ ] Lighthouse: performance and accessibility both above 90 on mobile
+- [x] Lighthouse: performance and accessibility both above 90 on mobile (97 / 100, simulated mobile against a local production build, 2026-09-21)
 
 ## 7. Polish, after launch
 - [ ] Hero hive: continue assembling on scroll and hand over to cell 01 (currently a load animation only)

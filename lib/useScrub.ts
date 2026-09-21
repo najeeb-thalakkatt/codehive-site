@@ -27,12 +27,12 @@ export function useScrub(sectionRef: RefObject<HTMLElement | null>, distance = 1
     // Pinning reparents `el` into a spacer, which cancels and recreates every CSS
     // animation in the subtree. So the handles are (re)collected after the trigger
     // exists and on every refresh, never before.
+    // One subtree query, not one per element: each getAnimations() call can force a style
+    // recalc, and a cell has a few hundred animated nodes. Everything animated inside a cell is ours.
     let anims: Animation[] = [];
     const collect = () => {
-      anims = [];
-      el.querySelectorAll<HTMLElement>(".anim, .w").forEach((node) => {
-        node.getAnimations().forEach((a) => { a.pause(); anims.push(a); });
-      });
+      anims = el.getAnimations({ subtree: true });
+      for (const a of anims) a.pause();
     };
     const apply = (p: number) => { const t = p * 999; for (const a of anims) a.currentTime = t; };
 
