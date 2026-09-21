@@ -9,6 +9,9 @@ npm run dev        # http://localhost:3000
 ```
 Deploy: every push to `main` runs `.github/workflows/pages.yml`, which builds the static export (`out/`) and publishes it to GitHub Pages. `public/CNAME` pins the custom domain. Fonts are self-hosted by `next/font` at build time. Analytics: set the repository variable `NEXT_PUBLIC_UMAMI_WEBSITE_ID`; unset means no analytics script.
 
+## Making changes
+Small, safe change: commit on `main`, push, live in about a minute. Anything you want to look at first: branch, push, open a pull request; the workflow builds it as a check, merge when green, and the merge deploys. To undo a bad deploy, `git revert` the commit and push; the revert deploys the previous state. Preview locally with `npm run dev` (hot reload) or `npm run build && npx serve out` (exactly what ships).
+
 ## How the scroll works
 Each service cell is `components/Cell.tsx`. Its motion is plain CSS `@keyframes`, authored on a 0–100% timeline that equals the cell's scroll progress. `lib/useScrub.ts` pins the section with ScrollTrigger and, on every scroll update, sets `currentTime` on every paused animation inside it (Web Animations API). ScrollTrigger's `scrub: 1.2` is the smoothing; raise it for lazier motion, lower for tighter. Each cell pins for 1.8 viewport heights (`useScrub(ref, 1.8)`); more distance means slower, calmer streaming.
 

@@ -1,7 +1,10 @@
 name: Deploy to GitHub Pages
 
+# Pull requests: build only, as a check. Pushes to main (merges): build and deploy.
 on:
   push:
+    branches: [main]
+  pull_request:
     branches: [main]
   workflow_dispatch:
 
@@ -36,6 +39,7 @@ jobs:
           path: out
 
   deploy:
+    if: github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
     environment:
