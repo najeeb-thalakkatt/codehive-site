@@ -13,9 +13,9 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; letter-spacing:
 .eyebrow::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--amber); }
 button.act { background: none; border: 0; padding: 10px 0; font: inherit; }
 .act { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink1); font-family: var(--font-display); font-weight: 700; font-size: 18px; padding: 10px 0; min-height: 44px; position: relative; }
-.act::before { content: ""; width: 10px; height: 10px; background: var(--amber); clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); transition: transform .25s var(--ease-out); }
-.act::after { content: ""; position: absolute; left: 22px; right: 0; bottom: 6px; height: 1.5px; background: var(--amber); transform: scaleX(0); transform-origin: left; transition: transform .35s var(--ease-out); }
-.act:hover { color: var(--ink1); } .act:hover::after { transform: scaleX(1); } .act:hover::before { transform: rotate(90deg); }
+.act::before { content: ""; width: 10px; height: 10px; background: var(--amber); clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); }
+.act::after { content: ""; position: absolute; left: 22px; right: 0; bottom: 6px; height: 1.5px; background: var(--amber); transform: scaleX(0); transform-origin: left; }
+.act:hover { color: var(--ink1); } .act:hover::after { transform: scaleX(1); }
 .act.ghost { color: var(--ink2); } .act.ghost::before { background: var(--line2); } .act.ghost::after { background: var(--ink2); }
 .act:focus-visible { outline: none; } .act:focus-visible::after { transform: scaleX(1); }
 .chip { font-family: var(--font-mono); font-size: 13px; letter-spacing: .3px; color: var(--ink1); border: 1px solid var(--line2); background: var(--bg1); padding: 8px 12px; border-radius: var(--radius-sm); white-space: nowrap; }

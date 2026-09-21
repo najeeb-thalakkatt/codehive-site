@@ -1,4 +1,4 @@
 .index { display: flex; flex-wrap: wrap; gap: 12px 32px; margin-top: 32px; font-size: 14px; letter-spacing: .3px; }
-.index a { color: var(--ink2); text-decoration: none; display: inline-flex; gap: 10px; padding: 6px 0; border-bottom: 1px solid transparent; transition: color .2s var(--ease-out), border-color .2s var(--ease-out); }
+.index a { color: var(--ink2); text-decoration: none; display: inline-flex; gap: 10px; padding: 6px 0; border-bottom: 1px solid transparent; }
 .index a span { color: var(--amber); }
 .index a:hover, .index a:focus-visible { color: var(--ink1); border-color: var(--amber); outline: none; }

@@ -14,7 +14,7 @@
 .msg h2 { font-size: clamp(30px, 4.2vw, 52px); }
 .msg p { font-size: clamp(16px, 1.5vw, 19px); color: var(--ink2); margin: 0; max-width: 640px; }
 .caret { display: inline-block; width: 8px; height: 14px; background: var(--amber); margin-left: 2px; vertical-align: -2px; animation-name: caret; }
-.vizWrap { position: relative; width: 100%; overflow: hidden; border-radius: var(--radius-md); border: 1px solid var(--line1); background: rgba(20,23,28,.6); animation-name: vizin; }
+.vizWrap { position: relative; width: 100%; overflow: hidden; border-radius: var(--radius-sm); border: 1px solid var(--line1); background: var(--bg1); animation-name: vizin; }
 .viz { position: absolute; left: 0; top: 0; width: 1280px; height: 800px; transform-origin: 560px 100px; }
 /* The visual box shows from ~30% (the "you" turn is in, the scene is still the problem state);
    everything animated inside it plays from 42% to the end, so the solution assembles with the answer. */
