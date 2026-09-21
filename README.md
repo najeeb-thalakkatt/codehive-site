@@ -10,7 +10,7 @@ npm run dev        # http://localhost:3000
 Deploy: import the repo in Vercel, no config needed. Fonts are self-hosted by `next/font` at build time.
 
 ## How the scroll works
-Each service cell is `components/Cell.tsx`. Its motion is plain CSS `@keyframes`, authored on a 0–100% timeline that equals the cell's scroll progress. `lib/useScrub.ts` pins the section with ScrollTrigger and, on every scroll update, sets `currentTime` on every paused animation inside it (Web Animations API). ScrollTrigger's `scrub: 0.6` is the smoothing; raise it for lazier motion, lower for tighter.
+Each service cell is `components/Cell.tsx`. Its motion is plain CSS `@keyframes`, authored on a 0–100% timeline that equals the cell's scroll progress. `lib/useScrub.ts` pins the section with ScrollTrigger and, on every scroll update, sets `currentTime` on every paused animation inside it (Web Animations API). ScrollTrigger's `scrub: 1.2` is the smoothing; raise it for lazier motion, lower for tighter. Each cell pins for 1.8 viewport heights (`useScrub(ref, 1.8)`); more distance means slower, calmer streaming.
 
 Rules for anything you animate inside a cell:
 - give it class `anim` (or `w` for streamed words) and `animation-name`

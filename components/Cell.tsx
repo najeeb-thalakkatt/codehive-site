@@ -10,7 +10,7 @@ export default function Cell({ data, mobileCrop, children }: { data: CellData; m
   const ref = useRef<HTMLElement>(null);
   const wrap = useRef<HTMLDivElement>(null);
   const viz = useRef<HTMLDivElement>(null);
-  useScrub(ref, 1.2);
+  useScrub(ref, 1.8);
 
   // The visual is authored on a 1280×800 canvas; we show one crop of it scaled to the column:
   // the shared 720×520 window on desktop, a per-cell tighter window on narrow viewports.
@@ -32,9 +32,8 @@ export default function Cell({ data, mobileCrop, children }: { data: CellData; m
     <section ref={ref} className={s.cell} id={`cell-${data.id}`} aria-label={data.label}>
       <div className={s.stage}>
         <div className={`${s.col} anim`}>
-          <div className="eyebrow">{data.id} / {data.label}</div>
+          <div className={`eyebrow ${s.eyebrow}`}><span className={s.num}>{data.id}</span>{data.label}</div>
           <div className={`${s.msg} ${s.you} anim`}>
-            <div className={s.who}>you</div>
             <h2><Stream text={data.question} t0={0.02} t1={0.2} /></h2>
             <p><Stream text={data.questionBody} t0={0.21} t1={0.4} /></p>
           </div>

@@ -13,9 +13,6 @@ export default function Hero() {
           <h1>Ship the <span style={{ color: "var(--amber)" }}>AI feature.</span></h1>
           <p>Backend engineering for teams adding LLM features without an ML team. Based in Stockholm, working with companies across Europe, the UK and the US.</p>
           <div className={s.cta}><a className="act" href="#contact">Start a project</a><a className="act ghost" href="#services">See the services</a></div>
-          <div className="mono" style={{ display: "flex", flexWrap: "wrap", gap: "8px 20px", fontSize: 13, color: "var(--ink3)" }}>
-            <span>Senior backend engineers only</span><span>·</span><span>Python, Go</span><span>·</span><span>AWS, GCP, Azure</span>
-          </div>
         </div>
         <div className={s.hint} aria-hidden="true">SCROLL<i /></div>
         <div className={s.viz}>

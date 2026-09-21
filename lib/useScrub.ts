@@ -18,7 +18,7 @@ if (typeof window !== "undefined") gsap.registerPlugin(ScrollTrigger);
  * `animation-duration: 1s` (or a delay+duration that fits inside 1s),
  * and its keyframes are authored on a 0–100% timeline that equals section progress.
  */
-export function useScrub(sectionRef: RefObject<HTMLElement | null>, distance = 1.2) {
+export function useScrub(sectionRef: RefObject<HTMLElement | null>, distance = 1.8) {
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
@@ -43,7 +43,8 @@ export function useScrub(sectionRef: RefObject<HTMLElement | null>, distance = 1
       start: "top top",
       end: () => `+=${window.innerHeight * distance}`,
       pin: true,
-      scrub: 0.6,           // seconds of smoothing; this is the "not jerky" knob
+      anticipatePin: 1,     // start the pin a frame early so a fast scroll does not visibly jump at the pin point
+      scrub: 1.2,           // seconds of smoothing; this is the "not jerky" knob
       onRefresh: (self) => { collect(); apply(self.progress); },
       onUpdate: (self) => apply(self.progress),
       invalidateOnRefresh: true,

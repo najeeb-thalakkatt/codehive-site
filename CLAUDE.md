@@ -30,7 +30,7 @@ up each cell's visual in the `visuals` map in `components/cells/index.ts` by cel
 entry renders its text but an empty visual box. All five are registered.
 
 ### The scroll scrub (the one non-obvious mechanism)
-- Every `Cell` is pinned for 1.2 viewport heights by `lib/useScrub.ts` (GSAP ScrollTrigger, `scrub: 0.6`).
+- Every `Cell` is pinned for 1.8 viewport heights by `lib/useScrub.ts` (GSAP ScrollTrigger, `scrub: 1.2`, `anticipatePin: 1`).
 - Motion is NOT GSAP tweens. It is plain CSS `@keyframes` whose 0–100% equals the cell's scroll progress.
   On each scroll update the hook sets `currentTime = progress * 999ms` on every paused Web Animation
   found under `.anim` and `.w` elements. Keyframes stay the single source of truth; GSAP only pins and smooths.
