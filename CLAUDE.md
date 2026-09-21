@@ -65,7 +65,9 @@ entry renders its text but an empty visual box. All five are registered.
   mobile (Lighthouse blamed the framework chunk, which is misleading).
 - The old scroll-scrub driver (GSAP ScrollTrigger pinning, progress → currentTime) was replaced on 2026-09-21 by
   play-on-enter at the founder's request. Do not bring pinning back without asking.
-- Perf budget: Lighthouse mobile performance and accessibility both above 90. Re-run after touching
+- Perf budget: Lighthouse mobile performance and accessibility both above 90. Measure against the live site
+  or a server that gzips; `python3 -m http.server` on `out/` sends 157 KB of uncompressed HTML and makes the
+  simulated LCP read 4 s when the real figure is under 2 s. Re-run after touching
   `usePlayOnEnter`, `Stream`, `HiveCanvas` or anything that adds DOM nodes to a cell.
 - `components/HiveCanvas.tsx` is a canvas hex lattice with glow "flows" that hop between cells; its density
   follows scroll position (full on hero, quiet behind cells, medium after). It reads the last `section[id^=cell-]`
