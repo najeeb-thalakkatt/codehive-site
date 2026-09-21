@@ -14,7 +14,7 @@ export default function Booking() {
     window.addEventListener("hashchange", check);
     return () => window.removeEventListener("hashchange", check);
   }, []);
-  const src = `${CALENDLY}?hide_gdpr_banner=1&background_color=0b0d10&text_color=f4f1ea&primary_color=f2b84b&embed_type=Inline&embed_domain=${typeof location !== "undefined" ? location.hostname : "codehives.se"}`;
+  const src = `${CALENDLY}?hide_gdpr_banner=1&hide_event_type_details=1&background_color=0b0d10&text_color=f4f1ea&primary_color=f2b84b&embed_type=Inline&embed_domain=${typeof location !== "undefined" ? location.hostname : "codehives.se"}`;
   return (
     <div id="book" className={s.book}>
       <div className={s.row}>
