@@ -23,6 +23,6 @@
 @keyframes vizin { 0%, 50% { opacity: 0; transform: translateY(20px); } 58%, 100% { opacity: 1; transform: none; } }
 
 @media (max-width: 820px) {
-  .col { top: 10vh; gap: 20px; }
+  .col { top: max(10vh, 96px); gap: 20px; } /* nav is 80px tall; keep the eyebrow below it on short phones */
   .msg h2 { font-size: clamp(26px, 7.5vw, 34px); }
 }

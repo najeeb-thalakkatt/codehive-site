@@ -1,28 +1,32 @@
 "use client";
 import { useEffect, useRef } from "react";
 import type { CellData } from "@/content/cells";
+import { desktopCrop, type Crop } from "@/components/cells";
 import { useScrub } from "@/lib/useScrub";
 import Stream from "./Stream";
 import s from "./Cell.module.css";
 
-export default function Cell({ data, children }: { data: CellData; children?: React.ReactNode }) {
+export default function Cell({ data, mobileCrop, children }: { data: CellData; mobileCrop?: Crop; children?: React.ReactNode }) {
   const ref = useRef<HTMLElement>(null);
   const wrap = useRef<HTMLDivElement>(null);
   const viz = useRef<HTMLDivElement>(null);
   useScrub(ref, 1.2);
 
-  // The visual is authored on a 1280×800 canvas; we show the 720×520 region at (560,100) scaled to the column.
+  // The visual is authored on a 1280×800 canvas; we show one crop of it scaled to the column:
+  // the shared 720×520 window on desktop, a per-cell tighter window on narrow viewports.
   useEffect(() => {
     const fit = () => {
       if (!wrap.current || !viz.current) return;
-      const k = wrap.current.clientWidth / 720;
-      wrap.current.style.height = `${Math.round(520 * k)}px`;
-      viz.current.style.transform = `translate(-560px,-100px) scale(${k})`;
+      const c = window.innerWidth <= 820 && mobileCrop ? mobileCrop : desktopCrop;
+      const k = wrap.current.clientWidth / c.w;
+      wrap.current.style.height = `${Math.round(c.h * k)}px`;
+      viz.current.style.transformOrigin = `${c.x}px ${c.y}px`;
+      viz.current.style.transform = `translate(${-c.x}px,${-c.y}px) scale(${k})`;
     };
     fit();
     window.addEventListener("resize", fit);
     return () => window.removeEventListener("resize", fit);
-  }, []);
+  }, [mobileCrop]);
 
   return (
     <section ref={ref} className={s.cell} id={`cell-${data.id}`} aria-label={data.label}>

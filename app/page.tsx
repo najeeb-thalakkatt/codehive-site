@@ -22,8 +22,8 @@ export default function Page() {
           </h2>
         </section>
         {cells.map((c) => {
-          const Viz = visuals[c.id];
-          return <Cell key={c.id} data={c}>{Viz ? <Viz /> : null}</Cell>;
+          const v = visuals[c.id];
+          return <Cell key={c.id} data={c} mobileCrop={v?.mobile}>{v ? <v.Component /> : null}</Cell>;
         })}
         <Contact />
       </main>

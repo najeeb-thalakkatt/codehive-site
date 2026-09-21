@@ -28,9 +28,9 @@ Decision 2026-09-21: keep the `mailto` for launch. Revisit when there is volume.
 
 ## 5. Mobile
 - [ ] Test on a real mid-range Android and an iPhone, not DevTools
-- [ ] Re-choreograph each visual for a 390px column instead of the cropped desktop scene (hex radius 40, shorter labels, nothing entering from off-frame unless intended)
-- [ ] Check the column drift (`@keyframes col`) does not push the action off-screen on short phones
-- [ ] Check the hive canvas frame rate; halve flow count on mobile if it stutters
+- [x] Re-choreograph each visual for a 390px column instead of the cropped desktop scene (done as a per-cell mobile crop in `components/cells/index.ts`, same keyframes, tighter window around the finished state; revisit with true re-authored scenes if the crops read badly on a real phone)
+- [x] Check the column drift (`@keyframes col`) does not push the action off-screen on short phones (headless 390×660 and 390×844, all five cells)
+- [x] Check the hive canvas frame rate; halve flow count on mobile if it stutters (halved at ≤820px pre-emptively; confirm on device)
 
 ## 6. Launch plumbing
 - [ ] Domain: point codehives.se at Vercel, www redirect, HTTPS

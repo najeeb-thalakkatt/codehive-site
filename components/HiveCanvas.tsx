@@ -38,7 +38,8 @@ export default function HiveCanvas() {
       if (!last) last = ts; const dt = Math.min(0.05, (ts - last) / 1000); last = ts;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H); if (grid) ctx.drawImage(grid, 0, 0, W, H);
       const y = window.scrollY, hh = window.innerHeight;
-      const dens = y < hh * 0.8 ? 1 : y < cellsEnd ? 0.22 : 0.55;
+      // narrow viewports get half the flows: fewer glows to blur per frame on a phone GPU
+      const dens = (y < hh * 0.8 ? 1 : y < cellsEnd ? 0.22 : 0.55) * (W <= 820 ? 0.5 : 1);
       if (flows.length < Math.round(6 * dens) + 1 && Math.random() < 0.03 * dens) flows.push({ at: Math.floor(Math.random() * cells.length), prev: -1, hops: 3 + Math.floor(Math.random() * 6), wait: 0, hue: Math.random() < 0.88 ? "242,184,75" : "111,207,151" });
       for (let f = flows.length - 1; f >= 0; f--) {
         const fl = flows[f]; fl.wait -= dt;
