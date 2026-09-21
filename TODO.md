@@ -10,7 +10,7 @@ Work top to bottom. Each item is one PR. Tick it in the same commit that finishe
 ## 2. Port the four remaining visuals (one PR each)
 Source: `prototype/index.html`, keyframes prefixed `s2`, `s3`, `s4`, `s5`. Template: `components/cells/Strategy.tsx`.
 - [x] 02 Application development: tickets stack into a thread, amber reply with source line
-- [ ] 03 Model work: model cards settle into a benchmark chart, EU-region badge
+- [x] 03 Model work: model cards settle into a benchmark chart, EU-region badge
 - [ ] 04 Production and MLOps: excuses drop away, dev/test/prod/monitor pipeline draws and turns green
 - [ ] 05 Enablement: one lit cell, knowledge ripples through two rings
 - [ ] Register each in `components/cells/index.ts`
