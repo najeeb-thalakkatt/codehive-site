@@ -1,0 +1,20 @@
+/* Cell 04, Production and MLOps: the excuses drop away, a dev/test/prod/monitor pipeline draws itself and turns green. */
+@keyframes s4d0 { 0%, 38% { opacity: 1; transform: rotate(-10deg); } 56%, 100% { opacity: 0; transform: translateY(120px) rotate(2deg); } }
+@keyframes s4d1 { 0%, 38% { opacity: 1; transform: rotate(7deg); } 56%, 100% { opacity: 0; transform: translateY(120px) rotate(19deg); } }
+@keyframes s4d2 { 0%, 38% { opacity: 1; transform: rotate(4deg); } 56%, 100% { opacity: 0; transform: translateY(120px) rotate(16deg); } }
+@keyframes s4d3 { 0%, 38% { opacity: 1; transform: rotate(-8deg); } 56%, 100% { opacity: 0; transform: translateY(120px) rotate(4deg); } }
+@keyframes s4d4 { 0%, 38% { opacity: 1; transform: rotate(3deg); } 56%, 100% { opacity: 0; transform: translateY(120px) rotate(15deg); } }
+@keyframes s4wire { 0% { stroke-dashoffset: 420; opacity: 0; } 44% { stroke-dashoffset: 420; opacity: 1; } 70%, 100% { stroke-dashoffset: 0; opacity: 1; } }
+@keyframes s4n0 { 0%, 46% { opacity: 0; transform: scale(.6); } 54%, 100% { opacity: 1; transform: scale(1); } }
+@keyframes s4n1 { 0%, 52% { opacity: 0; transform: scale(.6); } 60%, 100% { opacity: 1; transform: scale(1); } }
+@keyframes s4n2 { 0%, 58% { opacity: 0; transform: scale(.6); } 66%, 100% { opacity: 1; transform: scale(1); } }
+@keyframes s4n3 { 0%, 64% { opacity: 0; transform: scale(.6); } 72%, 100% { opacity: 1; transform: scale(1); } }
+@keyframes s4g0 { 0%, 76% { stroke: var(--amber); } 80%, 100% { stroke: var(--ok); } }
+@keyframes s4g1 { 0%, 82% { stroke: var(--amber); } 86%, 100% { stroke: var(--ok); } }
+@keyframes s4g2 { 0%, 88% { stroke: var(--amber); } 92%, 100% { stroke: var(--ok); } }
+@keyframes s4g3 { 0%, 94% { stroke: var(--amber); } 98%, 100% { stroke: var(--ok); } }
+@keyframes s4o0 { 0%, 76% { opacity: 0; } 80%, 100% { opacity: 1; } }
+@keyframes s4o1 { 0%, 82% { opacity: 0; } 86%, 100% { opacity: 1; } }
+@keyframes s4o2 { 0%, 88% { opacity: 0; } 92%, 100% { opacity: 1; } }
+@keyframes s4o3 { 0%, 94% { opacity: 0; } 98%, 100% { opacity: 1; } }
+@keyframes s4log { 0%, 92% { opacity: 0; } 100% { opacity: 1; } }
