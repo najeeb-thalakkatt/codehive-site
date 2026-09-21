@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { Familjen_Grotesk, Schibsted_Grotesk, IBM_Plex_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-// next/font self-hosts these at build time: no request to Google at runtime.
-const display = Familjen_Grotesk({ subsets: ["latin"], weight: ["500", "600", "700"], variable: "--font-display", display: "swap" });
-const body = Schibsted_Grotesk({ subsets: ["latin"], weight: ["400", "500", "700"], variable: "--font-body", display: "swap" });
-const mono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500"], variable: "--font-mono", display: "swap" });
+// Fonts are checked in under app/fonts (latin subset, variable where Google offers it) and served
+// from the site itself: no request to Google at runtime and none at build time either, so the
+// static export builds the same on a laptop and on the GitHub Actions runner.
+const display = localFont({ src: "./fonts/familjen-grotesk.woff2", weight: "500 700", variable: "--font-display", display: "swap" });
+const body = localFont({ src: "./fonts/schibsted-grotesk.woff2", weight: "400 700", variable: "--font-body", display: "swap" });
+const mono = localFont({ src: [{ path: "./fonts/ibm-plex-mono-400.woff2", weight: "400" }, { path: "./fonts/ibm-plex-mono-500.woff2", weight: "500" }], variable: "--font-mono", display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://codehives.se"),
