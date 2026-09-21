@@ -34,7 +34,7 @@ export const cells: CellData[] = [
     question: "Which model, and on whose servers?",
     questionBody: "The API bill grows every month. Legal will not let customer data leave the EU. Nobody can say if the newest model is better for your task, so the prompt gets another edit.",
     answer: "The right model, measured, where your data is allowed to go.",
-    answerBody: "We benchmark candidates on your data, not a leaderboard. When compliance needs it, we run open models on your infrastructure. When a prompt is not enough, we curate a dataset and fine-tune, QLoRA on open models or at the frontier.",
+    answerBody: "We benchmark candidates on your own data, all of it. When compliance needs it, we run open models on your infrastructure. When a prompt is not enough, we curate a dataset and fine-tune, QLoRA on open models or at the frontier.",
     chips: ["Model selection and benchmarking", "Private open-source deployment", "Dataset curation", "Frontier fine-tuning", "QLoRA fine-tuning of open models"],
     cta: "Book a call"
   },

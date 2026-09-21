@@ -51,4 +51,4 @@ Source: `prototype/index.html`, keyframes prefixed `s2`, `s3`, `s4`, `s5`. Templ
 ## Not doing
 - No blog, no team page, no client logos until there are clients
 - No light theme
-- No third-party animation libraries beyond GSAP
+- No third-party animation libraries (GSAP was removed with the scroll scrub on 2026-09-21)

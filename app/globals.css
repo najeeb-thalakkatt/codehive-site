@@ -20,7 +20,7 @@ button.act { background: none; border: 0; padding: 10px 0; font: inherit; }
 .act:focus-visible { outline: none; } .act:focus-visible::after { transform: scaleX(1); }
 .chip { font-family: var(--font-mono); font-size: 13px; letter-spacing: .3px; color: var(--ink1); border: 1px solid var(--line2); background: var(--bg1); padding: 8px 12px; border-radius: var(--radius-sm); white-space: nowrap; }
 .chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-/* scroll-scrubbed animation primitives (see lib/useScrub.ts) */
+/* animation primitives, played once per cell by lib/usePlayOnEnter.ts */
 .anim { animation-duration: 1s; animation-timing-function: linear; animation-fill-mode: both; animation-play-state: paused; will-change: transform, opacity; }
 .w { opacity: 0; animation-name: wd; animation-duration: .04s; animation-timing-function: linear; animation-fill-mode: both; animation-play-state: paused; display: inline-block; }
 .act.w { display: inline-flex; }

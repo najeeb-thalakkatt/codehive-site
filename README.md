@@ -1,6 +1,6 @@
 # codehives.se
 
-Next.js 15 (App Router) + GSAP ScrollTrigger. One page. Dark only. Static export, served by GitHub Pages at codehives.se.
+Next.js 15 (App Router), CSS keyframes driven by the Web Animations API. One page. Dark only. Static export, served by GitHub Pages at codehives.se.
 
 ## Run
 ```
@@ -12,17 +12,17 @@ Deploy: every push to `main` runs `.github/workflows/pages.yml`, which builds th
 ## Making changes
 Small, safe change: commit on `main`, push, live in about a minute. Anything you want to look at first: branch, push, open a pull request; the workflow builds it as a check, merge when green, and the merge deploys. To undo a bad deploy, `git revert` the commit and push; the revert deploys the previous state. Preview locally with `npm run dev` (hot reload) or `npm run build && npx serve out` (exactly what ships).
 
-## How the scroll works
-Each service cell is `components/Cell.tsx`. Its motion is plain CSS `@keyframes`, authored on a 0–100% timeline that equals the cell's scroll progress. `lib/useScrub.ts` pins the section with ScrollTrigger and, on every scroll update, sets `currentTime` on every paused animation inside it (Web Animations API). ScrollTrigger's `scrub: 1.2` is the smoothing; raise it for lazier motion, lower for tighter. Each cell pins for 1.8 viewport heights (`useScrub(ref, 1.8)`); more distance means slower, calmer streaming.
+## How the cells play
+Each service cell is `components/Cell.tsx`. Its motion is plain CSS `@keyframes`, authored on a 0–100% timeline (1 s of animation time). Nothing is tied to scroll position: `lib/usePlayOnEnter.ts` waits until a quarter of the section is on screen, then plays every animation inside it once at a playback rate that stretches the 1 s timeline to 7 s (`usePlayOnEnter(ref, 7)`). The reader scrolls on when they are ready; the next cell plays when it arrives. No pinning, no GSAP.
 
 Rules for anything you animate inside a cell:
 - give it class `anim` (or `w` for streamed words) and `animation-name`
-- keep `animation-duration` at 1s, or a delay+duration that adds up to ≤1s
+- keep `animation-duration` at 1s, or a delay+duration that adds up to ≤1s (the hook stretches that 1s to 7s on screen)
 - animate transform and opacity where you can; colour and stroke changes work but cost more on weak phones
 
 Text streams in via `components/Stream.tsx`: each word is a span with an `animation-delay` between t0 and t1. All words are always in the DOM, so screen readers read the full text.
 
-The cell visual is authored on a 1280×800 canvas (same coordinates as the design mockups). `Cell.tsx` shows the 720×520 region at (560,100) scaled to the column width, and compresses the visual's timeline into the second half of the scroll (`.viz .anim { animation-delay: .5s; animation-duration: .499s }`).
+The cell visual is authored on a 1280×800 canvas (same coordinates as the design mockups). `Cell.tsx` shows the 720×520 region at (560,100) on desktop, or a per-cell tighter window on narrow viewports, scaled to the column width, and compresses the visual's timeline into the last 58% of the play (`.viz .anim { animation-delay: .42s; animation-duration: .579s }`).
 
 ## What is wired and what is not
 - All five cell visuals are ported and registered in `components/cells/index.ts`. Each is `<Name>.tsx` + `<name>.css` next to it; `Strategy.tsx` is the simplest one to copy for a new cell.

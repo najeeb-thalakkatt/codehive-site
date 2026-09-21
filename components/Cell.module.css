@@ -1,9 +1,6 @@
 .cell { position: relative; }
-.stage { position: relative; height: 100vh; height: 100svh; overflow: hidden; }
-.stage::before, .stage::after { content: ""; position: absolute; left: 0; right: 0; height: 110px; z-index: 3; pointer-events: none; }
-.stage::before { top: 0; background: linear-gradient(var(--bg0), transparent); }
-.stage::after { bottom: 0; background: linear-gradient(transparent, var(--bg0)); }
-.col { position: absolute; left: 50%; top: 14vh; width: min(760px, calc(100vw - 40px)); transform: translateX(-50%); display: flex; flex-direction: column; gap: 28px; will-change: transform; animation-name: col; }
+.stage { min-height: 100svh; display: flex; align-items: center; padding: 112px 0 72px; }
+.col { width: min(760px, calc(100vw - 40px)); margin: 0 auto; display: flex; flex-direction: column; gap: 28px; }
 .text { display: flex; flex-direction: column; gap: 28px; }
 .eyebrow { font-size: 18px; letter-spacing: .5px; gap: 14px; }
 .num { color: var(--ink1); font-weight: 500; }
@@ -20,32 +17,29 @@
    everything animated inside it plays from 42% to the end, so the solution assembles with the answer. */
 .viz :global(.anim) { animation-duration: .579s; animation-delay: .42s; }
 
-@keyframes col { 0%, 34% { transform: translate(-50%, 0); } 100% { transform: translate(-50%, -46%); } }
 @keyframes dim { 0%, 34% { opacity: 1; } 44%, 100% { opacity: .6; } }
 @keyframes who { 0%, 33% { opacity: 0; } 36%, 100% { opacity: 1; } }
 @keyframes caret { 0%, 34% { opacity: 0; } 36%, 70% { opacity: 1; } 72%, 100% { opacity: 0; } }
 @keyframes vizin { 0%, 24% { opacity: 0; transform: translateY(20px); } 32%, 100% { opacity: 1; transform: none; } }
 
-/* Wide screens: text left, visual right, so the frame is never empty while words stream. */
+/* Wide screens: text left, visual right. */
 @media (min-width: 1100px) {
-  .col { width: min(1280px, calc(100vw - 128px)); top: 12vh; display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); column-gap: 56px; align-items: center; animation-name: colWide; }
+  .col { width: min(1280px, calc(100vw - 128px)); display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); column-gap: 56px; align-items: center; }
   .text { gap: 24px; }
   .msg p { max-width: 560px; }
 }
-@keyframes colWide { 0%, 34% { transform: translate(-50%, 0); } 100% { transform: translate(-50%, -14%); } }
-/* Wide but short (13" laptops, 1280×800, 1366×768): tighter type and a longer end drift so the dimmed
-   question slides under the nav and the action stays on screen. */
+/* Wide but short (13" laptops): tighter type so a whole cell tends to fit one screen. */
 @media (min-width: 1100px) and (max-height: 860px) {
-  .col { top: 9vh; animation-name: colWideShort; }
+  .stage { padding-top: 96px; }
   .text { gap: 16px; }
   .msg h2 { font-size: clamp(28px, 3.4vw, 42px); }
   .msg p { font-size: 16px; }
   .eyebrow { font-size: 15px; }
 }
-@keyframes colWideShort { 0%, 34% { transform: translate(-50%, 0); } 100% { transform: translate(-50%, -28%); } }
 
 @media (max-width: 820px) {
-  .col { top: max(10vh, 96px); gap: 20px; } /* nav is 80px tall; keep the eyebrow below it on short phones */
+  .stage { padding: 104px 0 56px; }
+  .col { gap: 20px; }
   .text { gap: 20px; }
   .msg h2 { font-size: clamp(26px, 7.5vw, 34px); }
   .eyebrow { font-size: 15px; }

@@ -2,7 +2,7 @@
 import { useEffect, useRef } from "react";
 import type { CellData } from "@/content/cells";
 import { desktopCrop, type Crop } from "@/components/cells";
-import { useScrub } from "@/lib/useScrub";
+import { usePlayOnEnter } from "@/lib/usePlayOnEnter";
 import Stream from "./Stream";
 import s from "./Cell.module.css";
 
@@ -10,7 +10,7 @@ export default function Cell({ data, mobileCrop, children }: { data: CellData; m
   const ref = useRef<HTMLElement>(null);
   const wrap = useRef<HTMLDivElement>(null);
   const viz = useRef<HTMLDivElement>(null);
-  useScrub(ref, 1.8);
+  usePlayOnEnter(ref, 7);
 
   // The visual is authored on a 1280×800 canvas; we show one crop of it scaled to the column:
   // the shared 720×520 window on desktop, a per-cell tighter window on narrow viewports.
@@ -31,11 +31,11 @@ export default function Cell({ data, mobileCrop, children }: { data: CellData; m
   return (
     <section ref={ref} className={s.cell} id={`cell-${data.id}`} aria-label={data.label}>
       <div className={s.stage}>
-        <div className={`${s.col} anim`}>
+        <div className={s.col}>
           <div className={s.text}>
             <div className={`eyebrow ${s.eyebrow}`}><span className={s.num}>{data.id}</span>{data.label}</div>
-            {/* Timeline (0–1 = scroll progress). The headline starts with a negative delay so its first
-                words are already on screen when the cell pins: no empty frame between cells. */}
+            {/* Timeline (0–1 = the 7 s play). The headline starts with a negative delay so its first
+                words are already on screen the moment the cell appears. */}
             <div className={`${s.msg} ${s.you} anim`}>
               <h2><Stream text={data.question} t0={-0.06} t1={0.12} /></h2>
               <p><Stream text={data.questionBody} t0={0.12} t1={0.3} /></p>
