@@ -28,6 +28,9 @@ export default function Booking() {
     window.addEventListener("hashchange", check);
     return () => { window.removeEventListener("hashchange", check); window.removeEventListener("load", settle); };
   }, []);
+  // The frame adds height below the section; scroll only once it is in the DOM, or the page is
+  // too short to bring #book to the top.
+  useEffect(() => { if (open !== false) document.getElementById("book")?.scrollIntoView({ block: "start", behavior: "instant" }); }, [open]);
   const host = typeof location !== "undefined" ? location.hostname : "codehives.se";
   const src = `${CALENDLY}?hide_gdpr_banner=1&hide_event_type_details=1&background_color=0b0d10&text_color=f4f1ea&primary_color=f2b84b&embed_type=Inline&embed_domain=${host}${open ? `&a1=${encodeURIComponent(open)}` : ""}`;
   return (
