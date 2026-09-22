@@ -6,5 +6,5 @@
 @media (max-width: 820px) {
   .contact { grid-template-columns: 1fr; padding-top: 64px; padding-bottom: 64px; gap: 24px; }
   /* below the text, pushed to the right edge and faint: decoration, never behind copy */
-  .hive { width: 150px; height: 138px; opacity: .4; justify-self: end; margin-right: -24px; order: 3; } /* after the booking block */
+  .hive { width: 150px; height: 138px; opacity: .4; justify-self: end; margin-right: calc(-1 * clamp(20px, 5vw, 64px)); order: 3; } /* after the booking block */
 }
