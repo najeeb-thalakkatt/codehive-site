@@ -4,12 +4,14 @@ import "./models.css";
 /** Cell 03 visual. Five model cards jitter in place, then settle into a benchmark chart.
  *  The bars grow from the same left edge; the fine-tuned open model is the amber one.
  *  Keyframes on the full 0–100% cell timeline. */
+/** The benchmark rows. Generic on purpose: named models date a page within months. Edit here only. */
+export const MODEL_LABELS = ["hosted model A", "hosted model B", "open model, 70B", "open model, zero-shot", "small open model, fine-tuned on your data"];
 const models: { name: string; label: string; top: number; bar: number; amber?: boolean }[] = [
-  { name: "s3m0", label: "gpt-4o via API", top: 276, bar: 173 },
-  { name: "s3m1", label: "claude via API", top: 340, bar: 184 },
-  { name: "s3m2", label: "llama 70b, prompt v37", top: 404, bar: 134 },
-  { name: "s3m3", label: "mistral, zero-shot", top: 468, bar: 114 },
-  { name: "s3m4", label: "llama 8b, fine-tuned on your data", top: 532, bar: 232, amber: true },
+  { name: "s3m0", label: MODEL_LABELS[0], top: 276, bar: 173 },
+  { name: "s3m1", label: MODEL_LABELS[1], top: 340, bar: 184 },
+  { name: "s3m2", label: MODEL_LABELS[2], top: 404, bar: 134 },
+  { name: "s3m3", label: MODEL_LABELS[3], top: 468, bar: 114 },
+  { name: "s3m4", label: MODEL_LABELS[4], top: 532, bar: 232, amber: true },
 ];
 
 export default function Models() {
