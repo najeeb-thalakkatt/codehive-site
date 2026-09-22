@@ -20,7 +20,7 @@ export type CellVisual = {
 
 /** Map cell id → visual. All five ported from prototype/index.html (keyframes s1..s5). */
 export const visuals: Record<string, CellVisual> = {
-  "01": { Component: Strategy, mobile: { x: 660, y: 150, w: 400, h: 400 } },
+  "01": { Component: Strategy, mobile: { x: 690, y: 220, w: 420, h: 360 } },
   "02": { Component: AppDev, mobile: { x: 740, y: 180, w: 440, h: 450 } },
   "03": { Component: Models, mobile: { x: 720, y: 216, w: 520, h: 400 } },
   "04": { Component: MLOps, mobile: { x: 660, y: 280, w: 510, h: 300 } },
