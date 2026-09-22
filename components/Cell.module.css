@@ -20,7 +20,8 @@
 @keyframes dim { 0%, 34% { opacity: 1; } 44%, 100% { opacity: .6; } }
 @keyframes who { 0%, 33% { opacity: 0; } 36%, 100% { opacity: 1; } }
 @keyframes caret { 0%, 34% { opacity: 0; } 36%, 70% { opacity: 1; } 72%, 100% { opacity: 0; } }
-@keyframes vizin { 0%, 24% { opacity: 0; transform: translateY(20px); } 32%, 100% { opacity: 1; transform: none; } }
+/* resting state: the panel and its problem-state fragments are faintly there from the start, never a blank */
+@keyframes vizin { 0%, 24% { opacity: .35; transform: translateY(12px); } 32%, 100% { opacity: 1; transform: none; } }
 
 /* Wide screens: text left, visual right. */
 @media (min-width: 1100px) {
