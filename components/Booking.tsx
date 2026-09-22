@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cells } from "@/content/cells";
 import s from "./Booking.module.css";
 
@@ -13,6 +13,7 @@ const CALENDLY = "https://calendly.com/dev-codehive/30min";
 export default function Booking() {
   const [open, setOpen] = useState<false | string>(false);
   const [loaded, setLoaded] = useState(false);
+  const frame = useRef<HTMLIFrameElement>(null);
   useEffect(() => {
     const scroll = () => document.getElementById("book")?.scrollIntoView({ block: "start", behavior: "instant" });
     const check = () => {
@@ -33,6 +34,17 @@ export default function Booking() {
   // The frame adds height below the section; scroll only once it is in the DOM, or the page is
   // too short to bring #book to the top.
   useEffect(() => { if (open !== false) document.getElementById("book")?.scrollIntoView({ block: "start", behavior: "instant" }); }, [open]);
+  // Loading line goes away on the iframe's load event or on Calendly's own "viewed" message,
+  // whichever arrives first; a late load event on a cross-origin frame is not something to wait on.
+  useEffect(() => {
+    if (open === false) return;
+    const done = () => setLoaded(true);
+    const el = frame.current; el?.addEventListener("load", done);
+    const onMsg = (e: MessageEvent) => { if (e.origin === "https://calendly.com" && e.data?.event?.startsWith?.("calendly.")) done(); };
+    window.addEventListener("message", onMsg);
+    const fallback = window.setTimeout(done, 8000);
+    return () => { el?.removeEventListener("load", done); window.removeEventListener("message", onMsg); window.clearTimeout(fallback); };
+  }, [open]);
   const host = typeof location !== "undefined" ? location.hostname : "codehives.se";
   const src = `${CALENDLY}?hide_gdpr_banner=1&hide_event_type_details=1&background_color=14171c&text_color=f4f1ea&primary_color=f2b84b&embed_type=Inline&embed_domain=${host}${open ? `&a1=${encodeURIComponent(open)}` : ""}`;
   return (
@@ -44,7 +56,7 @@ export default function Booking() {
       {open !== false && (
         <div id="book-frame" className={s.frame}>
           {!loaded && <span className={`mono ${s.loading}`}>Loading the calendar</span>}
-          <iframe title="Book a 30 minute call with Codehive" src={src} loading="lazy" onLoad={() => setLoaded(true)} />
+          <iframe ref={frame} title="Book a 30 minute call with Codehive" src={src} loading="lazy" />
           <p className={`mono ${s.note}`}>The booking form is provided by Calendly. See <a href="/privacy">privacy</a>.</p>
         </div>
       )}
