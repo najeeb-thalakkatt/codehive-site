@@ -7,27 +7,28 @@ const CALENDLY = "https://calendly.com/dev-codehive/30min";
 
 /** Click-to-load Calendly. Nothing from calendly.com loads until the visitor asks for it, so the
  *  page stays cookie-free by default and the privacy page can say so.
- *  Any link to #book opens it; #book-02 also prefills Calendly's first invitee question ("Which
- *  service are you looking for?") with that cell's label, via Calendly's `a1` parameter. The option
- *  text in Calendly must match `label` in content/cells.ts exactly. */
+ *  Any link to #book opens it. A cell's action also dispatches a `codehive:book` event carrying its
+ *  label, which prefills Calendly's first invitee question ("Which service are you looking for?") via
+ *  the `a1` parameter. The option text in Calendly must match `label` in content/cells.ts exactly. */
 export default function Booking() {
   const [open, setOpen] = useState<false | string>(false);
   const [loaded, setLoaded] = useState(false);
   useEffect(() => {
     const scroll = () => document.getElementById("book")?.scrollIntoView({ block: "start", behavior: "instant" });
     const check = () => {
-      const m = location.hash.match(/^#book(?:-(\d\d))?$/);
-      if (!m) return;
-      setOpen(cells.find((c) => c.id === m[1])?.label ?? "");
+      if (location.hash !== "#book") return;
+      setOpen((o) => (o === false ? "" : o)); // keep a label a cell's click just set
       scroll();
     };
+    const fromCell = (e: Event) => { const label = (e as CustomEvent<string>).detail; if (cells.some((c) => c.label === label)) setOpen(label); };
+    window.addEventListener("codehive:book", fromCell);
     check();
     // On a direct load with the hash, the pin spacers are inserted after this effect and push the
     // section down by several screens, so scroll once more when the page has settled.
     const settle = () => setTimeout(scroll, 150);
     if (location.hash.startsWith("#book")) { if (document.readyState === "complete") settle(); else window.addEventListener("load", settle, { once: true }); }
     window.addEventListener("hashchange", check);
-    return () => { window.removeEventListener("hashchange", check); window.removeEventListener("load", settle); };
+    return () => { window.removeEventListener("hashchange", check); window.removeEventListener("load", settle); window.removeEventListener("codehive:book", fromCell); };
   }, []);
   // The frame adds height below the section; scroll only once it is in the DOM, or the page is
   // too short to bring #book to the top.
