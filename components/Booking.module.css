@@ -1,6 +1,6 @@
 .book { scroll-margin-top: 96px; }
 .row { display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: center; }
-.mail { color: var(--ink2); text-decoration: none; font-size: 14px; }
+.mail { color: var(--ink2); text-decoration: none; font-size: 14px; display: inline-flex; align-items: center; min-height: 44px; }
 .mail:hover { color: var(--ink1); }
 .frame { margin-top: 32px; border: 1px solid var(--line1); border-radius: var(--radius-sm); overflow: hidden; background: var(--bg1); position: relative; }
 /* plain loading line; removed when the iframe fires load */

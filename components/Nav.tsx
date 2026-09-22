@@ -8,8 +8,8 @@ export default function Nav() {
           <Mark />codehive
         </a>
         <nav className="mono" style={{ pointerEvents: "auto", display: "flex", gap: 28, fontSize: 13, letterSpacing: 1, textTransform: "uppercase" }}>
-          <a href="/#services" style={{ color: "var(--ink2)", textDecoration: "none", padding: "12px 0" }}>Services</a>
-          <a href="/#contact" style={{ color: "var(--ink2)", textDecoration: "none", padding: "12px 0" }}>Contact</a>
+          <a href="/#services" style={{ color: "var(--ink2)", textDecoration: "none", padding: "12px 0", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Services</a>
+          <a href="/#contact" style={{ color: "var(--ink2)", textDecoration: "none", padding: "12px 0", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Contact</a>
         </nav>
       </div>
     </header>
