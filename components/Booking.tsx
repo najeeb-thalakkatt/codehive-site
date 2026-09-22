@@ -12,6 +12,7 @@ const CALENDLY = "https://calendly.com/dev-codehive/30min";
  *  text in Calendly must match `label` in content/cells.ts exactly. */
 export default function Booking() {
   const [open, setOpen] = useState<false | string>(false);
+  const [loaded, setLoaded] = useState(false);
   useEffect(() => {
     const scroll = () => document.getElementById("book")?.scrollIntoView({ block: "start", behavior: "instant" });
     const check = () => {
@@ -32,7 +33,7 @@ export default function Booking() {
   // too short to bring #book to the top.
   useEffect(() => { if (open !== false) document.getElementById("book")?.scrollIntoView({ block: "start", behavior: "instant" }); }, [open]);
   const host = typeof location !== "undefined" ? location.hostname : "codehives.se";
-  const src = `${CALENDLY}?hide_gdpr_banner=1&hide_event_type_details=1&background_color=0b0d10&text_color=f4f1ea&primary_color=f2b84b&embed_type=Inline&embed_domain=${host}${open ? `&a1=${encodeURIComponent(open)}` : ""}`;
+  const src = `${CALENDLY}?hide_gdpr_banner=1&hide_event_type_details=1&background_color=14171c&text_color=f4f1ea&primary_color=f2b84b&embed_type=Inline&embed_domain=${host}${open ? `&a1=${encodeURIComponent(open)}` : ""}`;
   return (
     <div id="book" className={s.book}>
       <div className={s.row}>
@@ -41,7 +42,8 @@ export default function Booking() {
       </div>
       {open !== false && (
         <div id="book-frame" className={s.frame}>
-          <iframe title="Book a 30 minute call with Codehive" src={src} loading="lazy" />
+          {!loaded && <span className={`mono ${s.loading}`}>Loading the calendar</span>}
+          <iframe title="Book a 30 minute call with Codehive" src={src} loading="lazy" onLoad={() => setLoaded(true)} />
           <p className={`mono ${s.note}`}>The booking form is provided by Calendly. See <a href="/privacy">privacy</a>.</p>
         </div>
       )}
