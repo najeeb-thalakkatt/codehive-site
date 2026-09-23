@@ -15,3 +15,5 @@
 .box { border: 1px solid var(--line2); border-radius: 6px; background: var(--bg1); }
 .bar { height: 8px; border-radius: 4px; background: var(--line1); overflow: hidden; }
 .bar > div { height: 8px; width: 0; background: var(--ink2); }
+/* the loop's end fade, so a restart is a dissolve rather than a cut */
+@keyframes stagefade { 0%, 95% { opacity: 1; } 100% { opacity: 0; } }

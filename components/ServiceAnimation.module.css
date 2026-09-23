@@ -1,0 +1,12 @@
+/* aspect-ratio reserves the frame's height before hydration, so mounting the scaler shifts nothing */
+.frame { position: relative; width: 100%; aspect-ratio: 640 / 600; overflow: hidden; border-radius: var(--radius-md); background: var(--bg0); border: 1px solid var(--line1); }
+.stage { position: absolute; left: 0; top: 0; width: 640px; height: 600px; transform-origin: top left; }
+/* the visuals are drawn in a 560×520 .stg; in the artboards it sits inside 40px of padding */
+.stage :global(.stg) { left: 40px; top: 40px; animation: stagefade 13s linear infinite paused; }
+/* loop policy: 13 s CSS loops, running only while the frame is on screen */
+.stage :global(.anim) { animation-duration: 13s; animation-iteration-count: infinite; animation-timing-function: linear; animation-play-state: paused; }
+.on :global(.anim), .on :global(.stg) { animation-play-state: running; }
+/* reduced motion: hold every animation at 95% of its loop, the finished scene before the end fade */
+@media (prefers-reduced-motion: reduce) {
+  .stage :global(.anim), .stage :global(.stg) { animation-play-state: paused !important; animation-iteration-count: 1; animation-delay: -12.35s; }
+}

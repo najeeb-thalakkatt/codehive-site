@@ -1,51 +1,31 @@
-.cell { position: relative; }
-.stage { min-height: 100svh; display: flex; align-items: center; padding: 112px 0 72px; }
-.col { width: min(760px, calc(100vw - 40px)); margin: 0 auto; display: flex; flex-direction: column; gap: 28px; }
-.text { display: flex; flex-direction: column; gap: 28px; }
-.eyebrow { font-size: 18px; letter-spacing: .5px; gap: 14px; }
-.num { color: var(--ink1); font-weight: 500; }
-.msg { display: flex; flex-direction: column; gap: 14px; }
-.who { font-family: var(--font-mono); font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--ink3); display: flex; align-items: center; gap: 8px; }
-.us .who { color: var(--amber); animation-name: who; }
-.you { animation-name: dim; }
-.msg h2 { font-size: clamp(30px, 4.2vw, 52px); }
-.msg p { font-size: clamp(16px, 1.5vw, 19px); color: var(--ink2); margin: 0; max-width: 640px; }
-.caret { display: inline-block; width: 8px; height: 14px; background: var(--amber); margin-left: 2px; vertical-align: -2px; animation-name: caret; }
-.vizWrap { position: relative; width: 100%; overflow: hidden; border-radius: var(--radius-sm); border: 1px solid var(--line1); background: var(--bg1); animation-name: vizin; }
-.viz { position: absolute; left: 0; top: 0; width: 1280px; height: 800px; transform-origin: 560px 100px; }
-/* The visual box shows from ~30% (the "you" turn is in, the scene is still the problem state);
-   everything animated inside it plays from 42% to the end, so the solution assembles with the answer. */
-/* the visual's own 0–100% runs from 34% of the cell timeline to the end: its problem state while the
-   question finishes, its resolution alongside the codehive turn */
-.viz :global(.anim) { animation-duration: .66s; animation-delay: .34s; }
-
-@keyframes dim { 0%, 34% { opacity: 1; } 44%, 100% { opacity: .6; } }
-@keyframes who { 0%, 33% { opacity: 0; } 36%, 100% { opacity: 1; } }
+/* One service card that fits a 720px-tall viewport at 1280 wide: tight paddings, 28/22/14px type. */
+.card { position: relative; padding: 24px 32px; background: var(--bg1); border: 1px solid var(--line1); border-radius: var(--radius-lg); display: flex; flex-direction: column; gap: 20px; scroll-margin-top: 80px; }
+.head { display: flex; justify-content: space-between; align-items: center; gap: 16px; font-family: var(--font-mono); font-size: 13px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: var(--amber); }
+.title { display: flex; align-items: center; gap: 8px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--amber); flex: none; }
+.num { color: var(--ink1); }
+.count { color: var(--ink3); white-space: nowrap; }
+.body { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 32px; align-items: center; }
+.text { display: flex; flex-direction: column; gap: 12px; }
+.bubble { display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; }
+.you { background: var(--bg2); border-radius: 12px 12px 12px 4px; animation-name: dim; }
+.us { border: 1px solid var(--amber); border-radius: 12px 12px 4px 12px; animation-name: usin; }
+.who { font-family: var(--font-mono); font-size: 13px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: var(--ink3); display: flex; align-items: center; gap: 8px; }
+.whoUs { color: var(--amber); }
+.bubble h2 { font-size: 28px; line-height: 1.08; letter-spacing: -.025em; text-wrap: pretty; }
+.bubble h3 { font-size: 22px; line-height: 1.15; letter-spacing: -.02em; text-wrap: pretty; }
+.bubble p { margin: 0; font-size: 14px; line-height: 1.45; color: var(--ink2); text-wrap: pretty; }
+.caret { display: inline-block; width: 8px; height: 13px; background: var(--amber); vertical-align: -2px; animation-name: caret; }
+.text :global(.chips) { gap: 6px; }
+.text :global(.chip) { background: var(--bg2); border-color: var(--line1); padding: 5px 9px; font-size: 12.5px; }
+.text :global(.act) { padding: 0; }
+@keyframes dim { 0%, 34% { opacity: 1; } 44%, 100% { opacity: .75; } }
+@keyframes usin { 0%, 32% { opacity: 0; transform: translateY(6px); } 36%, 100% { opacity: 1; transform: none; } }
 @keyframes caret { 0%, 34% { opacity: 0; } 36%, 70% { opacity: 1; } 72%, 100% { opacity: 0; } }
-/* resting state: the panel and its problem-state fragments are there from the start, never a blank. Full opacity
-   on purpose: at .35 the dim card text measured 1.6:1 against the ground and failed the contrast audit. The cue
-   at 24–32% is the settle from 12px, then the keyframes take over at 42%. */
-@keyframes vizin { 0%, 24% { transform: translateY(12px); } 32%, 100% { transform: none; } }
-
-/* Wide screens: text left, visual right. */
-@media (min-width: 1100px) {
-  .col { width: min(1280px, calc(100vw - 128px)); display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); column-gap: 56px; align-items: center; }
-  .text { gap: 24px; }
-  .msg p { max-width: 560px; }
-}
-/* Wide but short (13" laptops): tighter type so a whole cell tends to fit one screen. */
-@media (min-width: 1100px) and (max-height: 860px) {
-  .stage { padding-top: 96px; }
-  .text { gap: 16px; }
-  .msg h2 { font-size: clamp(28px, 3.4vw, 42px); }
-  .msg p { font-size: 16px; }
-  .eyebrow { font-size: 15px; }
-}
-
-@media (max-width: 820px) {
-  .stage { padding: 104px 0 56px; }
-  .col { gap: 20px; }
-  .text { gap: 20px; }
-  .msg h2 { font-size: clamp(26px, 7.5vw, 34px); }
-  .eyebrow { font-size: 15px; }
+@media (max-width: 900px) {
+  .card { padding: 20px; gap: 16px; }
+  .body { grid-template-columns: 1fr; gap: 24px; }
+  .bubble h2 { font-size: clamp(24px, 6.5vw, 28px); }
+  .bubble h3 { font-size: 21px; }
+  .bubble p { font-size: 15px; line-height: 1.5; }
 }

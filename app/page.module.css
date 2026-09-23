@@ -1,4 +1,1 @@
-.index { display: flex; flex-wrap: wrap; gap: 12px 32px; margin-top: 32px; font-size: 14px; letter-spacing: .3px; }
-.index a { color: var(--ink2); text-decoration: none; display: inline-flex; align-items: center; gap: 10px; min-height: 44px; border-bottom: 1px solid transparent; }
-.index a span { color: var(--amber); }
-.index a:hover, .index a:focus-visible { color: var(--ink1); border-color: var(--amber); outline: none; }
+.cards { display: flex; flex-direction: column; gap: var(--space-6); padding-bottom: var(--space-6); }
