@@ -16,7 +16,7 @@ export const cells: CellData[] = [
     question: "Which of your AI pilots deserves a budget?",
     questionBody: "Marketing has a chatbot. Support tried a vendor. The board wants to know if the company is behind. Nobody owns the answer, so every pilot gets a little money and none gets a decision.",
     answer: "A plan the board can fund.",
-    answerBody: "We work out where AI pays off in your business and put a number on each case. Build or buy, which vendor, what can go wrong. Then a roadmap in the order it has to happen: data first, then people, then the change itself.",
+    answerBody: "We work out where AI pays off in your business and put a number on each case: build or buy, which vendor, what can go wrong. Then a roadmap in the order it has to happen. Data first, then people, then the change itself.",
     chips: ["AI strategy engagement", "Build vs buy and vendor evaluation", "AI risk assessment", "Implementation roadmap", "Executive and board briefings"],
     cta: "Book a call"
   },
