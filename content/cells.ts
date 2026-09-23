@@ -23,9 +23,9 @@ export const cells: CellData[] = [
   {
     id: "02", label: "Application development",
     question: "How many tabs does support open per ticket?",
-    questionBody: "Your team answers the same questions by hand, from PDFs, Confluence and the one person who remembers. The last AI pilot was a demo. Nobody dared put it in front of a customer.",
-    answer: "Assistants your customers can talk to.",
-    answerBody: "Chatbots and support agents that answer from your own documents. Agents that transcribe meetings, do research, find prospects. MCP servers so your tools can call each other. Built on whatever framework fits your stack, and shipped with an eval set so you know when it breaks.",
+    questionBody: "Your team answers the same questions by hand, from PDFs, Confluence and the one person who remembers. The last AI pilot was a demo nobody dared put in front of a customer.",
+    answer: "Assistants that answer from your own documents.",
+    answerBody: "Support agents and chatbots that cite the handbook instead of guessing. Agents that transcribe meetings, do research or find prospects. MCP servers so your tools can call each other. Built on whatever framework fits your stack, with an eval set so you know when it breaks.",
     chips: ["Custom chatbots and RAG assistants", "Multimodal support agents", "SDR and deep-research agents", "Meeting transcription and action items", "MCP servers and multi-agent systems"],
     cta: "Book a call"
   },
