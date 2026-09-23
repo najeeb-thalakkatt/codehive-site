@@ -49,16 +49,15 @@ export default function LiquidHero() {
       </div>
 
       <div className={s.copy}>
-        <p className={s.eyebrow}>AI engineering as a service · Stockholm</p>
+        <p className={s.eyebrow}>AI engineering as a service</p>
         <h1 id="hero-title" className={s.h1}>Ship the AI feature.</h1>
-        <p className={s.sub}>Backend engineering for teams adding LLM features without an ML team. Based in Stockholm, remote across Europe, the UK and the US.</p>
+        <p className={s.sub}>Backend engineering for teams adding LLM features without an ML team.</p>
         <div className={s.actions}>
           <a className={s.btn} href="#book">Book a call</a>
           <a className={s.btnGhost} href="#services">See the services</a>
         </div>
       </div>
 
-      <div className={s.scroll} aria-hidden="true">Scroll</div>
     </section>
   );
 }
