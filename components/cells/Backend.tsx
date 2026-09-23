@@ -18,7 +18,7 @@ export default function Backend() {
         <div key={name} className="card anim" style={{ animationName: name, borderRadius: "12px 12px 12px 4px" }}>{text}</div>
       ))}
       <div className="reply anim" style={{ animationName: "s2reply", top: 440 }}>one API · one job · zero tokens</div>
-      <div className="mono anim" style={{ animationName: "s2cite", position: "absolute", left: 860, top: 518, fontSize: 13, color: "var(--ink3)" }}>runs nightly · 40 s · cost: the server you already have</div>
+      <div className="mono anim" style={{ animationName: "s2cite", position: "absolute", right: 120, top: 518, fontSize: 13, whiteSpace: "nowrap", color: "var(--ink3)" }}>runs nightly · 40 s · cost: the server you already have</div>
     </>
   );
 }
