@@ -13,7 +13,7 @@ const mono = localFont({ src: [{ path: "./fonts/ibm-plex-mono-400.woff2", weight
 export const metadata: Metadata = {
   metadataBase: new URL("https://codehives.se"),
   title: "Codehive · AI engineering as a service",
-  description: "Backend engineering for teams adding LLM features without an ML team. Stockholm.",
+  description: "Backend engineering for teams adding LLM features without an ML team. Stockholm, remote across Europe, the UK and the US.",
   icons: {
     icon: [{ url: "/favicon.svg", type: "image/svg+xml" }, { url: "/favicon-32.png", sizes: "32x32", type: "image/png" }],
     apple: "/apple-touch-icon.png",
