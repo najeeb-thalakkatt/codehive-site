@@ -34,7 +34,7 @@ Source: `prototype/index.html`, keyframes prefixed `s2`, `s3`, `s4`, `s5`. Templ
 
 ## 6. Launch plumbing
 - [x] Domain: point codehives.se at GitHub Pages (live 2026-09-21: HTTPS enforced, www and http redirect to https://codehives.se. DNS has one A record, 185.199.108.153; add 109, 110 and 111 and the four AAAA records for redundancy)
-- [ ] Email: SPF, DKIM, DMARC for dev@codehives.se (do this before any outreach)
+- [x] Email: SPF, DKIM, DMARC for dev@codehives.se (Strato: SPF redirect, DKIM selectors, DMARC p=reject, 2026-09-22)
 - [x] OG image (1200×630) from the design system cover, wired in `app/layout.tsx` (built from the hero, source in the commit message; swap for the real cover art if there is one)
 - [x] Favicon set: svg in place; add 32px png and apple-touch-icon from `codehive-favicon.svg`
 - [x] Privacy page (`/privacy`), linked from the footer; required once a form or analytics exists (street address is a [PLACEHOLDER])
