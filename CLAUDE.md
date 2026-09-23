@@ -3,7 +3,7 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 Single-page marketing site for Codehive AB, an AI engineering consultancy in Stockholm.
-Next.js 15 App Router, React 19, TypeScript strict, CSS keyframes driven by the Web Animations API. Static export (`output: "export"`) deployed to GitHub Pages at codehives.se by `.github/workflows/pages.yml` on every push to `main`. Dark theme only.
+Next.js 15 App Router, React 19, TypeScript strict, CSS keyframes driven by the Web Animations API, one WebGL shader in the hero. Static export (`output: "export"`) deployed to GitHub Pages at codehives.se by `.github/workflows/pages.yml` on every push to `main`. Dark theme only.
 
 ## Commands
 ```
@@ -25,63 +25,62 @@ No server features: no API routes, no `next/image` optimisation, no middleware. 
 - `styles/tokens.css` before choosing any colour, spacing or radius. Never write a raw hex in a component; use the variable.
 
 ## How the page fits together
-`app/page.tsx` mounts, in order: `HiveCanvas` (fixed background), `Reveal`, `Nav`, then `Hero`, the
-"Six things we do" intro, one `Cell` per entry in `content/services.ts`, `Contact`, `Footer`. It looks
-up each cell's visual in the `visuals` map in `components/cells/index.ts` by cell id; a cell with no
-entry renders its text but an empty visual box. All six are registered; 06 reuses the cell 02 keyframes until it gets its own visual.
+`app/page.tsx` mounts, in order: `HiveCanvas` (fixed background), `Reveal`, `Nav`, then `LiquidHero`,
+`ServicesIntro`, one `Cell` card per entry in `content/services.ts` (`SERVICES`), `Contact`, `Footer`.
+Everything that shows a service number, name or label reads from `SERVICES`; nothing else types one.
+The layout is the site-v3 package from the founder (hero, intro, compact card, six animations); port
+its references, do not redesign them.
 
-### Play on enter (the one non-obvious mechanism)
-- Nothing is scrubbed by scroll position and nothing is pinned. `lib/usePlayOnEnter.ts` collects every
-  Web Animation inside a cell, holds them at 0, and once a quarter of the section is in view plays them all
-  at playback rate 1/7, so the 1 s keyframe timeline takes 7 s on screen. One play per cell per page load.
-- Motion is plain CSS `@keyframes` whose 0–100% is that timeline. Keyframes stay the single source of truth;
-  the hook only decides when they run. There is no animation library.
-- `.anim` (in `app/globals.css`) sets duration 1s, linear, fill both, paused. An element needs `.anim` plus an
-  `animation-name` to participate. `.w` is the streamed-word variant (duration .04s, staggered via `animation-delay`).
-- Text streams via `components/Stream.tsx`: each word is a `.w` span with `animation-delay` spread between
-  `t0` and `t1` (0–1 progress). All words are always in the DOM, so screen readers get the full text.
-- The cell timeline: the question headline is partly visible at 0 (negative `t0`), the "you" turn is in by
-  0.3, the visual box appears at 0.24–0.32 in its problem state, the "codehive" turn streams 0.36–0.62, chips
-  0.63–0.72, action 0.74. Visual keyframes are authored on the full 0–100% and compressed into 0.34–1.0 by
-  `.viz :global(.anim)` in `Cell.module.css`.
-- Above 1100px the cell is two columns (text left, visual right); below, one column with the visual last.
+### Hero (`components/LiquidHero.tsx`)
+A WebGL liquid-metal shader (`@paper-design/shaders-react`, the one dependency with a reason) masked by
+`public/codehive-cell.svg`, the logo cell with the braces cut out. Loaded with `next/dynamic` after
+hydration so the copy is the LCP and the 83 kB shader chunk stays off the first load. `colorBack` is
+transparent so the HiveCanvas lattice shows through. Reduced motion sets `speed` 0 and parks the drifting
+snippets. Actions are the site's `.act`, with an ink marker on the primary: no amber on the honey.
+
+### Play on enter (text and intro)
+- `lib/usePlayOnEnter.ts` collects every Web Animation inside a ref, holds them at 0, and once the element
+  is in view plays them all once at rate 1/duration. The intro plays over 10 s; each card's text column over
+  7 s. Nothing is scrubbed by scroll and nothing is pinned.
+- Motion is plain CSS `@keyframes` whose 0–100% is that timeline. `.anim` (in `app/globals.css`) sets duration
+  1s, linear, fill both, paused; an element needs `.anim` plus an `animation-name`. `.w` is the streamed-word
+  variant (`components/Stream.tsx`, one `.w` span per word, the space between spans, never inside).
+- Card text timeline: question partly visible at 0 (negative `t0`), the "you" turn in by 0.3, the codehive
+  bubble fades in at 0.32–0.36, its heading 0.36–0.46, body 0.47–0.62, chips 0.63–0.72, action 0.74.
+- Keyframes in a CSS module get hashed names; keyframes referenced by inline `animationName` live in plain
+  global css next to the component (`services-intro.css`, `components/cells/*.css`), prefixed per component.
 - Reduced motion: the hook sets every animation to its end and never plays.
 
-### Cell visuals
-- Authored on a 1280×800 canvas. `Cell.tsx` shows the 720×520 region at (560,100), scaled to the column width
-  on resize. The six visuals are ports of the artboards in the "Codehive service animations" design canvas
-  (https://claude.ai/artifact/MtLje9ahfF4WvAN5wReE61, 560×520 each): every one is drawn inside `.stg`, a 560×520
-  stage at (640,100), so artboard coordinates carry over unchanged. Artboard timings carry over as keyframe
-  percentages; drop the artboards' loop-only end fade and any infinite animation (the hook needs every animation
-  to finish). Phone crops are the stage plus a margin, so labels render at about 60%.
-- Shared primitives are in `components/cells/viz.css` (`.stg`, `.el`, `.lbl`, `.note`, `.tag`, `.typed`, `.bub`, `.ans`,
-  `.box`, `.bar`) and `components/cells/parts.tsx` (hex points, `Tick`, `Badge`, `Lines`). Per-cell keyframes go in
-  their own css file next to the component (`strategy.css`), prefixed `s<cell>` since the css is global.
-- Recipe for a cell visual: `components/cells/<Name>.tsx` + `<name>.css` following `Strategy.tsx` (inline
-  `animationName` per element, `aria-hidden` on decorative svg), registered by id in `components/cells/index.ts`.
-  Hex clusters sit on the site grid: pointy-top, 6px gap, neighbours at √3·r+6 horizontally. `prototype/index.html`
-  is the older reference the first visuals came from; do not edit it.
-- Anything that reparents a cell's DOM after mount recreates its CSS animations and orphans the hook's handles.
-  Do not reintroduce pinning or portals inside a cell without re-collecting in `usePlayOnEnter`.
-- `.w` word spans are inline-block; the inter-word space must sit between spans, not inside them, and
-  with no wrapper element per word: every node in a cell is hydration work on a phone.
-- Never call `getAnimations()` per element. One `el.getAnimations({ subtree: true })` per cell. The per-element
-  version forced hundreds of style recalcs inside React's effect flush and cost a second of main-thread time on
-  mobile (Lighthouse blamed the framework chunk, which is misleading).
-- The old scroll-scrub driver (GSAP ScrollTrigger pinning, progress → currentTime) was replaced on 2026-09-21 by
-  play-on-enter at the founder's request. Do not bring pinning back without asking.
-- Perf budget: Lighthouse mobile performance and accessibility both above 90. Measure against the live site
-  or a server that gzips; `python3 -m http.server` on `out/` sends 157 KB of uncompressed HTML and makes the
-  simulated LCP read 4 s when the real figure is under 2 s. Re-run after touching
-  `usePlayOnEnter`, `Stream`, `HiveCanvas` or anything that adds DOM nodes to a cell.
-- `components/HiveCanvas.tsx` is a canvas hex lattice with glow "flows" that hop between cells; its density
-  follows scroll position (full on hero, quiet behind cells, medium after). It reads the last `section[id^=cell-]`
-  to know where the cells end, so keep that id pattern.
-- `components/Reveal.tsx` is a plain IntersectionObserver that adds `.in` to `.reveal` elements for fade-ups
-  outside the pinned cells.
+### Service cards and their animations
+- `components/Cell.tsx` is the compact card: header row (dot, number, name, `0N / 06`), a "you" bubble and a
+  "codehive" bubble with chips and the action on the left, `ServiceAnimation` on the right; one column under
+  900px. Cards must fit a 720px-tall viewport at 1280 wide (check with `v3.mjs`-style measurements).
+- `components/ServiceAnimation.tsx` is a 640×600 frame scaled to its width (`lib/useScaleToFit.ts`,
+  `aspect-ratio` reserves the height so nothing shifts). The visual inside is one of `components/cells`,
+  registered by the `animation` key in `SERVICES` in `components/cells/index.ts`.
+- The visuals are ports of the site-v3 artboards (`site-v3/animations`, identical to the "Codehive service
+  animations" design canvas): each draws in a 560×520 `.stg` that the frame places at the artboard's 40px
+  padding. Artboard timings carry over as keyframe percentages, colours as tokens, geometry unchanged.
+- Loop policy: the frame's css turns every `.anim` inside into a 13 s infinite loop (`.stg` gets the end fade),
+  running only while the frame is in view (IntersectionObserver) and paused otherwise. Under reduced motion
+  the component parks every loop at 12.35 s (the finished scene, before the fade). The card's play-once hook
+  watches the text column only, so it never touches the loop.
+- Shared primitives: `components/cells/viz.css` (`.stg`, `.el`, `.lbl`, `.note`, `.tag`, `.typed`, `.bub`,
+  `.ans`, `.box`, `.bar`, `stagefade`) and `components/cells/parts.tsx` (hex points, `Tick`, `Badge`, `Lines`).
+  Hex clusters sit on the site grid: pointy-top, 6px gap, neighbours at √3·r+6.
+- Never call `getAnimations()` per element. One `getAnimations({ subtree: true })` per column or frame.
+- Anything that reparents a card's DOM after mount recreates its CSS animations and orphans the hook's handles.
+- Perf budget: Lighthouse mobile performance and accessibility both above 90; performance within 5 points of
+  the pre-v3 site (97–99). Measure against the live site or a server that gzips; `python3 -m http.server`
+  inflates LCP. The dim-at-rest idea failed the contrast audit once (1.6:1); keep resting text at full opacity.
+- `components/HiveCanvas.tsx` is a canvas hex lattice with glow "flows"; its density follows scroll position
+  and it reads the last `section[id^=cell-]` to know where the cards end, so keep that id pattern.
+- `components/Reveal.tsx` adds `.in` to `.reveal` elements for fade-ups (contact).
+- `prototype/index.html` is the pre-v3 reference the first visuals came from; do not edit it.
 
 ## Animation contract
-- Anything scrubbed has class `anim` (or `w`), an `animation-name`, and total delay+duration ≤ 1s.
+- Anything played once has class `anim` (or `w`), an `animation-name`, and total delay+duration ≤ 1s. The
+  card animations loop instead; their keyframes are still authored on 0–100%.
 - Prefer transform and opacity. Colour, stroke and border animations are allowed sparingly.
 - Do not replace the keyframes with a JS animation library; extend them.
 - `prefers-reduced-motion` must always render the finished state. Test it.
@@ -102,7 +101,7 @@ entry renders its text but an empty visual box. All six are registered; 06 reuse
 ## Working agreements
 - Keep components small and colocated: `Foo.tsx` + `Foo.module.css`. Global CSS only in `app/globals.css`
   (and the cell visual css files, which are plain global css imported by their component).
-- Do not add dependencies without a reason written in the PR. The site should stay a small static page with
-  no animation library at all. "Not doing" in `TODO.md` applies: no blog, team page, client logos, light theme.
+- Do not add dependencies without a reason written in the PR. `@paper-design/shaders-react` is the one
+  exception (the hero shader, site-v3 T1); there is still no animation library. "Not doing" in `TODO.md` applies: no blog, team page, client logos, light theme.
 - Do not touch `prototype/index.html`; it is the reference the visuals were ported from.
 - Contact is a click-to-load Calendly frame in `components/Booking.tsx`; analytics is Umami behind an env var set as a GitHub Actions variable.
