@@ -32,7 +32,7 @@ The cell visual is authored on a 1280×800 canvas (same coordinates as the desig
 - Mobile: the visual is a crop of the desktop scene. A re-choreographed mobile variant per cell is still to do.
 
 ## Where things live
-- `content/cells.ts` all copy for the six cells
+- `content/services.ts` all copy for the six services
 - `styles/tokens.css` the design tokens (mirror of the Codehive design system)
 - `components/HiveCanvas.tsx` background lattice and glow; density follows scroll position
 - `prototype/index.html` the static prototype this was ported from, kept for reference

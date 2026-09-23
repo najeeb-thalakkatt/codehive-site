@@ -1,12 +1,12 @@
 "use client";
 import { useEffect, useRef } from "react";
-import type { CellData } from "@/content/cells";
+import { BOOK, type Service } from "@/content/services";
 import { desktopCrop, type Crop } from "@/components/cells";
 import { usePlayOnEnter } from "@/lib/usePlayOnEnter";
 import Stream from "./Stream";
 import s from "./Cell.module.css";
 
-export default function Cell({ data, mobileCrop, children }: { data: CellData; mobileCrop?: Crop; children?: React.ReactNode }) {
+export default function Cell({ data, mobileCrop, children }: { data: Service; mobileCrop?: Crop; children?: React.ReactNode }) {
   const ref = useRef<HTMLElement>(null);
   const wrap = useRef<HTMLDivElement>(null);
   const viz = useRef<HTMLDivElement>(null);
@@ -29,21 +29,21 @@ export default function Cell({ data, mobileCrop, children }: { data: CellData; m
   }, [mobileCrop]);
 
   return (
-    <section ref={ref} className={s.cell} id={`cell-${data.id}`} aria-label={data.label}>
+    <section ref={ref} className={s.cell} id={`cell-${data.id}`} aria-label={data.name}>
       <div className={s.stage}>
         <div className={s.col}>
           <div className={s.text}>
-            <div className={`eyebrow ${s.eyebrow}`}><span className={s.num}>{data.id}</span>{data.label}</div>
+            <div className={`eyebrow ${s.eyebrow}`}><span className={s.num}>{data.id}</span>{data.name}</div>
             {/* Timeline (0–1 = the 7 s play). The headline starts with a negative delay so its first
                 words are already on screen the moment the cell appears. */}
             <div className={`${s.msg} ${s.you} anim`}>
               <h2><Stream text={data.question} t0={-0.06} t1={0.12} /></h2>
-              <p><Stream text={data.questionBody} t0={0.12} t1={0.3} /></p>
+              <p><Stream text={data.problem} t0={0.12} t1={0.3} /></p>
             </div>
             <div className={`${s.msg} ${s.us}`}>
               <div className={`${s.who} anim`}>codehive<span className={`${s.caret} anim`} /></div>
               <h2><Stream text={data.answer} t0={0.36} t1={0.46} /></h2>
-              <p><Stream text={data.answerBody} t0={0.47} t1={0.62} /></p>
+              <p><Stream text={data.body} t0={0.47} t1={0.62} /></p>
               <div className="chips">
                 {data.chips.map((c, i) => (
                   <span key={c} className="chip w" style={{ animationDelay: `${(0.63 + (0.09 * i) / data.chips.length).toFixed(3)}s` }}>{c}</span>
@@ -52,7 +52,7 @@ export default function Cell({ data, mobileCrop, children }: { data: CellData; m
               {/* Plain #book works without JavaScript. The source cell rides along as a data attribute and a
                   custom event so Booking can prefill Calendly's service question. */}
               <a className="act w" style={{ animationDelay: ".74s" }} href="#book" data-source={`cell-${data.id}`}
-                onClick={() => window.dispatchEvent(new CustomEvent("codehive:book", { detail: data.label }))}>{data.cta}</a>
+                onClick={() => window.dispatchEvent(new CustomEvent("codehive:book", { detail: data.name }))}>{BOOK}</a>
             </div>
           </div>
           <div ref={wrap} className={`${s.vizWrap} anim`}>

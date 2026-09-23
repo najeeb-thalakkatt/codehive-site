@@ -16,7 +16,7 @@ Source: `prototype/index.html`, keyframes prefixed `s2`, `s3`, `s4`, `s5`. Templ
 - [x] Register each in `components/cells/index.ts`
 
 ## 3. Copy pass (founder, not Claude)
-- [x] Read `content/cells.ts` aloud once; rewrite anything you would not say to a client (founder, 2026-09-21)
+- [x] Read `content/services.ts` aloud once; rewrite anything you would not say to a client (founder, 2026-09-21)
 - [x] Decide the five CTAs: all "Start a project", all "Book a call", or as is (all "Book a call", hero too: every action opens the same Calendly)
 - [ ] Hero subline and contact paragraph: confirm or rewrite
 
@@ -47,7 +47,7 @@ Source: `prototype/index.html`, keyframes prefixed `s2`, `s3`, `s4`, `s5`. Templ
 - [ ] Hive glow: react to scroll speed
 - [ ] Services intro: consider removing the "Six things we do" heading if the cells carry it
 - [x] Cell 06 "Plain backend": own visual (all six visuals ported from the service animations canvas, 2026-09-23)
-- [ ] Calendly: add "Plain backend" to the "Which service are you looking for?" options (must match the label in content/cells.ts)
+- [ ] Calendly: add "Plain backend" to the "Which service are you looking for?" options (must match `name` in content/services.ts)
 - [ ] Add a `/work` page only when there is a real AI case study to show; never a placeholder
 
 ## Not doing

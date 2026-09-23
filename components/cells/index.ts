@@ -21,10 +21,10 @@ export type CellVisual = {
 
 /** Map cell id → visual. All six ported from the "Codehive service animations" design canvas (one artboard per cell); the mobile crop is the stage plus a 16px margin on the side where content meets its edge. */
 export const visuals: Record<string, CellVisual> = {
-  "01": { Component: Strategy, mobile: { x: 680, y: 100, w: 480, h: 520 } },
-  "02": { Component: AppDev, mobile: { x: 624, y: 100, w: 592, h: 520 } },
-  "03": { Component: Models, mobile: { x: 624, y: 100, w: 592, h: 520 } },
-  "04": { Component: MLOps, mobile: { x: 624, y: 100, w: 592, h: 520 } },
-  "05": { Component: Enablement, mobile: { x: 680, y: 100, w: 480, h: 520 } },
-  "06": { Component: Backend, mobile: { x: 624, y: 100, w: 560, h: 520 } },
+  strategy: { Component: Strategy, mobile: { x: 680, y: 100, w: 480, h: 520 } },
+  applications: { Component: AppDev, mobile: { x: 624, y: 100, w: 592, h: 520 } },
+  models: { Component: Models, mobile: { x: 624, y: 100, w: 592, h: 520 } },
+  production: { Component: MLOps, mobile: { x: 624, y: 100, w: 592, h: 520 } },
+  enablement: { Component: Enablement, mobile: { x: 680, y: 100, w: 480, h: 520 } },
+  backend: { Component: Backend, mobile: { x: 624, y: 100, w: 560, h: 520 } },
 };

@@ -1,5 +1,5 @@
 import s from "./Hero.module.css";
-import { cells } from "@/content/cells";
+import { SERVICES } from "@/content/services";
 const HEX = "0,-58 50,-29 50,29 0,58 -50,29 -50,-29";
 // One tile per service, on the site grid: pointy-top r=58 hexes with a 6px gap, neighbours at (±106, 0)
 // and (±53, ±92) from the centre. The centre is cell 04 (live in production); the ring runs clockwise
@@ -9,7 +9,7 @@ const tiles: [number, number, string, string, number][] = [
   [227, 372, "handover", "05", .2], [174, 280, "API", "06", .75],
 ];
 const ghost: [number, number, number] = [333, 372, .1];
-const nameOf = (id: string) => cells.find((c) => c.id === id)?.label ?? id;
+const nameOf = (id: string) => SERVICES.find((c) => c.id === id)?.name ?? id;
 
 export default function Hero() {
   return (

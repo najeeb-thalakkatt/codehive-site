@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { cells } from "@/content/cells";
+import { SERVICES } from "@/content/services";
 import s from "./Booking.module.css";
 
 const CALENDLY = "https://calendly.com/dev-codehive/30min";
@@ -9,7 +9,7 @@ const CALENDLY = "https://calendly.com/dev-codehive/30min";
  *  page stays cookie-free by default and the privacy page can say so.
  *  Any link to #book opens it. A cell's action also dispatches a `codehive:book` event carrying its
  *  label, which prefills Calendly's first invitee question ("Which service are you looking for?") via
- *  the `a1` parameter. The option text in Calendly must match `label` in content/cells.ts exactly. */
+ *  the `a1` parameter. The option text in Calendly must match `name` in content/services.ts exactly. */
 export default function Booking() {
   const [open, setOpen] = useState<false | string>(false);
   const [loaded, setLoaded] = useState(false);
@@ -21,7 +21,7 @@ export default function Booking() {
       setOpen((o) => (o === false ? "" : o)); // keep a label a cell's click just set
       scroll();
     };
-    const fromCell = (e: Event) => { const label = (e as CustomEvent<string>).detail; if (cells.some((c) => c.label === label)) setOpen(label); };
+    const fromCell = (e: Event) => { const label = (e as CustomEvent<string>).detail; if (SERVICES.some((c) => c.name === label)) setOpen(label); };
     window.addEventListener("codehive:book", fromCell);
     check();
     // On a direct load with the hash, the pin spacers are inserted after this effect and push the
