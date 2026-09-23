@@ -18,6 +18,11 @@ No server features: no API routes, no `next/image` optimisation, no middleware. 
 
 `@/*` maps to the repo root (`@/content/services`, `@/lib/usePlayOnEnter`).
 
+## Skills
+Project skills in `.claude/skills/`: `init-session` (start here), `apply-tasks` (pasted task lists), `port-visual`
+(artboard to cell), `check` (Playwright checks), `screens` (look at a section), `variants` (local comparison page),
+`ship` (build, commit, push, deploy, Lighthouse). `scripts/status.sh` and `scripts/run-checks.sh` back them.
+
 ## Read first
 - `README.md` for how the cells play and what is wired vs not.
 - `TODO.md` is the ordered backlog; one item per PR, tick it in the same commit that finishes it.
