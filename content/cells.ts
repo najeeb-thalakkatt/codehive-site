@@ -52,7 +52,7 @@ export const cells: CellData[] = [
     question: "What happens when the one person who knows leaves?",
     questionBody: "One engineer understands the pipeline. The vendor who built the pilot has moved on. Your board learns about AI from the news instead of from you.",
     answer: "A team that owns it.",
-    answerBody: "Training at every layer, from a board briefing to hands-on sessions for engineers. During the build we pair with your team, so when we leave the knowledge does not.",
+    answerBody: "Training at every layer, from a board briefing to hands-on sessions for engineers. During the build we pair with your team, so the knowledge stays when we leave.",
     chips: ["Executive and board workshops", "Engineer training on LLM and agent stacks", "Pairing during delivery", "Runbooks and handover"],
     cta: "Book a call"
   },
