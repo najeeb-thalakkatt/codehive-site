@@ -45,7 +45,9 @@ Source: `prototype/index.html`, keyframes prefixed `s2`, `s3`, `s4`, `s5`. Templ
 ## 7. Polish, after launch
 - [ ] Hero hive: continue assembling on scroll and hand over to cell 01 (currently a load animation only)
 - [ ] Hive glow: react to scroll speed
-- [ ] Services intro: consider removing the "Five things we do" heading if the cells carry it
+- [ ] Services intro: consider removing the "Six things we do" heading if the cells carry it
+- [ ] Cell 06 "Plain backend": own visual (first version reuses the cell 02 chat stream)
+- [ ] Calendly: add "Plain backend" to the "Which service are you looking for?" options (must match the label in content/cells.ts)
 - [ ] Add a `/work` page only when there is a real AI case study to show; never a placeholder
 
 ## Not doing

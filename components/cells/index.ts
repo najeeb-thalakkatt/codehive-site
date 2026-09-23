@@ -4,6 +4,7 @@ import AppDev from "./AppDev";
 import Models from "./Models";
 import MLOps from "./MLOps";
 import Enablement from "./Enablement";
+import Backend from "./Backend";
 
 /** Region of the 1280×800 canvas that Cell.tsx shows, scaled to the column width. */
 export type Crop = { x: number; y: number; w: number; h: number };
@@ -18,11 +19,12 @@ export type CellVisual = {
   mobile: Crop;
 };
 
-/** Map cell id → visual. All five ported from prototype/index.html (keyframes s1..s5). */
+/** Map cell id → visual. 01–05 ported from prototype/index.html (keyframes s1..s5); 06 reuses s2 for now. */
 export const visuals: Record<string, CellVisual> = {
   "01": { Component: Strategy, mobile: { x: 690, y: 220, w: 420, h: 360 } },
   "02": { Component: AppDev, mobile: { x: 740, y: 180, w: 440, h: 450 } },
   "03": { Component: Models, mobile: { x: 720, y: 216, w: 520, h: 400 } },
   "04": { Component: MLOps, mobile: { x: 660, y: 280, w: 510, h: 300 } },
   "05": { Component: Enablement, mobile: { x: 660, y: 166, w: 480, h: 420 } },
+  "06": { Component: Backend, mobile: { x: 740, y: 180, w: 440, h: 400 } },
 };

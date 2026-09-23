@@ -4,7 +4,7 @@ import { Fragment } from "react";
  *  Purely CSS + WAAPI: the words are always in the DOM, so screen readers get the full text.
  *  The space lives between the spans, not inside: `.w` is inline-block, and trailing
  *  whitespace inside an inline-block box is collapsed away. One element per word, no wrappers:
- *  every extra node here is hydration work on a phone, five cells deep. */
+ *  every extra node here is hydration work on a phone, six cells deep. */
 export default function Stream({ text, t0, t1 }: { text: string; t0: number; t1: number }) {
   const words = text.split(" ");
   // A negative delay means "already shown when the cell appears". Clamp it to the word's full

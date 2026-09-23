@@ -21,14 +21,14 @@ No server features: no API routes, no `next/image` optimisation, no middleware. 
 ## Read first
 - `README.md` for how the cells play and what is wired vs not.
 - `TODO.md` is the ordered backlog; one item per PR, tick it in the same commit that finishes it.
-- `content/cells.ts` before touching any copy. All words for the five service cells live there.
+- `content/cells.ts` before touching any copy. All words for the six service cells live there.
 - `styles/tokens.css` before choosing any colour, spacing or radius. Never write a raw hex in a component; use the variable.
 
 ## How the page fits together
 `app/page.tsx` mounts, in order: `HiveCanvas` (fixed background), `Reveal`, `Nav`, then `Hero`, the
-"Five things we do" intro, one `Cell` per entry in `content/cells.ts`, `Contact`, `Footer`. It looks
+"Six things we do" intro, one `Cell` per entry in `content/cells.ts`, `Contact`, `Footer`. It looks
 up each cell's visual in the `visuals` map in `components/cells/index.ts` by cell id; a cell with no
-entry renders its text but an empty visual box. All five are registered.
+entry renders its text but an empty visual box. All six are registered; 06 reuses the cell 02 keyframes until it gets its own visual.
 
 ### Play on enter (the one non-obvious mechanism)
 - Nothing is scrubbed by scroll position and nothing is pinned. `lib/usePlayOnEnter.ts` collects every

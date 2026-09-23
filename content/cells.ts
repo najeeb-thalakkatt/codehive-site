@@ -1,5 +1,5 @@
 export type CellData = {
-  id: string;            // "01".."05"
+  id: string;            // "01".."06"
   label: string;         // eyebrow
   question: string;      // "you" headline
   questionBody: string;
@@ -54,6 +54,15 @@ export const cells: CellData[] = [
     answer: "A team that owns it.",
     answerBody: "Training at every layer, from a board briefing to hands-on sessions for engineers. During the build we pair with your team, so the knowledge stays when we leave.",
     chips: ["Executive and board workshops", "Engineer training on LLM and agent stacks", "Pairing during delivery", "Runbooks and handover"],
+    cta: "Book a call"
+  },
+  {
+    id: "06", label: "Plain backend",
+    question: "Do you need AI for this at all?",
+    questionBody: "The brief says \"add AI\". The actual problem is a report that takes a week, a sync job that fails every Sunday, or two systems that do not talk to each other. A well-built backend would fix it and nobody would need a model.",
+    answer: "Sometimes a good API is the whole answer.",
+    answerBody: "We build backend systems: APIs, data pipelines, integrations, and the queues and databases behind them. If that is what your problem needs, that is what we build, and we will say so before you pay for a model you do not need.",
+    chips: ["REST and GraphQL APIs", "Data pipelines and ETL", "Integrations and event systems", "Postgres, queues and cloud deployment"],
     cta: "Book a call"
   },
 ];
