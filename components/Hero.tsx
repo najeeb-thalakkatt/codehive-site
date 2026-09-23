@@ -1,10 +1,16 @@
 import s from "./Hero.module.css";
+import { cells } from "@/content/cells";
 const HEX = "0,-58 50,-29 50,29 0,58 -50,29 -50,-29";
-// pointy-top r=58 hexes tessellated with a 6px gap: neighbours at (±106, 0) and (±53, ±92) from the centre
-const cells: [number, number, string, "solid" | "line" | "dash", number][] = [
-  [280, 280, "prod", "solid", .9], [227, 188, "RAG", "line", .3], [333, 188, "agents", "line", .45], [386, 280, "evals", "line", .6],
-  [333, 372, "", "dash", .1], [227, 372, "", "dash", .2], [174, 280, "API", "line", .75],
+// One tile per service, on the site grid: pointy-top r=58 hexes with a 6px gap, neighbours at (±106, 0)
+// and (±53, ±92) from the centre. The centre is cell 04 (live in production); the ring runs clockwise
+// from the north-west in cell order 01, 02, 03, then 05, 06; the south-east slot stays a ghost.
+const tiles: [number, number, string, string, number][] = [
+  [280, 280, "live", "04", .9], [227, 188, "plan", "01", .3], [333, 188, "agents", "02", .45], [386, 280, "models", "03", .6],
+  [227, 372, "handover", "05", .2], [174, 280, "API", "06", .75],
 ];
+const ghost: [number, number, number] = [333, 372, .1];
+const nameOf = (id: string) => cells.find((c) => c.id === id)?.label ?? id;
+
 export default function Hero() {
   return (
     <section className={s.hero} id="top">
@@ -17,16 +23,24 @@ export default function Hero() {
         </div>
         <div className={s.hint} aria-hidden="true">SCROLL<i /></div>
         <div className={s.viz}>
-          <svg viewBox="0 0 560 560" width="100%" height="100%" aria-hidden="true">
-            {cells.map(([x, y, l, st, d]) => (
-              <g key={`${x}${y}`} transform={`translate(${x},${y})`}>
-                <g className={s.h} style={{ animationDelay: `${d}s` }}>
-                  {st === "solid" ? <><polygon points={HEX} fill="var(--amber)" /><text y="4" fill="var(--bg0)">{l}</text></>
-                    : st === "line" ? <><polygon points={HEX} fill="var(--bg1)" stroke="var(--amber)" strokeWidth="2" /><text y="4" fill="var(--ink1)">{l}</text></>
-                    : <polygon points={HEX} fill="none" stroke="var(--line2)" strokeWidth="2" strokeDasharray="6 5" />}
+          <svg viewBox="0 0 560 560" width="100%" height="100%" role="group" aria-label="The six services">
+            {tiles.map(([x, y, l, id, d]) => (
+              <a key={id} href={`#cell-${id}`} className={s.tile} aria-label={`${id} ${nameOf(id)}`}>
+                <title>{`${id} ${nameOf(id)}`}</title>
+                <g transform={`translate(${x},${y})`}>
+                  <g className={s.h} style={{ animationDelay: `${d}s` }}>
+                    {id === "04"
+                      ? <><polygon points={HEX} fill="var(--amber)" /><text y="4" fill="var(--bg0)">{l}</text></>
+                      : <><polygon points={HEX} fill="var(--bg1)" stroke="var(--amber)" strokeWidth="2" /><text y="4" fill="var(--ink1)">{l}</text></>}
+                  </g>
                 </g>
-              </g>
+              </a>
             ))}
+            <g transform={`translate(${ghost[0]},${ghost[1]})`} aria-hidden="true">
+              <g className={s.h} style={{ animationDelay: `${ghost[2]}s` }}>
+                <polygon points={HEX} fill="none" stroke="var(--line2)" strokeWidth="2" strokeDasharray="6 5" />
+              </g>
+            </g>
           </svg>
         </div>
       </div>

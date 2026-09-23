@@ -6,6 +6,9 @@
 .viz { position: relative; width: 100%; aspect-ratio: 1; max-width: 560px; justify-self: center; }
 .h { transform-box: fill-box; transform-origin: center; transform: scale(.55); opacity: 0; animation: heroin .8s var(--ease-out) forwards; }
 .viz text { text-anchor: middle; font-family: var(--font-mono); font-size: 12px; font-weight: 500; }
+.tile { cursor: pointer; outline: none; }
+.tile:hover polygon, .tile:focus-visible polygon { fill: var(--amber); }
+.tile:hover text, .tile:focus-visible text { fill: var(--bg0); }
 @keyframes heroin { to { transform: scale(1); opacity: 1; } }
 .hint { position: absolute; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); font-family: var(--font-mono); font-size: 11px; letter-spacing: 1px; color: var(--ink3); display: flex; flex-direction: column; align-items: center; gap: 8px; }
 .hint i { display: block; width: 1px; height: 28px; background: linear-gradient(var(--amber), transparent); animation: hint 1.8s ease-in-out infinite; }
