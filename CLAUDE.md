@@ -42,20 +42,25 @@ entry renders its text but an empty visual box. All six are registered; 06 reuse
   `t0` and `t1` (0–1 progress). All words are always in the DOM, so screen readers get the full text.
 - The cell timeline: the question headline is partly visible at 0 (negative `t0`), the "you" turn is in by
   0.3, the visual box appears at 0.24–0.32 in its problem state, the "codehive" turn streams 0.36–0.62, chips
-  0.63–0.72, action 0.74. Visual keyframes are authored on the full 0–100% and compressed into 0.42–1.0 by
+  0.63–0.72, action 0.74. Visual keyframes are authored on the full 0–100% and compressed into 0.34–1.0 by
   `.viz :global(.anim)` in `Cell.module.css`.
 - Above 1100px the cell is two columns (text left, visual right); below, one column with the visual last.
 - Reduced motion: the hook sets every animation to its end and never plays.
 
 ### Cell visuals
-- Authored on a 1280×800 canvas (same coordinates as the design mockups and `prototype/index.html`).
-  `Cell.tsx` shows the 720×520 region at (560,100), scaled to the column width on resize. Keep important
-  elements inside that region, or let them enter from outside on purpose.
-- Shared primitives are in `components/cells/viz.css` (`.hx` hexagon, `.card`, `.vizSvg`, `trace`, `tick`, `fadeout`).
-  Per-cell keyframes go in their own css file next to the component (`strategy.css`).
+- Authored on a 1280×800 canvas. `Cell.tsx` shows the 720×520 region at (560,100), scaled to the column width
+  on resize. The six visuals are ports of the artboards in the "Codehive service animations" design canvas
+  (https://claude.ai/artifact/MtLje9ahfF4WvAN5wReE61, 560×520 each): every one is drawn inside `.stg`, a 560×520
+  stage at (640,100), so artboard coordinates carry over unchanged. Artboard timings carry over as keyframe
+  percentages; drop the artboards' loop-only end fade and any infinite animation (the hook needs every animation
+  to finish). Phone crops are the stage plus a margin, so labels render at about 60%.
+- Shared primitives are in `components/cells/viz.css` (`.stg`, `.el`, `.lbl`, `.note`, `.tag`, `.typed`, `.bub`, `.ans`,
+  `.box`, `.bar`) and `components/cells/parts.tsx` (hex points, `Tick`, `Badge`, `Lines`). Per-cell keyframes go in
+  their own css file next to the component (`strategy.css`), prefixed `s<cell>` since the css is global.
 - Recipe for a cell visual: `components/cells/<Name>.tsx` + `<name>.css` following `Strategy.tsx` (inline
   `animationName` per element, `aria-hidden` on decorative svg), registered by id in `components/cells/index.ts`.
-  The prototype is the reference for coordinates and timing; do not edit it.
+  Hex clusters sit on the site grid: pointy-top, 6px gap, neighbours at √3·r+6 horizontally. `prototype/index.html`
+  is the older reference the first visuals came from; do not edit it.
 - Anything that reparents a cell's DOM after mount recreates its CSS animations and orphans the hook's handles.
   Do not reintroduce pinning or portals inside a cell without re-collecting in `usePlayOnEnter`.
 - `.w` word spans are inline-block; the inter-word space must sit between spans, not inside them, and

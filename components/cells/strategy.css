@@ -1,16 +1,13 @@
-/* Cell 01, Strategy: scattered problem cards fly in and become a hive.
-   Each card lands centred on one hexagon (translate = hex centre − (card width/2, 17)), then shrinks away. */
-@keyframes s1c0 { 0% { transform: translate(155px,103px) rotate(-12deg); opacity: 1; } 44% { transform: translate(734px,291px) rotate(0); opacity: 1; } 51%, 100% { transform: translate(734px,291px) scale(.7); opacity: 0; } }
-@keyframes s1c1 { 0% { transform: translate(1057px,93px) rotate(8deg); opacity: 1; } 47% { transform: translate(885px,291px) rotate(0); opacity: 1; } 54%, 100% { transform: translate(885px,291px) scale(.7); opacity: 0; } }
-@keyframes s1c2 { 0% { transform: translate(72px,643px) rotate(6deg); opacity: 1; } 50% { transform: translate(783px,383px) rotate(0); opacity: 1; } 57%, 100% { transform: translate(783px,383px) scale(.7); opacity: 0; } }
-@keyframes s1c3 { 0% { transform: translate(935px,673px) rotate(-7deg); opacity: 1; } 46% { transform: translate(893px,383px) rotate(0); opacity: 1; } 53%, 100% { transform: translate(893px,383px) scale(.7); opacity: 0; } }
-@keyframes s1c4 { 0% { transform: translate(581px,43px) rotate(4deg); opacity: 1; } 49% { transform: translate(730px,383px) rotate(0); opacity: 1; } 56%, 100% { transform: translate(730px,383px) scale(.7); opacity: 0; } }
-@keyframes s1c5 { 0% { transform: translate(712px,543px) rotate(11deg); opacity: 1; } 45% { transform: translate(795px,475px) rotate(0); opacity: 1; } 52%, 100% { transform: translate(795px,475px) scale(.7); opacity: 0; } }
-@keyframes s1c6 { 0% { transform: translate(350px,413px) rotate(-3deg); opacity: 1; } 48% { transform: translate(823px,475px) rotate(0); opacity: 1; } 55%, 100% { transform: translate(823px,475px) scale(.7); opacity: 0; } }
-@keyframes s1h0 { 0%, 48% { opacity: 0; transform: scale(.55); } 58%, 100% { opacity: 1; transform: scale(1); } }
-@keyframes s1h1 { 0%, 49% { opacity: 0; transform: scale(.55); } 59%, 100% { opacity: 1; transform: scale(1); } }
-@keyframes s1h2 { 0%, 50% { opacity: 0; transform: scale(.55); } 60%, 100% { opacity: 1; transform: scale(1); } }
-@keyframes s1h3 { 0%, 51% { opacity: 0; transform: scale(.55); } 61%, 100% { opacity: 1; transform: scale(1); } }
-@keyframes s1h4 { 0%, 52% { opacity: 0; transform: scale(.55); } 62%, 100% { opacity: 1; transform: scale(1); } }
-@keyframes s1h5 { 0%, 53% { opacity: 0; transform: scale(.55); } 63%, 100% { opacity: 1; transform: scale(1); } }
-@keyframes s1h6 { 0%, 54% { opacity: 0; transform: scale(.55); } 64%, 100% { opacity: 1; transform: scale(1); } }
+/* Cell 01, Strategy: pilots collapse into a funded plan, five cells assemble, the roadmap ticks in. 0–100% = the visual window. */
+@keyframes s1trace { 0%, 12% { opacity: 0; } 16%, 28% { opacity: 1; } 33%, 100% { opacity: 0; } }
+@keyframes s1frag { 0% { opacity: 0; transform: translate(var(--fx), var(--fy)) rotate(var(--fr)) scale(.92); animation-timing-function: var(--eo); } 7%, 26% { opacity: 1; transform: translate(var(--fx), var(--fy)) rotate(var(--fr)) scale(1); animation-timing-function: var(--ei); } 38%, 100% { opacity: 0; transform: translate(280px, 220px) rotate(0deg) scale(.35); } }
+@keyframes s1chip { 0%, 10% { opacity: 0; transform: translateY(6px); } 15%, 28% { opacity: 1; transform: translateY(0); } 34%, 100% { opacity: 0; transform: translateY(0); } }
+@keyframes s1core { 0%, 37% { opacity: 0; transform: translate(280px, 220px) scale(.6); animation-timing-function: var(--eo); } 46%, 100% { opacity: 1; transform: translate(280px, 220px) scale(1); } }
+@keyframes s1c1 { 0%, 48% { opacity: 0; transform: translate(var(--ox), var(--oy)); animation-timing-function: var(--eo); } 55%, 100% { opacity: 1; transform: translate(var(--cx), var(--cy)); } }
+@keyframes s1c2 { 0%, 54% { opacity: 0; transform: translate(var(--ox), var(--oy)); animation-timing-function: var(--eo); } 61%, 100% { opacity: 1; transform: translate(var(--cx), var(--cy)); } }
+@keyframes s1c3 { 0%, 59% { opacity: 0; transform: translate(var(--ox), var(--oy)); animation-timing-function: var(--eo); } 66%, 100% { opacity: 1; transform: translate(var(--cx), var(--cy)); } }
+@keyframes s1c4 { 0%, 65% { opacity: 0; transform: translate(var(--ox), var(--oy)); animation-timing-function: var(--eo); } 72%, 100% { opacity: 1; transform: translate(var(--cx), var(--cy)); } }
+@keyframes s1c5 { 0%, 70% { opacity: 0; transform: translate(var(--ox), var(--oy)); animation-timing-function: var(--eo); } 77%, 100% { opacity: 1; transform: translate(var(--cx), var(--cy)); } }
+@keyframes s1s1 { 0%, 78% { opacity: 0; transform: translateX(-8px); animation-timing-function: var(--eo); } 82%, 100% { opacity: 1; transform: translateX(0); } }
+@keyframes s1s2 { 0%, 81% { opacity: 0; transform: translateX(-8px); animation-timing-function: var(--eo); } 85%, 100% { opacity: 1; transform: translateX(0); } }
+@keyframes s1s3 { 0%, 84% { opacity: 0; transform: translateX(-8px); animation-timing-function: var(--eo); } 88%, 100% { opacity: 1; transform: translateX(0); } }

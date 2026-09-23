@@ -1,50 +1,62 @@
 import "./viz.css";
 import "./strategy.css";
+import { Fragment, type CSSProperties } from "react";
+import { HEX58, Lines, Tick } from "./parts";
 
-/** Cell 01 visual. Loose problem cards fly in and become a hive. Keyframes are authored on the full
- *  0–100% cell timeline; Cell.tsx compresses them into the last 58% via .viz .anim.
- *
- *  Hex geometry: pointy-top, r = 58, tessellated with a 6px gap. Centre-to-centre distance is
- *  √3·r + gap ≈ 106, so the six neighbours sit at (±106, 0) and (±53, ±92) from the centre (900, 400).
- *  `left`/`top` are the 120×120 svg's corner, i.e. centre − 60. */
-const HEX = "0,-58 50,-29 50,29 0,58 -50,29 -50,-29";
-const ring: { name: string; left: number; top: number; label: string | [string, string] }[] = [
-  { name: "s1h1", left: 787, top: 248, label: ["brief the", "board"] },   // NW
-  { name: "s1h2", left: 893, top: 248, label: "build vs buy" },          // NE
-  { name: "s1h3", left: 946, top: 340, label: "roadmap" },               // E
-  { name: "s1h4", left: 893, top: 432, label: ["data", "readiness"] },   // SE
-  { name: "s1h5", left: 787, top: 432, label: "risks" },                 // SW
-  { name: "s1h6", left: 734, top: 340, label: ["business", "case"] },    // W
+/** Cell 01 visual, from the "01 Strategy" artboard of the service animations canvas.
+ *  Three scattered pilots and the red trace between them collapse into one amber core, five
+ *  strategy cells assemble around it, then the roadmap steps tick in below.
+ *  The ring sits on the site's hex grid: pointy-top r=58 with a 6px gap, neighbours at (±106, 0) and (±53, ±92). */
+const frags: [string, string, string, string[]][] = [
+  ["104px", "110px", "-7deg", ["CHATBOT", "PILOT"]],
+  ["440px", "130px", "5deg", ["VENDOR", "DEMO #4"]],
+  ["300px", "380px", "-4deg", ["BOARD DECK:", "BEHIND?"]],
 ];
-const cards: [string, string][] = [
-  ["s1c0", "chatbot pilot · marketing"], ["s1c1", "vendor demo #4"], ["s1c2", "board deck: are we behind?"],
-  ["s1c3", "GPT wrapper or own model?"], ["s1c4", "no data owner"], ["s1c5", "EU AI Act?"], ["s1c6", "three pilots, one budget line"],
+const cells: [string, string, string, string, string, string[]][] = [
+  ["s1c1", "227px", "128px", "196px", "74px", ["STRATEGY"]],
+  ["s1c2", "333px", "128px", "364px", "74px", ["BUILD VS", "BUY"]],
+  ["s1c3", "386px", "220px", "448px", "220px", ["RISK"]],
+  ["s1c4", "227px", "312px", "196px", "366px", ["ROADMAP"]],
+  ["s1c5", "174px", "220px", "112px", "220px", ["BOARD", "BRIEFINGS"]],
 ];
 
 export default function Strategy() {
   return (
-    <>
-      <svg className="vizSvg" viewBox="0 0 1280 800" aria-hidden="true">
-        <path className="anim" style={{ animationName: "trace" }} d="M 240 660 C 400 600, 520 470, 470 445" stroke="var(--alert)" strokeWidth="1.5" strokeDasharray="4 4" fill="none" />
+    <div className="stg">
+      <svg width="560" height="440" viewBox="0 0 560 440" style={{ display: "block", overflow: "visible" }} aria-hidden="true">
+        <polyline className="anim" style={{ animationName: "s1trace" }} points="104,110 280,220 440,130 300,380 104,110" fill="none" stroke="var(--alert)" strokeWidth="1.5" strokeDasharray="6 6" strokeLinejoin="round" />
+        {frags.map(([fx, fy, fr, lines]) => (
+          <g key={fx + fy} className="anim" style={{ "--fx": fx, "--fy": fy, "--fr": fr, animationName: "s1frag" } as CSSProperties}>
+            <polygon points={HEX58} fill="none" stroke="var(--line2)" strokeWidth="2" strokeDasharray="6 4" />
+            <Lines lines={lines} fill="var(--ink3)" />
+          </g>
+        ))}
+        <g className="anim" style={{ animationName: "s1chip" }}>
+          <rect x="140" y="205" width="280" height="30" rx="6" fill="var(--bg1)" stroke="var(--line2)" strokeDasharray="4 3" />
+          <text x="280" y="224.5" fill="var(--ink3)">THREE PILOTS, ONE BUDGET LINE</text>
+        </g>
+        {cells.map(([name, cx, cy, ox, oy, lines]) => (
+          <g key={name} className="anim" style={{ "--cx": cx, "--cy": cy, "--ox": ox, "--oy": oy, animationName: name } as CSSProperties}>
+            <polygon points={HEX58} fill="var(--bg1)" stroke="var(--amber)" strokeWidth="2" />
+            <Lines lines={lines} fill="var(--ink1)" />
+          </g>
+        ))}
+        <g className="anim" style={{ animationName: "s1core" }}>
+          <polygon points={HEX58} fill="var(--amber)" />
+          <Lines lines={["A PLAN THE", "BOARD CAN", "FUND"]} fill="var(--bg0)" />
+        </g>
       </svg>
-      {cards.map(([name, text]) => (
-        <div key={name} className="card anim" style={{ animationName: name }}>{text}</div>
-      ))}
-      <svg className="hx anim" style={{ left: 840, top: 340, animationName: "s1h0" }} width="120" height="120" viewBox="-60 -60 120 120" aria-hidden="true">
-        <polygon points={HEX} fill="var(--amber)" /><text y="4" fill="var(--bg0)">assess</text>
-      </svg>
-      {ring.map((h) => (
-        <svg key={h.name} className="hx anim" style={{ left: h.left, top: h.top, animationName: h.name }} width="120" height="120" viewBox="-60 -60 120 120" aria-hidden="true">
-          <polygon points={HEX} fill="var(--bg1)" stroke="var(--amber)" strokeWidth="2" />
-          {typeof h.label === "string"
-            ? <text y="4" fill="var(--ink1)">{h.label}</text>
-            : <><text y="-3" fill="var(--ink1)">{h.label[0]}</text><text y="11" fill="var(--ink1)">{h.label[1]}</text></>}
-        </svg>
-      ))}
-      <svg className="anim" style={{ animationName: "tick", position: "absolute", left: 974, top: 261 }} width="26" height="26" viewBox="-13 -13 26 26" aria-hidden="true">
-        <circle r="11" fill="var(--bg0)" stroke="var(--ok)" strokeWidth="2" />
-        <path d="M -5 0 L -1.5 3.5 L 5 -4" stroke="var(--ok)" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    </>
+      <div className="el" style={{ left: 0, top: 452, width: 560, display: "flex", flexDirection: "column", gap: 8, alignItems: "center" }}>
+        <div className="lbl">Roadmap · in the order it has to happen</div>
+        <div className="note" style={{ gap: 24 }}>
+          {["data", "people", "the change"].map((t, i) => (
+            <Fragment key={t}>
+              {i > 0 && <span style={{ color: "var(--line2)" }}>→</span>}
+              <span className="note anim" style={{ animationName: `s1s${i + 1}` }}><b>0{i + 1}</b><span>{t}</span><Tick /></span>
+            </Fragment>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }

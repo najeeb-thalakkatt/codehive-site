@@ -1,9 +1,21 @@
-/* Cell 02, Application development: scattered tickets stack into a thread, an amber reply lands with its source line. */
-@keyframes s2b0 { 0% { transform: translate(188px,90px) rotate(-9deg); border-style: dashed; border-color: var(--line2); color: var(--ink3); background: var(--bg0); } 40% { transform: translate(760px,200px) rotate(0); border-style: dashed; border-color: var(--line2); color: var(--ink3); background: var(--bg0); } 48%, 100% { transform: translate(760px,200px) rotate(0); border-style: solid; border-color: var(--line2); color: var(--ink1); background: var(--bg1); } }
-@keyframes s2b1 { 0% { transform: translate(980px,120px) rotate(7deg); border-style: dashed; border-color: var(--line2); color: var(--ink3); background: var(--bg0); } 43% { transform: translate(760px,252px) rotate(0); border-style: dashed; border-color: var(--line2); color: var(--ink3); background: var(--bg0); } 51%, 100% { transform: translate(760px,252px) rotate(0); border-style: solid; border-color: var(--line2); color: var(--ink1); background: var(--bg1); } }
-@keyframes s2b2 { 0% { transform: translate(60px,600px) rotate(5deg); border-style: dashed; border-color: var(--line2); color: var(--ink3); background: var(--bg0); } 46% { transform: translate(760px,304px) rotate(0); border-style: dashed; border-color: var(--line2); color: var(--ink3); background: var(--bg0); } 54%, 100% { transform: translate(760px,304px) rotate(0); border-style: solid; border-color: var(--line2); color: var(--ink1); background: var(--bg1); } }
-@keyframes s2b3 { 0% { transform: translate(912px,660px) rotate(-6deg); border-style: dashed; border-color: var(--line2); color: var(--ink3); background: var(--bg0); } 49% { transform: translate(760px,356px) rotate(0); border-style: dashed; border-color: var(--line2); color: var(--ink3); background: var(--bg0); } 57%, 100% { transform: translate(760px,356px) rotate(0); border-style: solid; border-color: var(--line2); color: var(--ink1); background: var(--bg1); } }
-@keyframes s2b4 { 0% { transform: translate(500px,60px) rotate(3deg); border-style: dashed; border-color: var(--line2); color: var(--ink3); background: var(--bg0); } 52% { transform: translate(760px,408px) rotate(0); border-style: dashed; border-color: var(--line2); color: var(--ink3); background: var(--bg0); } 60%, 100% { transform: translate(760px,408px) rotate(0); border-style: solid; border-color: var(--line2); color: var(--ink1); background: var(--bg1); } }
-@keyframes s2b5 { 0% { transform: translate(595px,540px) rotate(10deg); border-style: dashed; border-color: var(--line2); color: var(--ink3); background: var(--bg0); } 55% { transform: translate(760px,460px) rotate(0); border-style: dashed; border-color: var(--line2); color: var(--ink3); background: var(--bg0); } 63%, 100% { transform: translate(760px,460px) rotate(0); border-style: solid; border-color: var(--line2); color: var(--ink1); background: var(--bg1); } }
-@keyframes s2reply { 0%, 68% { opacity: 0; transform: translateY(8px); } 78%, 100% { opacity: 1; transform: translateY(0); } }
-@keyframes s2cite { 0%, 84% { opacity: 0; } 94%, 100% { opacity: 1; } }
+/* Cell 02, Application development: a question is typed, sources are searched, an answer streams with citations. */
+.s2chunk { padding: 4px 10px; border-radius: 6px; background: var(--bg1); border: 1px solid var(--amber); color: var(--amber); white-space: nowrap; }
+@keyframes s2ub { 0%, 2% { opacity: 0; transform: translateY(8px); animation-timing-function: var(--eo); } 6%, 100% { opacity: 1; transform: translateY(0); } }
+@keyframes s2q1 { 0%, 5% { max-width: 0; } 14%, 100% { max-width: 100%; } }
+@keyframes s2q2 { 0%, 14% { max-width: 0; } 19%, 100% { max-width: 100%; } }
+@keyframes s2status { 0%, 20% { opacity: 0; } 23%, 38% { opacity: 1; } 41%, 100% { opacity: 0; } }
+@keyframes s2ln1 { 0%, 21% { stroke-dashoffset: 200; opacity: 1; } 27%, 60% { stroke-dashoffset: 0; opacity: 1; } 66%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+@keyframes s2ln2 { 0%, 23% { stroke-dashoffset: 200; opacity: 1; } 29%, 60% { stroke-dashoffset: 0; opacity: 1; } 66%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+@keyframes s2ln3 { 0%, 25% { stroke-dashoffset: 200; opacity: 1; } 31%, 36% { stroke-dashoffset: 0; opacity: 1; } 40%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+@keyframes s2hit { 0%, 27% { border-color: var(--line2); color: var(--ink3); } 31%, 64% { border-color: var(--amber); color: var(--ink1); } 70%, 100% { border-color: var(--line2); color: var(--ink3); } }
+@keyframes s2miss { 0%, 31% { opacity: 1; } 36%, 64% { opacity: .35; } 70%, 100% { opacity: 1; } }
+@keyframes s2chunkA { 0%, 33% { opacity: 0; transform: translate(0, 0); } 36% { opacity: 1; transform: translate(0, 0); animation-timing-function: var(--ei); } 44% { opacity: 1; transform: translate(-150px, 70px); } 46%, 100% { opacity: 0; transform: translate(-150px, 70px); } }
+@keyframes s2chunkB { 0%, 35% { opacity: 0; transform: translate(0, 0); } 38% { opacity: 1; transform: translate(0, 0); animation-timing-function: var(--ei); } 46% { opacity: 1; transform: translate(-150px, -42px); } 48%, 100% { opacity: 0; transform: translate(-150px, -42px); } }
+@keyframes s2hexfill { 0%, 44% { fill: var(--bg1); } 50%, 100% { fill: var(--amber); } }
+@keyframes s2hextext { 0%, 44% { fill: var(--ink1); } 50%, 100% { fill: var(--bg0); } }
+@keyframes s2ab { 0%, 50% { opacity: 0; transform: translateY(8px); animation-timing-function: var(--eo); } 54%, 100% { opacity: 1; transform: translateY(0); } }
+@keyframes s2l1 { 0%, 54% { max-width: 0; } 62%, 100% { max-width: 100%; } }
+@keyframes s2l2 { 0%, 63% { max-width: 0; } 70%, 100% { max-width: 100%; } }
+@keyframes s2l3 { 0%, 71% { max-width: 0; } 77%, 100% { max-width: 100%; } }
+@keyframes s2src { 0%, 78% { opacity: 0; animation-timing-function: var(--eo); } 82%, 100% { opacity: 1; } }
+@keyframes s2evl { 0%, 85% { opacity: 0; transform: translateX(-8px); animation-timing-function: var(--eo); } 89%, 100% { opacity: 1; transform: translateX(0); } }

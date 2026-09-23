@@ -1,48 +1,43 @@
 import "./viz.css";
 import "./enablement.css";
+import { HEX48, Badge, Tick } from "./parts";
 
-/** Cell 05 visual. Four fears fade out. One amber cell, "the one who knows", sits in the middle;
- *  the knowledge ripples outward: a first ring of named teams lights up, then a second ring.
- *  Keyframes on the full 0–100% cell timeline. */
-const fears: [string, number, number, number][] = [
-  ["vendor left, took the notes", 128, 100, -8],
-  ["two people know how it works", 944, 110, 6],
-  ["new hire, no docs", 126, 630, 5],
-  ["board reads about AI in the news", 889, 660, -7],
+/** Cell 05 visual, from the "05 Enablement" artboard. The one who knows leaves and the knowledge
+ *  with them; Codehive lands in the middle of the team and pairs with each role until every cell is
+ *  lit, then steps away while the team stays lit. Ring on the site grid at r=48 (pitch √3·48 + 6). */
+const ring: [number, number, string][] = [
+  [369.1, 250, "ENGINEER"], [324.55, 327.2, "OPS"], [235.45, 327.2, "RUNBOOKS"], [190.9, 250, "BOARD"], [235.45, 172.8, "PRODUCT"], [324.55, 172.8, "SUPPORT"],
 ];
-// Pointy-top r=58 hexes tessellated with a 6px gap around the centre (900,376), raised 24px so the bottom ring clears the desktop crop: ring 1 at (±106,0) and
-// (±53,±92), ring 2 at (±212,0), (±159,±92), (±106,±184), (0,±184). left/top = centre − 60. Both rings
-// are listed clockwise from the top so the ripple keyframes (s5r0.., s5r6..) keep their order.
-const ring1: [number, number, string][] = [
-  [787, 224, "eng"], [893, 224, "product"], [946, 316, "ops"], [893, 408, "support"], [787, 408, "sales"], [734, 316, "board"],
-];
-const ring2: [number, number][] = [
-  [840, 132], [946, 132], [999, 224], [1052, 316], [999, 408], [946, 500], [840, 500], [734, 500], [681, 408], [628, 316], [681, 224], [734, 132],
-];
-const HEX = "0,-58 50,-29 50,29 0,58 -50,29 -50,-29";
 
 export default function Enablement() {
   return (
-    <>
-      {fears.map(([text, left, top, rot]) => (
-        <div key={text} className="card anim" style={{ animationName: "fadeout", left, top, transform: `rotate(${rot}deg)` }}>{text}</div>
-      ))}
-      <svg className="hx" style={{ left: 840, top: 316 }} width="120" height="120" viewBox="-60 -60 120 120" aria-hidden="true">
-        <polygon points={HEX} fill="var(--amber)" />
-        <text y="-3" fill="var(--bg0)">the one</text>
-        <text y="11" fill="var(--bg0)">who knows</text>
+    <div className="stg">
+      <svg width="560" height="520" viewBox="0 0 560 520" style={{ display: "block", overflow: "visible" }} aria-hidden="true">
+        {ring.map(([x, y], i) => (
+          <line key={i} className="anim" style={{ animationName: `s5pl${i}` }} x1="280" y1="250" x2={x} y2={y} stroke="var(--amber)" strokeWidth="2" strokeDasharray="120" strokeDashoffset="120" />
+        ))}
+        {ring.map(([x, y, t], i) => (
+          <g key={t} transform={`translate(${x},${y})`}>
+            <polygon className="anim" style={{ animationName: `s5rs${i}` }} points={HEX48} fill="var(--bg1)" stroke="var(--line2)" strokeWidth="2" strokeDasharray="6 4" />
+            <text className="anim" style={{ animationName: `s5rt${i}` }} y="4.5" fill="var(--ink3)">{t}</text>
+            <Badge name={`s5rk${i}`} />
+          </g>
+        ))}
+        <g className="anim" style={{ animationName: "s5one" }}>
+          <polygon className="anim" style={{ animationName: "s5onestroke" }} points={HEX48} fill="var(--amber)" stroke="var(--amber)" strokeWidth="2" />
+          <text className="anim" style={{ animationName: "s5onetext" }} fill="var(--bg0)"><tspan x="0" y="-4.5">THE ONE</tspan><tspan x="0" y="13.5">WHO KNOWS</tspan></text>
+        </g>
+        <g className="anim" style={{ animationName: "s5leaves" }}>
+          <rect x="180" y="440" width="200" height="30" rx="6" fill="var(--bg1)" stroke="var(--line2)" strokeDasharray="4 3" />
+          <text x="280" y="459.5" fill="var(--alert)">KNOWLEDGE LEAVES TOO</text>
+        </g>
+        <g className="anim" style={{ animationName: "s5ch" }}>
+          <polygon points={HEX48} fill="var(--amber)" stroke="var(--amber)" strokeWidth="2" />
+          <text y="4.5" fill="var(--bg0)">CODEHIVE</text>
+        </g>
+        <text className="anim" style={{ animationName: "s5pair" }} x="280" y="459.5" fill="var(--ink3)">PAIRING · TRAINING · RUNBOOKS</text>
       </svg>
-      {ring1.map(([left, top, label], i) => (
-        <svg key={label} className="hx" style={{ left, top }} width="120" height="120" viewBox="-60 -60 120 120" aria-hidden="true">
-          <polygon className="anim" style={{ animationName: `s5r${i}` }} points={HEX} strokeWidth="2" />
-          <text className="anim" style={{ animationName: `s5t${i}` }} y="4" fill="var(--ink1)">{label}</text>
-        </svg>
-      ))}
-      {ring2.map(([left, top], i) => (
-        <svg key={`${left}-${top}`} className="hx" style={{ left, top }} width="120" height="120" viewBox="-60 -60 120 120" aria-hidden="true">
-          <polygon className="anim" style={{ animationName: `s5r${i + 6}` }} points={HEX} strokeWidth="2" />
-        </svg>
-      ))}
-    </>
+      <div className="el note anim" style={{ left: 0, top: 476, width: 560, justifyContent: "center", animationName: "s5stays" }}><b>handover</b><span>the knowledge stays when we leave</span><Tick /></div>
+    </div>
   );
 }

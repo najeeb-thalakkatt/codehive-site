@@ -15,7 +15,9 @@
 .viz { position: absolute; left: 0; top: 0; width: 1280px; height: 800px; transform-origin: 560px 100px; }
 /* The visual box shows from ~30% (the "you" turn is in, the scene is still the problem state);
    everything animated inside it plays from 42% to the end, so the solution assembles with the answer. */
-.viz :global(.anim) { animation-duration: .579s; animation-delay: .42s; }
+/* the visual's own 0–100% runs from 34% of the cell timeline to the end: its problem state while the
+   question finishes, its resolution alongside the codehive turn */
+.viz :global(.anim) { animation-duration: .66s; animation-delay: .34s; }
 
 @keyframes dim { 0%, 34% { opacity: 1; } 44%, 100% { opacity: .6; } }
 @keyframes who { 0%, 33% { opacity: 0; } 36%, 100% { opacity: 1; } }

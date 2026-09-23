@@ -25,7 +25,7 @@ Text streams in via `components/Stream.tsx`: each word is a span with an `animat
 The cell visual is authored on a 1280×800 canvas (same coordinates as the design mockups). `Cell.tsx` shows the 720×520 region at (560,100) on desktop, or a per-cell tighter window on narrow viewports, scaled to the column width, and compresses the visual's timeline into the last 58% of the play (`.viz .anim { animation-delay: .42s; animation-duration: .579s }`).
 
 ## What is wired and what is not
-- Cells 01–05 are ported from the prototype and registered in `components/cells/index.ts`. Each is `<Name>.tsx` + `<name>.css` next to it; `Strategy.tsx` is the simplest one to copy for a new cell.
+- All six cell visuals are ported from the service animations design canvas and registered in `components/cells/index.ts`. Each is `<Name>.tsx` + `<name>.css` next to it; `Strategy.tsx` is the simplest one to copy for a new cell.
 - Mobile is still the cropped desktop scene for every cell (see TODO 5).
 - Contact is a `mailto`. Replace with Cal.com or a form before launch.
 - No analytics. Add Plausible or Umami in `app/layout.tsx`.

@@ -1,13 +1,20 @@
-/* Cell 03, Model work: jittering model cards settle into a benchmark chart; the fine-tuned open model wins, in the EU. */
-@keyframes s3m0 { 0% { transform: translate(157px,110px) rotate(-8deg); } 8% { transform: translate(163px,107px) rotate(-5deg); } 16% { transform: translate(152px,112px) rotate(-10deg); } 24% { transform: translate(160px,110px) rotate(-7deg); } 38% { transform: translate(740px,236px) rotate(0); border-style: dashed; border-color: var(--line2); color: var(--ink3); } 44%, 100% { transform: translate(740px,236px) rotate(0); border-style: solid; border-color: var(--line2); color: var(--ink2); } }
-@keyframes s3m1 { 0% { transform: translate(1017px,90px) rotate(6deg); } 8% { transform: translate(1023px,87px) rotate(9deg); } 16% { transform: translate(1012px,92px) rotate(4deg); } 24% { transform: translate(1020px,90px) rotate(7deg); } 41% { transform: translate(740px,300px) rotate(0); border-style: dashed; border-color: var(--line2); color: var(--ink3); } 47%, 100% { transform: translate(740px,300px) rotate(0); border-style: solid; border-color: var(--line2); color: var(--ink2); } }
-@keyframes s3m2 { 0% { transform: translate(71px,640px) rotate(4deg); } 8% { transform: translate(77px,637px) rotate(7deg); } 16% { transform: translate(66px,642px) rotate(2deg); } 24% { transform: translate(74px,640px) rotate(5deg); } 44% { transform: translate(740px,364px) rotate(0); border-style: dashed; border-color: var(--line2); color: var(--ink3); } 50%, 100% { transform: translate(740px,364px) rotate(0); border-style: solid; border-color: var(--line2); color: var(--ink2); } }
-@keyframes s3m3 { 0% { transform: translate(1042px,600px) rotate(-9deg); } 8% { transform: translate(1048px,597px) rotate(-6deg); } 16% { transform: translate(1037px,602px) rotate(-11deg); } 24% { transform: translate(1045px,600px) rotate(-8deg); } 47% { transform: translate(740px,428px) rotate(0); border-style: dashed; border-color: var(--line2); color: var(--ink3); } 53%, 100% { transform: translate(740px,428px) rotate(0); border-style: solid; border-color: var(--line2); color: var(--ink2); } }
-@keyframes s3m4 { 0% { transform: translate(505px,70px) rotate(2deg); } 8% { transform: translate(511px,67px) rotate(5deg); } 16% { transform: translate(500px,72px) rotate(0deg); } 24% { transform: translate(508px,70px) rotate(3deg); } 50% { transform: translate(740px,492px) rotate(0); border-style: dashed; border-color: var(--line2); color: var(--ink3); } 56%, 100% { transform: translate(740px,492px) rotate(0); border-style: solid; border-color: var(--amber); color: var(--ink1); } }
-@keyframes s3bar0 { 0%, 58% { transform: scaleX(0); } 72%, 100% { transform: scaleX(1); } }
-@keyframes s3bar1 { 0%, 62% { transform: scaleX(0); } 76%, 100% { transform: scaleX(1); } }
-@keyframes s3bar2 { 0%, 66% { transform: scaleX(0); } 80%, 100% { transform: scaleX(1); } }
-@keyframes s3bar3 { 0%, 70% { transform: scaleX(0); } 84%, 100% { transform: scaleX(1); } }
-@keyframes s3bar4 { 0%, 74% { transform: scaleX(0); } 88%, 100% { transform: scaleX(1); } }
-@keyframes s3axis { 0%, 56% { opacity: 0; } 66%, 100% { opacity: 1; } }
-@keyframes s3lock { 0%, 88% { opacity: 0; transform: translateY(6px); } 100% { opacity: 1; transform: translateY(0); } }
+/* Cell 03, Model work: benchmark on your eval set, deploy the open model in the EU, fine-tune it. */
+.s3sheet { width: 118px; height: 70px; border-radius: 6px; background: var(--bg2); border: 1px solid var(--line1); }
+.s3front { background: var(--bg1); border-color: var(--line2); display: flex; flex-direction: column; justify-content: center; padding: 0 12px; gap: 4px; }
+.s3card { top: 40px; width: 120px; padding: 14px; background: var(--bg1); border: 1px solid var(--line2); border-radius: 12px; display: flex; flex-direction: column; gap: 10px; }
+@keyframes s3stack { 0%, 2% { opacity: 0; transform: translateX(-8px); animation-timing-function: var(--eo); } 8%, 100% { opacity: 1; transform: translateX(0); } }
+@keyframes s3eutag { 0%, 6% { opacity: 0; } 10%, 56% { opacity: 1; } 60%, 100% { opacity: 0; } }
+@keyframes s3oktag { 0%, 62% { opacity: 0; animation-timing-function: var(--eo); } 66%, 100% { opacity: 1; } }
+@keyframes s3card1 { 0%, 4% { opacity: 0; transform: translateY(8px); animation-timing-function: var(--eo); } 8%, 50% { opacity: 1; transform: translateY(0); } 56%, 100% { opacity: .35; transform: translateY(0); } }
+@keyframes s3card2 { 0%, 6% { opacity: 0; transform: translateY(8px); animation-timing-function: var(--eo); } 10%, 50% { opacity: 1; transform: translateY(0); } 56%, 100% { opacity: .35; transform: translateY(0); } }
+@keyframes s3card3 { 0%, 8% { opacity: 0; transform: translate(0, 8px); border-color: var(--line2); animation-timing-function: var(--eo); } 12%, 50% { opacity: 1; transform: translate(0, 0); border-color: var(--line2); animation-timing-function: var(--eo); } 60%, 100% { opacity: 1; transform: translate(-190px, 260px); border-color: var(--amber); } }
+@keyframes s3flow1 { 0%, 12% { stroke-dashoffset: 260; opacity: 1; } 16%, 44% { stroke-dashoffset: 0; opacity: 1; } 50%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+@keyframes s3flow2 { 0%, 13% { stroke-dashoffset: 260; opacity: 1; } 17%, 44% { stroke-dashoffset: 0; opacity: 1; } 50%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+@keyframes s3flow3 { 0%, 14% { stroke-dashoffset: 260; opacity: 1; } 18%, 44% { stroke-dashoffset: 0; opacity: 1; } 50%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+@keyframes s3bar1 { 0%, 18% { width: 0; } 40%, 100% { width: 78%; } }
+@keyframes s3bar2 { 0%, 18% { width: 0; } 40%, 100% { width: 58%; } }
+@keyframes s3bar3 { 0%, 18% { width: 0; background: var(--ink2); } 40%, 72% { width: 74%; background: var(--ink2); } 82%, 100% { width: 92%; background: var(--amber); } }
+@keyframes s3measured { 0%, 40% { opacity: 0; animation-timing-function: var(--eo); } 44%, 100% { opacity: 1; } }
+@keyframes s3eubox { 0%, 46% { opacity: 0; transform: translateY(12px); animation-timing-function: var(--eo); } 52%, 100% { opacity: 1; transform: translateY(0); } }
+@keyframes s3deployed { 0%, 62% { opacity: 0; animation-timing-function: var(--eo); } 66%, 100% { opacity: 1; } }
+@keyframes s3fttag { 0%, 80% { opacity: 0; transform: translateX(-8px); animation-timing-function: var(--eo); } 84%, 100% { opacity: 1; transform: translateX(0); } }

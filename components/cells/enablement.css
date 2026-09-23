@@ -1,25 +1,32 @@
-/* Cell 05, Enablement: one lit cell, knowledge ripples out through two rings of the hive. Generated from the s5 pattern in prototype/index.html. */
-@keyframes s5r0 { 0%, 48% { fill: var(--bg0); stroke: var(--line2); stroke-dasharray: 6 5; } 54%, 100% { fill: var(--bg1); stroke: var(--amber); stroke-dasharray: 0 0; } }
-@keyframes s5t0 { 0%, 50% { opacity: 0; } 56%, 100% { opacity: 1; } }
-@keyframes s5r1 { 0%, 51% { fill: var(--bg0); stroke: var(--line2); stroke-dasharray: 6 5; } 57%, 100% { fill: var(--bg1); stroke: var(--amber); stroke-dasharray: 0 0; } }
-@keyframes s5t1 { 0%, 53% { opacity: 0; } 59%, 100% { opacity: 1; } }
-@keyframes s5r2 { 0%, 54% { fill: var(--bg0); stroke: var(--line2); stroke-dasharray: 6 5; } 60%, 100% { fill: var(--bg1); stroke: var(--amber); stroke-dasharray: 0 0; } }
-@keyframes s5t2 { 0%, 56% { opacity: 0; } 62%, 100% { opacity: 1; } }
-@keyframes s5r3 { 0%, 57% { fill: var(--bg0); stroke: var(--line2); stroke-dasharray: 6 5; } 63%, 100% { fill: var(--bg1); stroke: var(--amber); stroke-dasharray: 0 0; } }
-@keyframes s5t3 { 0%, 59% { opacity: 0; } 65%, 100% { opacity: 1; } }
-@keyframes s5r4 { 0%, 60% { fill: var(--bg0); stroke: var(--line2); stroke-dasharray: 6 5; } 66%, 100% { fill: var(--bg1); stroke: var(--amber); stroke-dasharray: 0 0; } }
-@keyframes s5t4 { 0%, 62% { opacity: 0; } 68%, 100% { opacity: 1; } }
-@keyframes s5r5 { 0%, 63% { fill: var(--bg0); stroke: var(--line2); stroke-dasharray: 6 5; } 69%, 100% { fill: var(--bg1); stroke: var(--amber); stroke-dasharray: 0 0; } }
-@keyframes s5t5 { 0%, 65% { opacity: 0; } 71%, 100% { opacity: 1; } }
-@keyframes s5r6 { 0%, 70% { fill: var(--bg0); stroke: var(--line2); stroke-dasharray: 6 5; } 76%, 100% { fill: var(--bg1); stroke: var(--amber); stroke-dasharray: 0 0; } }
-@keyframes s5r7 { 0%, 72% { fill: var(--bg0); stroke: var(--line2); stroke-dasharray: 6 5; } 78%, 100% { fill: var(--bg1); stroke: var(--amber); stroke-dasharray: 0 0; } }
-@keyframes s5r8 { 0%, 74% { fill: var(--bg0); stroke: var(--line2); stroke-dasharray: 6 5; } 80%, 100% { fill: var(--bg1); stroke: var(--amber); stroke-dasharray: 0 0; } }
-@keyframes s5r9 { 0%, 76% { fill: var(--bg0); stroke: var(--line2); stroke-dasharray: 6 5; } 82%, 100% { fill: var(--bg1); stroke: var(--amber); stroke-dasharray: 0 0; } }
-@keyframes s5r10 { 0%, 78% { fill: var(--bg0); stroke: var(--line2); stroke-dasharray: 6 5; } 84%, 100% { fill: var(--bg1); stroke: var(--amber); stroke-dasharray: 0 0; } }
-@keyframes s5r11 { 0%, 80% { fill: var(--bg0); stroke: var(--line2); stroke-dasharray: 6 5; } 86%, 100% { fill: var(--bg1); stroke: var(--amber); stroke-dasharray: 0 0; } }
-@keyframes s5r12 { 0%, 82% { fill: var(--bg0); stroke: var(--line2); stroke-dasharray: 6 5; } 88%, 100% { fill: var(--bg1); stroke: var(--amber); stroke-dasharray: 0 0; } }
-@keyframes s5r13 { 0%, 84% { fill: var(--bg0); stroke: var(--line2); stroke-dasharray: 6 5; } 90%, 100% { fill: var(--bg1); stroke: var(--amber); stroke-dasharray: 0 0; } }
-@keyframes s5r14 { 0%, 86% { fill: var(--bg0); stroke: var(--line2); stroke-dasharray: 6 5; } 92%, 100% { fill: var(--bg1); stroke: var(--amber); stroke-dasharray: 0 0; } }
-@keyframes s5r15 { 0%, 88% { fill: var(--bg0); stroke: var(--line2); stroke-dasharray: 6 5; } 94%, 100% { fill: var(--bg1); stroke: var(--amber); stroke-dasharray: 0 0; } }
-@keyframes s5r16 { 0%, 90% { fill: var(--bg0); stroke: var(--line2); stroke-dasharray: 6 5; } 96%, 100% { fill: var(--bg1); stroke: var(--amber); stroke-dasharray: 0 0; } }
-@keyframes s5r17 { 0%, 92% { fill: var(--bg0); stroke: var(--line2); stroke-dasharray: 6 5; } 98%, 100% { fill: var(--bg1); stroke: var(--amber); stroke-dasharray: 0 0; } }
+/* Cell 05, Enablement: the one who knows leaves, Codehive pairs with every role, the team stays lit. Generated from the artboard timings. */
+@keyframes s5one { 0% { opacity: 0; transform: translate(280px, 250px) rotate(0deg); animation-timing-function: var(--eo); } 4%, 12% { opacity: 1; transform: translate(280px, 250px) rotate(0deg); animation-timing-function: var(--ei); } 24%, 100% { opacity: 0; transform: translate(600px, -40px) rotate(14deg); } }
+@keyframes s5onestroke { 0%, 12% { stroke: var(--amber); fill: var(--amber); stroke-dasharray: 0; } 18%, 100% { stroke: var(--alert); fill: var(--bg1); stroke-dasharray: 6 4; } }
+@keyframes s5onetext { 0%, 12% { fill: var(--bg0); } 18%, 100% { fill: var(--alert); } }
+@keyframes s5leaves { 0%, 16% { opacity: 0; } 20%, 30% { opacity: 1; } 34%, 100% { opacity: 0; } }
+@keyframes s5ch { 0%, 32% { opacity: 0; transform: translate(280px, 390px) scale(.8); animation-timing-function: var(--eo); } 40%, 76% { opacity: 1; transform: translate(280px, 250px) scale(1); animation-timing-function: var(--ei); } 86%, 100% { opacity: 0; transform: translate(280px, 250px) scale(.6); } }
+@keyframes s5pair { 0%, 40% { opacity: 0; } 44%, 76% { opacity: 1; } 82%, 100% { opacity: 0; } }
+@keyframes s5stays { 0%, 88% { opacity: 0; transform: translateX(-8px); animation-timing-function: var(--eo); } 92%, 100% { opacity: 1; transform: translateX(0); } }
+@keyframes s5pl0 { 0%, 44% { stroke-dashoffset: 120; opacity: 1; } 48%, 76% { stroke-dashoffset: 0; opacity: 1; } 84%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+@keyframes s5rs0 { 0%, 47% { stroke: var(--line2); stroke-dasharray: 6 4; } 50%, 100% { stroke: var(--amber); stroke-dasharray: 0; } }
+@keyframes s5rt0 { 0%, 47% { fill: var(--ink3); } 50%, 100% { fill: var(--ink1); } }
+@keyframes s5rk0 { 0%, 49% { opacity: 0; animation-timing-function: var(--eo); } 52%, 100% { opacity: 1; } }
+@keyframes s5pl1 { 0%, 49% { stroke-dashoffset: 120; opacity: 1; } 53%, 76% { stroke-dashoffset: 0; opacity: 1; } 84%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+@keyframes s5rs1 { 0%, 52% { stroke: var(--line2); stroke-dasharray: 6 4; } 55%, 100% { stroke: var(--amber); stroke-dasharray: 0; } }
+@keyframes s5rt1 { 0%, 52% { fill: var(--ink3); } 55%, 100% { fill: var(--ink1); } }
+@keyframes s5rk1 { 0%, 54% { opacity: 0; animation-timing-function: var(--eo); } 57%, 100% { opacity: 1; } }
+@keyframes s5pl2 { 0%, 54% { stroke-dashoffset: 120; opacity: 1; } 58%, 76% { stroke-dashoffset: 0; opacity: 1; } 84%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+@keyframes s5rs2 { 0%, 57% { stroke: var(--line2); stroke-dasharray: 6 4; } 60%, 100% { stroke: var(--amber); stroke-dasharray: 0; } }
+@keyframes s5rt2 { 0%, 57% { fill: var(--ink3); } 60%, 100% { fill: var(--ink1); } }
+@keyframes s5rk2 { 0%, 59% { opacity: 0; animation-timing-function: var(--eo); } 62%, 100% { opacity: 1; } }
+@keyframes s5pl3 { 0%, 59% { stroke-dashoffset: 120; opacity: 1; } 63%, 76% { stroke-dashoffset: 0; opacity: 1; } 84%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+@keyframes s5rs3 { 0%, 62% { stroke: var(--line2); stroke-dasharray: 6 4; } 65%, 100% { stroke: var(--amber); stroke-dasharray: 0; } }
+@keyframes s5rt3 { 0%, 62% { fill: var(--ink3); } 65%, 100% { fill: var(--ink1); } }
+@keyframes s5rk3 { 0%, 64% { opacity: 0; animation-timing-function: var(--eo); } 67%, 100% { opacity: 1; } }
+@keyframes s5pl4 { 0%, 64% { stroke-dashoffset: 120; opacity: 1; } 68%, 76% { stroke-dashoffset: 0; opacity: 1; } 84%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+@keyframes s5rs4 { 0%, 67% { stroke: var(--line2); stroke-dasharray: 6 4; } 70%, 100% { stroke: var(--amber); stroke-dasharray: 0; } }
+@keyframes s5rt4 { 0%, 67% { fill: var(--ink3); } 70%, 100% { fill: var(--ink1); } }
+@keyframes s5rk4 { 0%, 69% { opacity: 0; animation-timing-function: var(--eo); } 72%, 100% { opacity: 1; } }
+@keyframes s5pl5 { 0%, 69% { stroke-dashoffset: 120; opacity: 1; } 73%, 76% { stroke-dashoffset: 0; opacity: 1; } 84%, 100% { stroke-dashoffset: 0; opacity: 0; } }
+@keyframes s5rs5 { 0%, 72% { stroke: var(--line2); stroke-dasharray: 6 4; } 75%, 100% { stroke: var(--amber); stroke-dasharray: 0; } }
+@keyframes s5rt5 { 0%, 72% { fill: var(--ink3); } 75%, 100% { fill: var(--ink1); } }
+@keyframes s5rk5 { 0%, 74% { opacity: 0; animation-timing-function: var(--eo); } 77%, 100% { opacity: 1; } }
