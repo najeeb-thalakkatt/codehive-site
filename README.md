@@ -12,6 +12,9 @@ Deploy: every push to `main` runs `.github/workflows/pages.yml`, which builds th
 ## Making changes
 Small, safe change: commit on `main`, push, live in about a minute. Anything you want to look at first: branch, push, open a pull request; the workflow builds it as a check, merge when green, and the merge deploys. To undo a bad deploy, `git revert` the commit and push; the revert deploys the previous state. Preview locally with `npm run dev` (hot reload) or `npm run build && npx serve out` (exactly what ships).
 
+## The hero shader
+`components/LiquidCell.tsx` mounts the liquid-metal shader with a mask that was preprocessed once (`public/codehive-cell.processed.png`). If `public/codehive-cell.svg` changes, regenerate it: rasterise the svg at 1024px, run `toProcessedLiquidMetal` from `@paper-design/shaders` on it in a browser, save the `pngBlob`. Running the preprocessing at page load costs about 1.8 s of main-thread time on a phone.
+
 ## How the cells play
 Each service cell is `components/Cell.tsx`. Its motion is plain CSS `@keyframes`, authored on a 0–100% timeline (1 s of animation time). Nothing is tied to scroll position: `lib/usePlayOnEnter.ts` waits until a quarter of the section is on screen, then plays every animation inside it once at a playback rate that stretches the 1 s timeline to 7 s (`usePlayOnEnter(ref, 7)`). The reader scrolls on when they are ready; the next cell plays when it arrives. No pinning, no GSAP.
 
