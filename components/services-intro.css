@@ -1,0 +1,30 @@
+/* Services intro keyframes (0–100% = the 10 s play). Cells read --cx/--cy from ServicesIntro.module.css. */
+@keyframes siw1 { 0%, 1% { transform: translateY(110%); opacity: 0; animation-timing-function: var(--ease-out); } 8%, 100% { transform: translateY(0); opacity: 1; } }
+@keyframes siw2 { 0%, 4% { transform: translateY(110%); opacity: 0; animation-timing-function: var(--ease-out); } 11%, 100% { transform: translateY(0); opacity: 1; } }
+@keyframes siw3 { 0%, 7% { transform: translateY(110%); opacity: 0; animation-timing-function: var(--ease-out); } 14%, 100% { transform: translateY(0); opacity: 1; } }
+@keyframes siw4 { 0%, 10% { transform: translateY(110%); opacity: 0; animation-timing-function: var(--ease-out); } 17%, 100% { transform: translateY(0); opacity: 1; } }
+@keyframes sisub { 0%, 16% { opacity: 0; transform: translateY(8px); animation-timing-function: var(--ease-out); } 22%, 100% { opacity: 1; transform: translateY(0); } }
+@keyframes sic0 { 0%, 22% { opacity: 0; transform: translate(var(--cx), calc(var(--cy) - 24px)); animation-timing-function: var(--ease-out); } 28%, 52% { opacity: 1; transform: translate(var(--cx), var(--cy)); filter: drop-shadow(0 0 0 rgba(242,184,75,0)); } 53%, 57% { filter: drop-shadow(0 0 16px rgba(242,184,75,.35)); } 58%, 100% { opacity: 1; transform: translate(var(--cx), var(--cy)); filter: drop-shadow(0 0 0 rgba(242,184,75,0)); } }
+@keyframes sif0 { 0%, 52% { fill: var(--bg1); } 53%, 57% { fill: var(--amber); } 58%, 100% { fill: var(--bg1); } }
+@keyframes sin0 { 0%, 52% { fill: var(--amber); } 53%, 57% { fill: var(--bg0); } 58%, 100% { fill: var(--amber); } }
+@keyframes sit0 { 0%, 52% { fill: var(--ink1); } 53%, 57% { fill: var(--bg0); } 58%, 100% { fill: var(--ink1); } }
+@keyframes sic1 { 0%, 26% { opacity: 0; transform: translate(var(--cx), calc(var(--cy) - 24px)); animation-timing-function: var(--ease-out); } 32%, 58% { opacity: 1; transform: translate(var(--cx), var(--cy)); filter: drop-shadow(0 0 0 rgba(242,184,75,0)); } 59%, 63% { filter: drop-shadow(0 0 16px rgba(242,184,75,.35)); } 64%, 100% { opacity: 1; transform: translate(var(--cx), var(--cy)); filter: drop-shadow(0 0 0 rgba(242,184,75,0)); } }
+@keyframes sif1 { 0%, 58% { fill: var(--bg1); } 59%, 63% { fill: var(--amber); } 64%, 100% { fill: var(--bg1); } }
+@keyframes sin1 { 0%, 58% { fill: var(--amber); } 59%, 63% { fill: var(--bg0); } 64%, 100% { fill: var(--amber); } }
+@keyframes sit1 { 0%, 58% { fill: var(--ink1); } 59%, 63% { fill: var(--bg0); } 64%, 100% { fill: var(--ink1); } }
+@keyframes sic2 { 0%, 30% { opacity: 0; transform: translate(var(--cx), calc(var(--cy) - 24px)); animation-timing-function: var(--ease-out); } 36%, 64% { opacity: 1; transform: translate(var(--cx), var(--cy)); filter: drop-shadow(0 0 0 rgba(242,184,75,0)); } 65%, 69% { filter: drop-shadow(0 0 16px rgba(242,184,75,.35)); } 70%, 100% { opacity: 1; transform: translate(var(--cx), var(--cy)); filter: drop-shadow(0 0 0 rgba(242,184,75,0)); } }
+@keyframes sif2 { 0%, 64% { fill: var(--bg1); } 65%, 69% { fill: var(--amber); } 70%, 100% { fill: var(--bg1); } }
+@keyframes sin2 { 0%, 64% { fill: var(--amber); } 65%, 69% { fill: var(--bg0); } 70%, 100% { fill: var(--amber); } }
+@keyframes sit2 { 0%, 64% { fill: var(--ink1); } 65%, 69% { fill: var(--bg0); } 70%, 100% { fill: var(--ink1); } }
+@keyframes sic3 { 0%, 34% { opacity: 0; transform: translate(var(--cx), calc(var(--cy) - 24px)); animation-timing-function: var(--ease-out); } 40%, 70% { opacity: 1; transform: translate(var(--cx), var(--cy)); filter: drop-shadow(0 0 0 rgba(242,184,75,0)); } 71%, 75% { filter: drop-shadow(0 0 16px rgba(242,184,75,.35)); } 76%, 100% { opacity: 1; transform: translate(var(--cx), var(--cy)); filter: drop-shadow(0 0 0 rgba(242,184,75,0)); } }
+@keyframes sif3 { 0%, 70% { fill: var(--bg1); } 71%, 75% { fill: var(--amber); } 76%, 100% { fill: var(--bg1); } }
+@keyframes sin3 { 0%, 70% { fill: var(--amber); } 71%, 75% { fill: var(--bg0); } 76%, 100% { fill: var(--amber); } }
+@keyframes sit3 { 0%, 70% { fill: var(--ink1); } 71%, 75% { fill: var(--bg0); } 76%, 100% { fill: var(--ink1); } }
+@keyframes sic4 { 0%, 38% { opacity: 0; transform: translate(var(--cx), calc(var(--cy) - 24px)); animation-timing-function: var(--ease-out); } 44%, 76% { opacity: 1; transform: translate(var(--cx), var(--cy)); filter: drop-shadow(0 0 0 rgba(242,184,75,0)); } 77%, 81% { filter: drop-shadow(0 0 16px rgba(242,184,75,.35)); } 82%, 100% { opacity: 1; transform: translate(var(--cx), var(--cy)); filter: drop-shadow(0 0 0 rgba(242,184,75,0)); } }
+@keyframes sif4 { 0%, 76% { fill: var(--bg1); } 77%, 81% { fill: var(--amber); } 82%, 100% { fill: var(--bg1); } }
+@keyframes sin4 { 0%, 76% { fill: var(--amber); } 77%, 81% { fill: var(--bg0); } 82%, 100% { fill: var(--amber); } }
+@keyframes sit4 { 0%, 76% { fill: var(--ink1); } 77%, 81% { fill: var(--bg0); } 82%, 100% { fill: var(--ink1); } }
+@keyframes sic5 { 0%, 42% { opacity: 0; transform: translate(var(--cx), calc(var(--cy) - 24px)); animation-timing-function: var(--ease-out); } 48%, 82% { opacity: 1; transform: translate(var(--cx), var(--cy)); filter: drop-shadow(0 0 0 rgba(242,184,75,0)); } 83%, 87% { filter: drop-shadow(0 0 16px rgba(242,184,75,.35)); } 88%, 100% { opacity: 1; transform: translate(var(--cx), var(--cy)); filter: drop-shadow(0 0 0 rgba(242,184,75,0)); } }
+@keyframes sif5 { 0%, 82% { fill: var(--bg1); } 83%, 87% { fill: var(--amber); } 88%, 100% { fill: var(--bg1); } }
+@keyframes sin5 { 0%, 82% { fill: var(--amber); } 83%, 87% { fill: var(--bg0); } 88%, 100% { fill: var(--amber); } }
+@keyframes sit5 { 0%, 82% { fill: var(--ink1); } 83%, 87% { fill: var(--bg0); } 88%, 100% { fill: var(--ink1); } }

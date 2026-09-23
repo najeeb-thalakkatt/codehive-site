@@ -1,0 +1,20 @@
+.intro { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 64px; align-items: center; padding-top: 120px; padding-bottom: 64px; }
+.text { display: flex; flex-direction: column; gap: 24px; }
+.h2 { font-size: clamp(40px, 5.6vw, 72px); line-height: 1.02; }
+.clip { display: inline-block; overflow: hidden; vertical-align: bottom; padding-bottom: .08em; margin-bottom: -.08em; }
+.clip > span { display: inline-block; }
+.sub { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: clamp(22px, 2.5vw, 32px); line-height: 1.15; letter-spacing: -.025em; color: var(--ink2); text-wrap: pretty; }
+.hive { display: block; width: 384px; height: 216px; overflow: visible; }
+.hive text { text-anchor: middle; font-family: var(--font-mono); font-size: 13px; font-weight: 500; letter-spacing: 1px; }
+.k { cursor: pointer; outline: none; }
+.k:hover polygon, .k:focus-visible polygon { fill: var(--amber); }
+.k:hover text, .k:focus-visible text { fill: var(--bg0); }
+/* cell centres: 3+3 on the site grid (pitch 106 / 92) */
+.k0 { --cx: 58px; --cy: 62px; } .k1 { --cx: 164px; --cy: 62px; } .k2 { --cx: 270px; --cy: 62px; }
+.k3 { --cx: 111px; --cy: 154px; } .k4 { --cx: 217px; --cy: 154px; } .k5 { --cx: 323px; --cy: 154px; }
+@media (max-width: 720px) {
+  .intro { grid-template-columns: 1fr; gap: 40px; padding-top: 96px; }
+  .hive { width: 280px; height: 308px; }
+  /* 2+2+2 */
+  .k2 { --cx: 111px; --cy: 154px; } .k3 { --cx: 217px; --cy: 154px; } .k4 { --cx: 58px; --cy: 246px; } .k5 { --cx: 164px; --cy: 246px; }
+}
