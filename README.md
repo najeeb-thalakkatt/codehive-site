@@ -12,6 +12,9 @@ Deploy: every push to `main` runs `.github/workflows/pages.yml`, which builds th
 ## Making changes
 Small, safe change: commit on `main`, push, live in about a minute. Anything you want to look at first: branch, push, open a pull request; the workflow builds it as a check, merge when green, and the merge deploys. To undo a bad deploy, `git revert` the commit and push; the revert deploys the previous state. Preview locally with `npm run dev` (hot reload) or `npm run build && npx serve out` (exactly what ships).
 
+## Checks
+`checks/hero.mjs` (hero luminance and per-line contrast, pill buttons, snippets inside the cell, reveal pacing) and `checks/cards.mjs` (card fit at 1280×720, play-once text, loop policy, phone overflow, reduced motion) are Playwright scripts. Build, serve `out/` on port 3000 (`npx serve -s out -l 3000`), then `node checks/hero.mjs` with Playwright installed globally or in a scratch folder (it is not a dependency of the site).
+
 ## The hero shader
 `components/LiquidCell.tsx` mounts the liquid-metal shader with a mask that was preprocessed once (`public/codehive-cell.processed.png`). If `public/codehive-cell.svg` changes, regenerate it: rasterise the svg at 1024px, run `toProcessedLiquidMetal` from `@paper-design/shaders` on it in a browser, save the `pngBlob`. Running the preprocessing at page load costs about 1.8 s of main-thread time on a phone.
 

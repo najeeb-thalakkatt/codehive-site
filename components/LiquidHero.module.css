@@ -8,20 +8,28 @@
 
 /* code snippets drifting through the honey */
 .code { position: absolute; inset: 0; margin: 0; padding: 0; list-style: none; clip-path: polygon(50% 5.5%, 88.5% 27.7%, 88.5% 72.3%, 50% 94.5%, 11.5% 72.3%, 11.5% 27.7%); mix-blend-mode: multiply; font-family: var(--font-mono); font-size: clamp(11px, 1.1vw, 15px); color: var(--bg0); opacity: .7; }
-.code li { position: absolute; left: var(--x); white-space: nowrap; animation: rise 40s linear infinite; animation-delay: var(--d); }
-@keyframes rise { from { top: 105%; } to { top: -8%; } }
+.code li { position: absolute; left: var(--x); transform: translateX(-50%); white-space: nowrap; animation: rise 40s linear infinite; animation-delay: var(--d); }
+@keyframes rise { 0% { top: 82%; opacity: 0; } 8% { opacity: 1; } 92% { opacity: 1; } 100% { top: 18%; opacity: 0; } }
+
+/* radial darkening behind the copy block, inside the cell layer, above the canvas and the snippets */
+.shade { position: absolute; left: 50%; top: 50%; width: min(760px, 100vw); height: 420px; transform: translate(-50%, -50%); background: radial-gradient(closest-side, rgba(11, 13, 16, .55), rgba(11, 13, 16, 0)); pointer-events: none; }
 
 /* copy over the cell */
 .copy { position: relative; z-index: 1; max-width: 760px; padding: 0 24px; display: flex; flex-direction: column; align-items: center; gap: 24px; text-align: center; text-wrap: pretty; }
 .eyebrow { margin: 0; font-family: var(--font-mono); font-size: 13px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: var(--ink1); text-shadow: 0 1px 12px rgba(11, 13, 16, .8); }
 .h1 { font-size: clamp(48px, 7.5vw, 96px); line-height: 1; letter-spacing: -.03em; color: var(--ink1); text-shadow: 0 2px 28px rgba(11, 13, 16, .75), 0 0 2px rgba(11, 13, 16, .9); }
 .sub { margin: 0; max-width: 640px; font-size: clamp(16px, 1.6vw, 20px); line-height: 1.5; font-weight: 500; color: var(--ink1); text-shadow: 0 1px 16px rgba(11, 13, 16, .85), 0 0 2px rgba(11, 13, 16, .9); }
-.actions { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; margin-top: 8px; text-shadow: 0 1px 12px rgba(11, 13, 16, .85); }
-/* amber on the honey is not allowed, so the primary action's marker and underline are ink here */
-.ink::before { background: var(--ink1); }
-.ink::after { background: var(--ink1); }
+.actions { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; margin-top: 8px; }
+/* pills are the brand shape for buttons (hexagons are never rounded). Ink on dark here: amber on the honey is banned. */
+.btn, .btnGhost { display: inline-flex; align-items: center; min-height: 48px; padding: 16px 28px; border-radius: var(--radius-pill); font-family: var(--font-display); font-weight: 700; font-size: 16px; line-height: 1; text-decoration: none; transition: background-color 150ms, border-color 150ms; }
+.btn { background: var(--ink1); color: var(--bg0); }
+.btn:hover { background: var(--ink2); color: var(--bg0); }
+.btnGhost { padding: 15px 28px; border: 1px solid var(--ink1); background: rgba(11, 13, 16, .55); color: var(--ink1); }
+.btnGhost:hover { border-color: var(--amber); color: var(--ink1); }
+.btn:focus-visible, .btnGhost:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 
 .scroll { position: absolute; left: clamp(20px, 5vw, 64px); bottom: calc(24px + env(safe-area-inset-bottom, 0px)); font-family: var(--font-mono); font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: var(--ink3); }
 
-@media (prefers-reduced-motion: reduce) { .code li { animation: none; top: calc(20% + var(--i) * 9%); } }
-@media (max-width: 720px) { .cell { width: 110vmin; } }
+@media (prefers-reduced-motion: reduce) { .code li { animation: none; top: calc(22% + var(--i) * 8%); } }
+@media (min-width: 1280px) { .h1 { font-size: 96px; letter-spacing: -3px; } }
+@media (max-width: 720px) { .cell { width: 110vmin; } .h1 { font-size: clamp(48px, 12vw, 64px); } }

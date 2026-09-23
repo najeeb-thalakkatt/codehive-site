@@ -25,7 +25,7 @@ export function usePlayOnEnter(sectionRef: RefObject<HTMLElement | null>, durati
       if (!entries.some((e) => e.isIntersecting)) return;
       io.disconnect();
       for (const a of anims) { a.playbackRate = 1 / duration; a.play(); }
-    }, { rootMargin: "0px 0px -20% 0px" }); // starts as soon as the section top passes 80% of the viewport
+    }, { threshold: 0.15, rootMargin: "0px 0px -10% 0px" }); // fires once 15% of the element is inside the viewport less its bottom 10%
     io.observe(el);
     return () => io.disconnect();
   }, [sectionRef, duration]);

@@ -23,12 +23,12 @@ export default function Cell({ data, children }: { data: Service; children?: Rea
       </header>
       <div className={s.body}>
         <div ref={text} className={s.text}>
-          {/* Timeline (0–1 = the 7 s play). The question starts with a negative delay so its first
-              words are already on screen the moment the card appears. */}
+          {/* Timeline (0–1 = the 7 s play). The question is complete from the first frame (negative delays
+              clamp to "already shown"), so the reader never arrives before it (addendum T9). */}
           <div className={`${s.bubble} ${s.you} anim`}>
             <div className={s.who}>you</div>
-            <h2><Stream text={data.question} t0={-0.06} t1={0.12} /></h2>
-            <p><Stream text={data.problem} t0={0.12} t1={0.3} /></p>
+            <h2><Stream text={data.question} t0={-0.1} t1={-0.02} /></h2>
+            <p><Stream text={data.problem} t0={0.02} t1={0.24} /></p>
           </div>
           <div className={`${s.bubble} ${s.us} anim`}>
             <div className={`${s.who} ${s.whoUs}`}>codehive<span className={`${s.caret} anim`} /></div>

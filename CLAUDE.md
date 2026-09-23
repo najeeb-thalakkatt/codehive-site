@@ -35,13 +35,13 @@ its references, do not redesign them.
 A WebGL liquid-metal shader (`@paper-design/shaders-react`, the one dependency with a reason) masked by
 `public/codehive-cell.svg`, the logo cell with the braces cut out. Loaded with `next/dynamic` after
 hydration so the copy is the LCP and the 83 kB shader chunk stays off the first load. `colorBack` is
-transparent so the HiveCanvas lattice shows through. Reduced motion sets `speed` 0 and parks the drifting
-snippets. Actions are the site's `.act`, with an ink marker on the primary: no amber on the honey.
+transparent so the HiveCanvas lattice shows through. A 760×420 radial darkening (`.shade`) sits behind the copy; it is the one gradient on the site.
+Reduced motion sets `speed` 0 and parks the drifting snippets. Buttons are pills, ink on dark: no amber on the
+honey. Hero B (`site-v3/layout-refs/hero-b-copy-over.html`) is the reference.
 
 ### Play on enter (text and intro)
 - `lib/usePlayOnEnter.ts` collects every Web Animation inside a ref, holds them at 0, and once the element
-  is in view plays them all once at rate 1/duration. The intro plays over 10 s; each card's text column over
-  7 s. Nothing is scrubbed by scroll and nothing is pinned.
+  is in view plays them all once at rate 1/duration. The intro and each card's text column play over 7 s. Nothing is scrubbed by scroll and nothing is pinned.
 - Motion is plain CSS `@keyframes` whose 0–100% is that timeline. `.anim` (in `app/globals.css`) sets duration
   1s, linear, fill both, paused; an element needs `.anim` plus an `animation-name`. `.w` is the streamed-word
   variant (`components/Stream.tsx`, one `.w` span per word, the space between spans, never inside).
@@ -89,7 +89,8 @@ snippets. Actions are the site's `.act`, with an ink marker on the primary: no a
 - Colours: near-black ground (`--bg0`), off-white text, one amber accent. Amber is a fill (`--amber` with dark text on it) or `--amber` as text on dark. No gradients. No new accent colours. `--ok` and `--alert` are for solved/broken states in the animations and real errors only.
 - Type: Familjen Grotesk for headlines, wordmark and actions; Schibsted Grotesk for body; IBM Plex Mono for eyebrows, chips, code and annotations. No other fonts. They are self-hosted by `next/font` in `app/layout.tsx` and exposed as `--font-display`, `--font-body`, `--font-mono`.
 - Logo: hexagon with `{ }` inside, `components/Mark.tsx`. Wordmark is the typed word `codehive`, lowercase, never drawn.
-- No pill buttons, no title bar. Actions are text with the hexagon marker and an underline on hover (`.act`). Nav is the floating layer in `components/Nav.tsx`.
+- Buttons are pills (`--radius-pill`); hexagons are never rounded. Inline actions in cards and contact are text with the
+  hexagon marker and an underline on hover (`.act`). No title bar. Nav is the floating layer in `components/Nav.tsx`.
 - No personal information anywhere on the site: no founder name, photo, LinkedIn, past employer names. Company voice only.
 
 ## Copy rules

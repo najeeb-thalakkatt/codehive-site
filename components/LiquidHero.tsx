@@ -7,7 +7,8 @@ import s from "./LiquidHero.module.css";
 // and the initial bundle. The copy underneath is static HTML, so the headline is the LCP either way.
 const LiquidCell = dynamic(() => import("./LiquidCell"), { ssr: false });
 
-// Lines that drift through the honey. Keep them real: things the stack actually does.
+// Lines that drift through the honey in three columns (30/50/70% of the cell), between 18% and 82% of its
+// height so their centres stay inside the hex (addendum T8). Keep them real: things the stack actually does.
 const SNIPPETS = [
   "POST /v1/agents/run",
   "retriever.search(query, k=8)",
@@ -40,9 +41,11 @@ export default function LiquidHero() {
         <LiquidCell speed={speed} />
         <ul className={s.code}>
           {SNIPPETS.map((t, i) => (
-            <li key={t} style={{ "--x": `${18 + ((i * 23) % 60)}%`, "--d": `${-i * 5}s`, "--i": i } as CSSProperties}>{t}</li>
+            <li key={t} style={{ "--x": `${[30, 50, 70][i % 3]}%`, "--d": `${-i * 5}s`, "--i": i } as CSSProperties}>{t}</li>
           ))}
         </ul>
+        {/* radial darkening behind the copy block: the one gradient on the site, only there to carry the copy */}
+        <div className={s.shade} />
       </div>
 
       <div className={s.copy}>
@@ -50,8 +53,8 @@ export default function LiquidHero() {
         <h1 id="hero-title" className={s.h1}>Ship the AI feature.</h1>
         <p className={s.sub}>Backend engineering for teams adding LLM features without an ML team. Based in Stockholm, remote across Europe, the UK and the US.</p>
         <div className={s.actions}>
-          <a className={`act ${s.ink}`} href="#book">Book a call</a>
-          <a className="act ghost" href="#services">See the services</a>
+          <a className={s.btn} href="#book">Book a call</a>
+          <a className={s.btnGhost} href="#services">See the services</a>
         </div>
       </div>
 

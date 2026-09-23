@@ -10,11 +10,11 @@ const WORDS = ["Six", "things", "we", "do."];
 
 /** Services intro, from site-v3/layout-refs/services-intro.html. The heading words rise in one by
  *  one, the subline fades up, six hex cells drop in and a highlight runs 01 → 06 once and stops.
- *  Played once on enter by usePlayOnEnter (10 s); keyframes in services-intro.css. The honeycomb
+ *  Played once on enter by usePlayOnEnter (7 s); keyframes in services-intro.css. The honeycomb
  *  is 3+3 on the site grid (r=58, 6px gap) and 2+2+2 under 720px, positions set per cell in css. */
 export default function ServicesIntro() {
   const ref = useRef<HTMLElement>(null);
-  usePlayOnEnter(ref, 10);
+  usePlayOnEnter(ref, 7); // the artboard's 10 s loop compressed so the honeycomb is drawn by ~3.4 s
   return (
     <section ref={ref} id="services" className={`wrap ${s.intro}`}>
       <div className={s.text}>
