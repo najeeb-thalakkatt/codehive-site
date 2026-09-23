@@ -41,7 +41,7 @@ export const cells: CellData[] = [
   {
     id: "04", label: "Production and MLOps",
     question: "It works on the laptop. Then what?",
-    questionBody: "The prototype is a notebook and a demo page. There is no tracing, no cost cap, no login, and a prompt injection would make the news. You cannot hand it to anyone.",
+    questionBody: "The prototype is a notebook and a demo page. No tracing, no cost cap, no login, and a prompt injection would make the news. You cannot hand it to anyone.",
     answer: "A system your team can run without us.",
     answerBody: "Terraform environments that promote dev to test to prod on their own. Bedrock or self-hosted inference. Production RAG on managed vector storage. LangFuse tracing with a cost ceiling. JWT on the front door. And a migration path for the thing you already built.",
     chips: ["Cloud architecture on AWS, Azure, GCP", "Terraform and CI/CD", "Bedrock, SageMaker, AgentCore", "Production RAG pipelines", "Observability and guardrails", "Security hardening", "Prototype to production migration"],
