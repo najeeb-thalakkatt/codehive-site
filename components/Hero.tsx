@@ -1,8 +1,9 @@
 import s from "./Hero.module.css";
 const HEX = "0,-58 50,-29 50,29 0,58 -50,29 -50,-29";
+// pointy-top r=58 hexes tessellated with a 6px gap: neighbours at (±106, 0) and (±53, ±92) from the centre
 const cells: [number, number, string, "solid" | "line" | "dash", number][] = [
-  [280, 280, "prod", "solid", .9], [280, 164, "RAG", "line", .3], [380, 222, "agents", "line", .45], [380, 338, "evals", "line", .6],
-  [280, 396, "", "dash", .1], [180, 338, "", "dash", .2], [180, 222, "API", "line", .75],
+  [280, 280, "prod", "solid", .9], [227, 188, "RAG", "line", .3], [333, 188, "agents", "line", .45], [386, 280, "evals", "line", .6],
+  [333, 372, "", "dash", .1], [227, 372, "", "dash", .2], [174, 280, "API", "line", .75],
 ];
 export default function Hero() {
   return (

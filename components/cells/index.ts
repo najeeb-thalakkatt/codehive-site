@@ -24,5 +24,5 @@ export const visuals: Record<string, CellVisual> = {
   "02": { Component: AppDev, mobile: { x: 740, y: 180, w: 440, h: 450 } },
   "03": { Component: Models, mobile: { x: 720, y: 216, w: 520, h: 400 } },
   "04": { Component: MLOps, mobile: { x: 660, y: 280, w: 510, h: 300 } },
-  "05": { Component: Enablement, mobile: { x: 640, y: 130, w: 480, h: 460 } },
+  "05": { Component: Enablement, mobile: { x: 660, y: 166, w: 480, h: 420 } },
 };
