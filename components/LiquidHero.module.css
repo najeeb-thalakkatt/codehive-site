@@ -1,0 +1,27 @@
+/* Hero: honey liquid-metal hive cell with the copy over it. Ported from site-v3/liquid-hero.
+   The ground is transparent so the page's HiveCanvas lattice shows through, as everywhere else. */
+.hero { position: relative; min-height: 100svh; overflow: hidden; display: grid; place-items: center; isolation: isolate; }
+
+/* the cell: a square stage the shader fills; sized by viewport so it stays centred */
+.cell { position: absolute; left: 50%; top: 50%; width: min(84vmin, 720px); aspect-ratio: 1; transform: translate(-50%, -50%); pointer-events: none; filter: drop-shadow(0 0 60px rgba(242, 184, 75, .25)); }
+.cell > canvas, .cell > div { width: 100% !important; height: 100% !important; }
+
+/* code snippets drifting through the honey */
+.code { position: absolute; inset: 0; margin: 0; padding: 0; list-style: none; clip-path: polygon(50% 5.5%, 88.5% 27.7%, 88.5% 72.3%, 50% 94.5%, 11.5% 72.3%, 11.5% 27.7%); mix-blend-mode: multiply; font-family: var(--font-mono); font-size: clamp(11px, 1.1vw, 15px); color: var(--bg0); opacity: .7; }
+.code li { position: absolute; left: var(--x); white-space: nowrap; animation: rise 40s linear infinite; animation-delay: var(--d); }
+@keyframes rise { from { top: 105%; } to { top: -8%; } }
+
+/* copy over the cell */
+.copy { position: relative; z-index: 1; max-width: 760px; padding: 0 24px; display: flex; flex-direction: column; align-items: center; gap: 24px; text-align: center; text-wrap: pretty; }
+.eyebrow { margin: 0; font-family: var(--font-mono); font-size: 13px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: var(--ink1); text-shadow: 0 1px 12px rgba(11, 13, 16, .8); }
+.h1 { font-size: clamp(48px, 7.5vw, 96px); line-height: 1; letter-spacing: -.03em; color: var(--ink1); text-shadow: 0 2px 28px rgba(11, 13, 16, .75), 0 0 2px rgba(11, 13, 16, .9); }
+.sub { margin: 0; max-width: 640px; font-size: clamp(16px, 1.6vw, 20px); line-height: 1.5; font-weight: 500; color: var(--ink1); text-shadow: 0 1px 16px rgba(11, 13, 16, .85), 0 0 2px rgba(11, 13, 16, .9); }
+.actions { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; margin-top: 8px; text-shadow: 0 1px 12px rgba(11, 13, 16, .85); }
+/* amber on the honey is not allowed, so the primary action's marker and underline are ink here */
+.ink::before { background: var(--ink1); }
+.ink::after { background: var(--ink1); }
+
+.scroll { position: absolute; left: clamp(20px, 5vw, 64px); bottom: calc(24px + env(safe-area-inset-bottom, 0px)); font-family: var(--font-mono); font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: var(--ink3); }
+
+@media (prefers-reduced-motion: reduce) { .code li { animation: none; top: calc(20% + var(--i) * 9%); } }
+@media (max-width: 720px) { .cell { width: 110vmin; } }
