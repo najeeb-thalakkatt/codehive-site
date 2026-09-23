@@ -12,7 +12,7 @@ export default function Contact() {
     <section id="contact" className={`wrap reveal ${s.contact}`}>
       <div>
         <div className="eyebrow">Contact</div>
-        <h2 className={s.h2}>Tell us what is stuck between demo and production.</h2>
+        <h2 className={s.h2}>Tell us what is stuck.</h2>
         <p className={s.p}>A thirty-minute call, no deck. If it is not a fit we will say so and point you somewhere better.</p>
       </div>
       <svg className={s.hive} viewBox="110 124 340 312" aria-hidden="true">
