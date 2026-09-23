@@ -12,7 +12,7 @@ export default function Hero() {
         <div>
           <div className="eyebrow">AI engineering as a service · Stockholm</div>
           <h1>Ship the <span style={{ color: "var(--amber)" }}>AI feature.</span></h1>
-          <p>Backend engineering for teams adding LLM features without an ML team. Based in Stockholm, working with companies across Europe, the UK and the US.</p>
+          <p>Backend engineering for teams adding LLM features without an ML team. Based in Stockholm, remote across Europe, the UK and the US.</p>
           <div className={s.cta}><a className="act" href="#book">Book a call</a><a className="act ghost" href="#services">See the services</a></div>
         </div>
         <div className={s.hint} aria-hidden="true">SCROLL<i /></div>
