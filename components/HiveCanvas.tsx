@@ -3,7 +3,8 @@ import { useEffect, useRef } from "react";
 import { motionOff, onMotionChange } from "@/lib/motion";
 
 /** Full-page hex lattice with an amber glow that hops cell to cell. Density follows scroll:
- *  full on the hero, quiet behind the cells, medium after. */
+ *  full on the hero, quiet behind the cells, medium after. A fast scroll wakes the hive: more flows,
+ *  easing back over about a second. */
 export default function HiveCanvas() {
   const ref = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
@@ -35,15 +36,17 @@ export default function HiveCanvas() {
     const light = (i: number, s: number, hue: string) => lit.set(i, { t: 0, d: 2.2 + Math.random() * 1.6, s, hue });
     const drawHex = (x: number, y: number, r: number) => { ctx.beginPath(); for (let k = 0; k < 6; k++) { const a = Math.PI / 6 + k * Math.PI / 3; const px = x + r * Math.cos(a), py = y + r * Math.sin(a); k ? ctx.lineTo(px, py) : ctx.moveTo(px, py); } ctx.closePath(); };
 
-    let last = 0, raf = 0;
+    let last = 0, raf = 0, lastY = window.scrollY, rush = 0;
     const frame = (ts: number) => {
       if (document.hidden) { raf = 0; return; }
       if (!last) last = ts; const dt = Math.min(0.05, (ts - last) / 1000); last = ts;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H); if (grid) ctx.drawImage(grid, 0, 0, W, H);
       const y = window.scrollY, hh = window.innerHeight;
+      // rush: 0 at rest, 1 at 2500 px/s or faster; jumps up with the scroll, decays with a ~0.7 s half-life
+      if (dt > 0) { rush = Math.max(rush * Math.exp(-dt), Math.min(1, Math.abs(y - lastY) / dt / 2500)); } lastY = y;
       // narrow viewports get half the flows: fewer glows to blur per frame on a phone GPU
       const dens = (y < hh * 0.8 ? 1 : y < cellsEnd ? 0.22 : 0.55) * (W <= 820 ? 0.5 : 1);
-      if (flows.length < Math.round(6 * dens) + 1 && Math.random() < 0.03 * dens) flows.push({ at: Math.floor(Math.random() * cells.length), prev: -1, hops: 3 + Math.floor(Math.random() * 6), wait: 0, hue: "242,184,75" });
+      if (flows.length < Math.round(6 * dens + 3 * rush) + 1 && Math.random() < 0.03 * dens * (1 + 3 * rush)) flows.push({ at: Math.floor(Math.random() * cells.length), prev: -1, hops: 3 + Math.floor(Math.random() * 6), wait: 0, hue: "242,184,75" });
       for (let f = flows.length - 1; f >= 0; f--) {
         const fl = flows[f]; fl.wait -= dt;
         if (fl.wait <= 0) {
@@ -54,7 +57,7 @@ export default function HiveCanvas() {
           if (fl.hops <= 0 || fl.at < 0) flows.splice(f, 1);
         }
       }
-      if (Math.random() < 0.02 * dens) light(Math.floor(Math.random() * cells.length), 0.6, "242,184,75");
+      if (Math.random() < 0.02 * dens * (1 + 2 * rush)) light(Math.floor(Math.random() * cells.length), 0.6, "242,184,75");
       for (const [key, L] of lit) {
         L.t += dt; if (L.t >= L.d) { lit.delete(key); continue; }
         const env = Math.sin(Math.PI * (L.t / L.d)) ** 2, a = env * L.s * (0.55 + 0.45 * dens);

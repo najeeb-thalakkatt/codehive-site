@@ -47,7 +47,7 @@ Source: `prototype/index.html`, keyframes prefixed `s2`, `s3`, `s4`, `s5`. Templ
 - [ ] v3 cards: on phones the 640-wide animations render at about 55%; phone artboards would fix it
 - [ ] OG image still shows the pre-v3 hero tiles; re-render once the hero is final
 - [ ] Hero hive: continue assembling on scroll and hand over to cell 01 (currently a load animation only)
-- [ ] Hive glow: react to scroll speed
+- [x] Hive glow: react to scroll speed
 - [x] Services intro: the v3 intro (words rise in, six-cell index) replaced the text list, 2026-09-23
 - [x] Cell 06 "Plain backend": own visual (all six visuals ported from the service animations canvas, 2026-09-23)
 - [ ] Calendly: add "Plain backend" to the "Which service are you looking for?" options (must match `name` in content/services.ts)
