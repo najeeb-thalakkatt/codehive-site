@@ -8,12 +8,13 @@
 .note { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 14px; line-height: 1.6; color: var(--ink2); white-space: nowrap; }
 .note b { font-weight: 400; color: var(--ink3); }
 .tag { width: max-content; padding: 4px 10px; border-radius: 6px; border: 1px dashed var(--alert); color: var(--alert); font-family: var(--font-mono); font-size: 13px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; white-space: nowrap; }
+/* typed lines and bars reveal with clip-path keyframes (paint only), never width: the box keeps its size */
 .typed { display: block; overflow: hidden; white-space: nowrap; width: fit-content; max-width: 100%; }
 .bub { padding: 12px 16px; border-radius: 12px 12px 12px 4px; background: var(--bg2); font-size: 15px; line-height: 1.5; color: var(--ink1); }
 .ans { padding: 14px 16px; background: var(--bg1); border: 1px solid var(--line2); border-radius: 12px 12px 4px 12px; font-size: 15px; line-height: 1.5; color: var(--ink1); }
 .src { padding: 3px 8px; border-radius: 6px; background: var(--bg2); white-space: nowrap; }
 .box { border: 1px solid var(--line2); border-radius: 6px; background: var(--bg1); }
 .bar { height: 8px; border-radius: 4px; background: var(--line1); overflow: hidden; }
-.bar > div { height: 8px; width: 0; background: var(--ink2); }
+.bar > div { height: 8px; width: 100%; background: var(--ink2); }
 /* the loop's end fade, so a restart is a dissolve rather than a cut */
 @keyframes stagefade { 0%, 95% { opacity: 1; } 100% { opacity: 0; } }

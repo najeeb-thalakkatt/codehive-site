@@ -16,6 +16,6 @@
 @keyframes s4g3 { 0%, 66% { opacity: 0; transform: translateY(8px); animation-timing-function: var(--eo); } 70%, 100% { opacity: 1; transform: translateY(0); } }
 @keyframes s4req { 0%, 74% { opacity: 0; transform: translateY(0); } 76% { opacity: 1; transform: translateY(0); animation-timing-function: linear; } 82% { opacity: 1; transform: translateY(64px); } 84% { opacity: 1; transform: translateY(64px); animation-timing-function: var(--ei); } 90% { opacity: 1; transform: translateY(150px); } 91%, 100% { opacity: 0; transform: translateY(150px); } }
 @keyframes s4jwt { 0%, 80% { border-color: var(--line2); color: var(--ink3); } 83%, 100% { border-color: var(--ok); color: var(--ok); } }
-@keyframes s4span1 { 0%, 86% { opacity: 0; width: 0; } 90%, 100% { opacity: 1; width: 120px; } }
-@keyframes s4span2 { 0%, 88% { opacity: 0; width: 0; } 92%, 100% { opacity: 1; width: 60px; } }
-@keyframes s4cost { 0%, 60% { width: 0; } 66%, 86% { width: 34%; } 92%, 100% { width: 46%; } }
+@keyframes s4span1 { 0%, 86% { opacity: 0; clip-path: inset(0 100% 0 0 round 4px); } 90%, 100% { opacity: 1; clip-path: inset(0 0 0 0 round 4px); } }
+@keyframes s4span2 { 0%, 88% { opacity: 0; clip-path: inset(0 100% 0 0 round 4px); } 92%, 100% { opacity: 1; clip-path: inset(0 0 0 0 round 4px); } }
+@keyframes s4cost { 0%, 60% { clip-path: inset(0 100% 0 0 round 4px); } 66%, 86% { clip-path: inset(0 66% 0 0 round 4px); } 92%, 100% { clip-path: inset(0 54% 0 0 round 4px); } }

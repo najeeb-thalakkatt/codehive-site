@@ -11,9 +11,9 @@
 @keyframes s3flow1 { 0%, 12% { stroke-dashoffset: 260; opacity: 1; } 16%, 44% { stroke-dashoffset: 0; opacity: 1; } 50%, 100% { stroke-dashoffset: 0; opacity: 0; } }
 @keyframes s3flow2 { 0%, 13% { stroke-dashoffset: 260; opacity: 1; } 17%, 44% { stroke-dashoffset: 0; opacity: 1; } 50%, 100% { stroke-dashoffset: 0; opacity: 0; } }
 @keyframes s3flow3 { 0%, 14% { stroke-dashoffset: 260; opacity: 1; } 18%, 44% { stroke-dashoffset: 0; opacity: 1; } 50%, 100% { stroke-dashoffset: 0; opacity: 0; } }
-@keyframes s3bar1 { 0%, 18% { width: 0; } 40%, 100% { width: 78%; } }
-@keyframes s3bar2 { 0%, 18% { width: 0; } 40%, 100% { width: 58%; } }
-@keyframes s3bar3 { 0%, 18% { width: 0; background: var(--ink2); } 40%, 72% { width: 74%; background: var(--ink2); } 82%, 100% { width: 92%; background: var(--amber); } }
+@keyframes s3bar1 { 0%, 18% { clip-path: inset(0 100% 0 0 round 4px); } 40%, 100% { clip-path: inset(0 22% 0 0 round 4px); } }
+@keyframes s3bar2 { 0%, 18% { clip-path: inset(0 100% 0 0 round 4px); } 40%, 100% { clip-path: inset(0 42% 0 0 round 4px); } }
+@keyframes s3bar3 { 0%, 18% { clip-path: inset(0 100% 0 0 round 4px); background: var(--ink2); } 40%, 72% { clip-path: inset(0 26% 0 0 round 4px); background: var(--ink2); } 82%, 100% { clip-path: inset(0 8% 0 0 round 4px); background: var(--amber); } }
 @keyframes s3measured { 0%, 40% { opacity: 0; animation-timing-function: var(--eo); } 44%, 100% { opacity: 1; } }
 @keyframes s3eubox { 0%, 46% { opacity: 0; transform: translateY(12px); animation-timing-function: var(--eo); } 52%, 100% { opacity: 1; transform: translateY(0); } }
 @keyframes s3deployed { 0%, 62% { opacity: 0; animation-timing-function: var(--eo); } 66%, 100% { opacity: 1; } }

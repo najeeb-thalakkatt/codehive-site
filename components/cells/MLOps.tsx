@@ -46,8 +46,8 @@ export default function MLOps() {
       <div className="el anim" style={{ left: 300, top: 410, width: 260, display: "flex", flexDirection: "column", gap: 6, animationName: "s4g2" }}>
         <div className="lbl">trace · langfuse</div>
         <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-          <div className="anim" style={{ height: 8, borderRadius: 4, background: "var(--line2)", width: 0, animationName: "s4span1", animationTimingFunction: "var(--eo)" }} />
-          <div className="anim" style={{ height: 8, borderRadius: 4, background: "var(--amber)", width: 0, marginLeft: 40, animationName: "s4span2", animationTimingFunction: "var(--eo)" }} />
+          <div className="anim" style={{ height: 8, borderRadius: 4, background: "var(--line2)", width: 120, animationName: "s4span1", animationTimingFunction: "var(--eo)" }} />
+          <div className="anim" style={{ height: 8, borderRadius: 4, background: "var(--amber)", width: 60, marginLeft: 40, animationName: "s4span2", animationTimingFunction: "var(--eo)" }} />
         </div>
       </div>
       <div className="el note anim" style={{ left: 0, top: 470, animationName: "s4g3" }}><b>handover</b><span>a system your team can run without us</span><Tick /></div>

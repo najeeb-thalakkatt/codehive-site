@@ -1,8 +1,8 @@
 /* Cell 02, Application development: a question is typed, sources are searched, an answer streams with citations. */
 .s2chunk { padding: 4px 10px; border-radius: 6px; background: var(--bg1); border: 1px solid var(--amber); color: var(--amber); white-space: nowrap; }
 @keyframes s2ub { 0%, 2% { opacity: 0; transform: translateY(8px); animation-timing-function: var(--eo); } 6%, 100% { opacity: 1; transform: translateY(0); } }
-@keyframes s2q1 { 0%, 5% { max-width: 0; } 14%, 100% { max-width: 100%; } }
-@keyframes s2q2 { 0%, 14% { max-width: 0; } 19%, 100% { max-width: 100%; } }
+@keyframes s2q1 { 0%, 5% { clip-path: inset(0 100% 0 0); } 14%, 100% { clip-path: inset(0); } }
+@keyframes s2q2 { 0%, 14% { clip-path: inset(0 100% 0 0); } 19%, 100% { clip-path: inset(0); } }
 @keyframes s2status { 0%, 20% { opacity: 0; } 23%, 38% { opacity: 1; } 41%, 100% { opacity: 0; } }
 @keyframes s2ln1 { 0%, 21% { stroke-dashoffset: 200; opacity: 1; } 27%, 60% { stroke-dashoffset: 0; opacity: 1; } 66%, 100% { stroke-dashoffset: 0; opacity: 0; } }
 @keyframes s2ln2 { 0%, 23% { stroke-dashoffset: 200; opacity: 1; } 29%, 60% { stroke-dashoffset: 0; opacity: 1; } 66%, 100% { stroke-dashoffset: 0; opacity: 0; } }
@@ -14,8 +14,8 @@
 @keyframes s2hexfill { 0%, 44% { fill: var(--bg1); } 50%, 100% { fill: var(--amber); } }
 @keyframes s2hextext { 0%, 44% { fill: var(--ink1); } 50%, 100% { fill: var(--bg0); } }
 @keyframes s2ab { 0%, 50% { opacity: 0; transform: translateY(8px); animation-timing-function: var(--eo); } 54%, 100% { opacity: 1; transform: translateY(0); } }
-@keyframes s2l1 { 0%, 54% { max-width: 0; } 62%, 100% { max-width: 100%; } }
-@keyframes s2l2 { 0%, 63% { max-width: 0; } 70%, 100% { max-width: 100%; } }
-@keyframes s2l3 { 0%, 71% { max-width: 0; } 77%, 100% { max-width: 100%; } }
+@keyframes s2l1 { 0%, 54% { clip-path: inset(0 100% 0 0); } 62%, 100% { clip-path: inset(0); } }
+@keyframes s2l2 { 0%, 63% { clip-path: inset(0 100% 0 0); } 70%, 100% { clip-path: inset(0); } }
+@keyframes s2l3 { 0%, 71% { clip-path: inset(0 100% 0 0); } 77%, 100% { clip-path: inset(0); } }
 @keyframes s2src { 0%, 78% { opacity: 0; animation-timing-function: var(--eo); } 82%, 100% { opacity: 1; } }
 @keyframes s2evl { 0%, 85% { opacity: 0; transform: translateX(-8px); animation-timing-function: var(--eo); } 89%, 100% { opacity: 1; transform: translateX(0); } }
