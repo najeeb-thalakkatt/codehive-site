@@ -10,6 +10,7 @@
 .you { background: var(--bg2); border-radius: 12px 12px 12px 4px; animation-name: dim; }
 .us { border: 1px solid var(--amber); border-radius: 12px 12px 4px 12px; animation-name: usin; }
 .who { font-family: var(--font-mono); font-size: 13px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: var(--ink3); display: flex; align-items: center; gap: 8px; }
+.you .who { color: var(--ink2); } /* the you bubble rests at opacity .75; ink3 there is 3.1:1 */
 .whoUs { color: var(--amber); }
 .bubble h2 { font-size: 28px; line-height: 1.08; letter-spacing: -.025em; text-wrap: pretty; }
 .bubble h3 { font-size: 22px; line-height: 1.15; letter-spacing: -.02em; text-wrap: pretty; }
@@ -17,7 +18,7 @@
 .caret { display: inline-block; width: 8px; height: 13px; background: var(--amber); vertical-align: -2px; animation-name: caret; }
 .text :global(.chips) { gap: 6px; }
 .text :global(.chip) { background: var(--bg2); border-color: var(--line1); padding: 5px 9px; font-size: 12.5px; }
-.text :global(.act) { padding: 0; }
+.text :global(.act) { padding: 0; align-self: flex-start; }
 @keyframes dim { 0%, 34% { opacity: 1; } 44%, 100% { opacity: .75; } }
 @keyframes usin { 0%, 32% { opacity: 0; transform: translateY(6px); } 36%, 100% { opacity: 1; transform: none; } }
 @keyframes caret { 0%, 34% { opacity: 0; } 36%, 70% { opacity: 1; } 72%, 100% { opacity: 0; } }

@@ -11,7 +11,7 @@ export default function Privacy() {
   return (
     <>
       <Nav />
-      <main className="wrap" style={{ paddingTop: 140, paddingBottom: 96 }}>
+      <main id="main" className="wrap" style={{ paddingTop: 140, paddingBottom: 96 }}>
         <div className="eyebrow">Privacy</div>
         <h1 style={{ fontSize: "clamp(36px,5vw,56px)", maxWidth: 720, margin: "14px 0 18px" }}>No cookies. Little else.</h1>
         <p style={p}>Codehive AB, org.nr 559392-7576, [PLACEHOLDER: street address], Stockholm, is responsible for this site and for the personal data described here. Questions go to <a href="mailto:dev@codehives.se">dev@codehives.se</a>.</p>

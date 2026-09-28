@@ -17,7 +17,7 @@ export default function Page() {
       <HiveCanvas />
       <Reveal />
       <Nav />
-      <main>
+      <main id="main">
         <LiquidHero />
         <ServicesIntro />
         {/* Each card in its own Suspense boundary: the HTML is already streamed, so no fallback ever

@@ -1,6 +1,6 @@
 @import "../styles/tokens.css";
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: env(safe-area-inset-top, 0px); }
+html { scroll-behavior: smooth; scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 96px); }
 body { margin: 0; background: var(--bg0); color: var(--ink1); font-family: var(--font-body); font-size: 16px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
 /* The hive canvas is position: fixed at z-index 0. Page content must sit in its own layer above it,
    otherwise the lattice paints over every headline and form field. */
@@ -13,10 +13,18 @@ h1, h2, h3 { font-family: var(--font-display); font-weight: 700; letter-spacing:
 button.act { background: none; border: 0; padding: 10px 0; font: inherit; }
 .act { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink1); font-family: var(--font-display); font-weight: 700; font-size: 18px; padding: 10px 0; min-height: 44px; position: relative; }
 .act::before { content: ""; width: 10px; height: 10px; background: var(--amber); clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); }
-.act::after { content: ""; position: absolute; left: 22px; right: 0; bottom: 6px; height: 1.5px; background: var(--amber); transform: scaleX(0); transform-origin: left; }
+.act::after { content: ""; position: absolute; left: 22px; right: 0; bottom: 6px; height: 1.5px; background: var(--amber); transform: scaleX(0); transform-origin: left; transition: transform 200ms var(--ease-out); }
 .act:hover { color: var(--ink1); } .act:hover::after { transform: scaleX(1); }
 .act.ghost { color: var(--ink2); } .act.ghost::before { background: var(--line2); } .act.ghost::after { background: var(--ink2); }
-.act:focus-visible { outline: none; } .act:focus-visible::after { transform: scaleX(1); }
+.act:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: var(--radius-sm); } .act:focus-visible::after { transform: scaleX(1); }
+.act:active { transform: translateY(1px); }
+/* skip link: off-screen until focused */
+.skip { position: absolute; left: 16px; top: -64px; z-index: 30; padding: 12px 20px; border-radius: var(--radius-pill); background: var(--ink1); color: var(--bg0); font-family: var(--font-display); font-weight: 700; text-decoration: none; }
+.skip:focus { top: 16px; outline: none; box-shadow: var(--focus-ring); } .skip:hover { color: var(--bg0); }
+/* nav and footer text links */
+.navlink { color: var(--ink2); text-decoration: none; display: inline-flex; align-items: center; min-height: 44px; transition: color 150ms var(--ease-out); }
+.navlink:hover { color: var(--ink1); }
+.navlink:focus-visible { outline: none; color: var(--ink1); box-shadow: var(--focus-ring); border-radius: var(--radius-sm); }
 .chip { font-family: var(--font-mono); font-size: 13px; letter-spacing: .3px; color: var(--ink1); border: 1px solid var(--line2); background: var(--bg1); padding: 8px 12px; border-radius: var(--radius-sm); white-space: nowrap; }
 .chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 /* animation primitives, played once per cell by lib/usePlayOnEnter.ts */
