@@ -1,6 +1,6 @@
 "use client";
 import { useRef } from "react";
-import { BOOK, type Service } from "@/content/services";
+import { ASK, type Service } from "@/content/services";
 import { usePlayOnEnter } from "@/lib/usePlayOnEnter";
 import Stream from "./Stream";
 import ServiceAnimation from "./ServiceAnimation";
@@ -40,7 +40,7 @@ export default function Cell({ data, children }: { data: Service; children?: Rea
           {/* Plain #book works without JavaScript. The source card rides along as a data attribute and a
               custom event so Booking can prefill Calendly's service question. */}
           <a className="act w" style={{ animationDelay: ".74s" }} href="#book" data-source={`cell-${data.id}`}
-            onClick={() => window.dispatchEvent(new CustomEvent("codehive:book", { detail: data.name }))}>{BOOK}</a>
+            onClick={() => window.dispatchEvent(new CustomEvent("codehive:book", { detail: data.name }))}>{ASK}</a>
         </div>
         <ServiceAnimation>{children}</ServiceAnimation>
       </div>

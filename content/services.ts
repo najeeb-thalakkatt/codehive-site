@@ -13,6 +13,8 @@ export type Service = {
 };
 
 export const BOOK = "Book a call";
+/** The card action: same #book target and Calendly prefill as BOOK, its own label so the page does not repeat "Book a call" eight times. */
+export const ASK = "Ask about this";
 
 // Copy is the site's content (SITE_COPY_v2). Edit here, nowhere else.
 export const SERVICES: Service[] = [
