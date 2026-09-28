@@ -8,9 +8,10 @@
 .cell > canvas, .cell > div { width: 100% !important; height: 100% !important; }
 
 /* code snippets drifting through the honey */
-.code { position: absolute; inset: 0; margin: 0; padding: 0; list-style: none; clip-path: polygon(50% 5.5%, 88.5% 27.7%, 88.5% 72.3%, 50% 94.5%, 11.5% 72.3%, 11.5% 27.7%); mix-blend-mode: multiply; font-family: var(--font-mono); font-size: clamp(11px, 1.1vw, 15px); color: var(--bg0); opacity: .7; }
-.code li { position: absolute; left: var(--x); transform: translateX(-50%); white-space: nowrap; animation: rise 40s linear infinite; animation-delay: var(--d); }
-@keyframes rise { 0% { top: 82%; opacity: 0; } 8% { opacity: 1; } 92% { opacity: 1; } 100% { top: 18%; opacity: 0; } }
+.code { position: absolute; inset: 0; margin: 0; padding: 0; list-style: none; container-type: size; clip-path: polygon(50% 5.5%, 88.5% 27.7%, 88.5% 72.3%, 50% 94.5%, 11.5% 72.3%, 11.5% 27.7%); mix-blend-mode: multiply; font-family: var(--font-mono); font-size: clamp(11px, 1.1vw, 15px); color: var(--bg0); opacity: .7; }
+/* the drift is a transform (82% → 18% of the cell = 64cqh of the .code container), not top: no layout per frame */
+.code li { position: absolute; left: var(--x); top: 82%; transform: translateX(-50%); white-space: nowrap; animation: rise 40s linear infinite; animation-delay: var(--d); }
+@keyframes rise { 0% { transform: translate(-50%, 0); opacity: 0; } 8% { opacity: 1; } 92% { opacity: 1; } 100% { transform: translate(-50%, -64cqh); opacity: 0; } }
 
 /* radial darkening behind the copy block, inside the cell layer, above the canvas and the snippets */
 .shade { position: absolute; left: 50%; top: 50%; width: min(var(--shade-w, 760px), 100vw); height: var(--shade-h, 420px); transform: translate(-50%, -50%); background: radial-gradient(closest-side, rgba(11, 13, 16, var(--shade-0, .55)) 0%, rgba(11, 13, 16, var(--shade-1, .3)) 45%, rgba(11, 13, 16, 0) 100%); pointer-events: none; }
