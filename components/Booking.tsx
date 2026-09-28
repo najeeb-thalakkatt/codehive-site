@@ -55,7 +55,7 @@ export default function Booking() {
       </div>
       {open !== false && (
         <div id="book-frame" className={s.frame}>
-          {!loaded && <span className={`mono ${s.loading}`}>Loading the calendar</span>}
+          <span className={`mono ${s.loading} ${loaded ? s.gone : ""}`} aria-hidden={loaded || undefined}>Loading the calendar</span>
           <iframe ref={frame} title="Book a 30 minute call with Codehive" src={src} loading="lazy" />
           <p className={`mono ${s.note}`}>The booking form is provided by Calendly. See <a href="/privacy">privacy</a>.</p>
         </div>
