@@ -18,7 +18,7 @@ export default function HiveCanvas() {
       dpr = Math.min(2, window.devicePixelRatio || 1); W = window.innerWidth; H = window.innerHeight;
       cv.width = W * dpr; cv.height = H * dpr; cv.style.width = `${W}px`; cv.style.height = `${H}px`;
       grid = document.createElement("canvas"); grid.width = cv.width; grid.height = cv.height;
-      const g = grid.getContext("2d")!; g.scale(dpr, dpr); g.strokeStyle = "#1a1d23"; g.lineWidth = 1;
+      const g = grid.getContext("2d")!; g.scale(dpr, dpr); g.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue("--hive-line").trim(); g.lineWidth = 1;
       cells = [];
       const w = SQ3 * R, h = 1.5 * R;
       for (let r = -1; r < Math.ceil(H / h) + 2; r++) for (let c = -1; c < Math.ceil(W / w) + 2; c++) {

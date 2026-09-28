@@ -12,6 +12,7 @@ const mono = localFont({ src: [{ path: "./fonts/ibm-plex-mono-400.woff2", weight
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://codehives.se"),
+  alternates: { canonical: "./" },
   title: "Codehive · AI engineering as a service",
   description: "Backend engineering for teams adding LLM features without an ML team. Stockholm, remote across Europe, the UK and the US.",
   icons: {
@@ -23,6 +24,9 @@ export const metadata: Metadata = {
 };
 
 // Cookie-free analytics. Set NEXT_PUBLIC_UMAMI_WEBSITE_ID in Vercel; without it nothing loads.
+// Only facts already printed on the page: name, url, email.
+const orgLd = { "@context": "https://schema.org", "@type": "Organization", name: "Codehive AB", url: "https://codehives.se", email: "dev@codehives.se", logo: "https://codehives.se/apple-touch-icon.png" };
+
 const umamiId = process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID;
 
 export const viewport = { themeColor: "#0b0d10", viewportFit: "cover" as const };
@@ -33,6 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <a className="skip" href="#main">Skip to content</a>
         {children}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgLd) }} />
         {umamiId && <Script src="https://cloud.umami.is/script.js" data-website-id={umamiId} strategy="afterInteractive" />}
       </body>
     </html>

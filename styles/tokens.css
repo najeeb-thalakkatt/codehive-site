@@ -1,7 +1,7 @@
 /* Codehive design tokens. Source of truth: the Codehive design system artifact. */
 :root {
   --bg0: #0b0d10; --bg1: #14171c; --bg2: #1c2026;
-  --line1: #2a2d33; --line2: #3a3d44;
+  --line1: #2a2d33; --line2: #3a3d44; --hive-line: #1a1d23;
   --ink1: #f4f1ea; --ink2: #b8b3a8; --ink3: #8a867e;
   --amber: #f2b84b; --amber2: #e0a030; --ok: #6fcf97; --alert: #f26d5b;
   --space-1: 4px; --space-2: 8px; --space-3: 16px; --space-4: 24px; --space-5: 40px; --space-6: 64px; --space-7: 120px;

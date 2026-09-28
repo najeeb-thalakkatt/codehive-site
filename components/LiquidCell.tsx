@@ -20,7 +20,7 @@ export default function LiquidCell({ speed }: { speed: number }) {
       mipmaps={["u_image"]}
       uniforms={{
         u_colorBack: getShaderColorFromString("rgba(11, 13, 16, 0)"),
-        u_colorTint: getShaderColorFromString("#e0a030"),
+        u_colorTint: getShaderColorFromString(getComputedStyle(document.documentElement).getPropertyValue("--amber2").trim()),
         u_image: "/codehive-cell.processed.png",
         u_isImage: true,
         u_shape: LiquidMetalShapes.none,
