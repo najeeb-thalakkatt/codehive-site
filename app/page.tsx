@@ -24,11 +24,11 @@ export default function Page() {
             shows, but React hydrates each boundary as a separate short task instead of the whole
             page in one long one. That is what keeps the main thread free on a phone. */}
         <div className={`wrap ${p.cards}`}>
-          {SERVICES.map((c) => {
+          {SERVICES.map((c, i) => {
             const V = visuals[c.animation];
             return (
               <Suspense key={c.id} fallback={null}>
-                <Cell data={c}>{V ? <V /> : null}</Cell>
+                <Cell data={c} flip={i % 2 === 1}>{V ? <V /> : null}</Cell>
               </Suspense>
             );
           })}

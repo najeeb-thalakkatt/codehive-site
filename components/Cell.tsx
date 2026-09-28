@@ -10,7 +10,7 @@ import s from "./Cell.module.css";
  *  bubble and a "codehive" bubble with the chips and the action on the left, the looping
  *  animation on the right. The text plays once on enter (the hook watches the text column only;
  *  the animation frame loops on its own). */
-export default function Cell({ data, children }: { data: Service; children?: React.ReactNode }) {
+export default function Cell({ data, flip = false, children }: { data: Service; flip?: boolean; children?: React.ReactNode }) {
   const text = useRef<HTMLDivElement>(null);
   usePlayOnEnter(text, 7);
   return (
@@ -18,7 +18,7 @@ export default function Cell({ data, children }: { data: Service; children?: Rea
       <header className={s.head}>
         <span className={s.num}>{data.id}</span><span>{data.name}</span>
       </header>
-      <div className={s.body}>
+      <div className={s.body} data-flip={flip || undefined}>
         <div ref={text} className={s.text}>
           {/* Timeline (0–1 = the 7 s play). The question is complete from the first frame (negative delays
               clamp to "already shown"), so the reader never arrives before it (addendum T9). */}
