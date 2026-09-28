@@ -12,7 +12,7 @@ import s from "./Cell.module.css";
  *  the animation frame loops on its own). */
 export default function Cell({ data, flip = false, children }: { data: Service; flip?: boolean; children?: React.ReactNode }) {
   const text = useRef<HTMLDivElement>(null);
-  usePlayOnEnter(text, 7);
+  usePlayOnEnter(text, 3); // was 7 s: the answer held back 3.5 s and the action 5.5 s, six times down the page
   return (
     <section className={s.card} id={`cell-${data.id}`} aria-label={data.name}>
       <header className={s.head}>
@@ -20,7 +20,7 @@ export default function Cell({ data, flip = false, children }: { data: Service; 
       </header>
       <div className={s.body} data-flip={flip || undefined}>
         <div ref={text} className={s.text}>
-          {/* Timeline (0–1 = the 7 s play). The question is complete from the first frame (negative delays
+          {/* Timeline (0–1 = the 3 s play). The question is complete from the first frame (negative delays
               clamp to "already shown"), so the reader never arrives before it (addendum T9). */}
           <div className={`${s.bubble} ${s.you} anim`}>
             <div className={s.who}>you</div>
@@ -37,9 +37,10 @@ export default function Cell({ data, flip = false, children }: { data: Service; 
               <span key={c} className="chip w" style={{ animationDelay: `${(0.63 + (0.09 * i) / data.chips.length).toFixed(3)}s` }}>{c}</span>
             ))}
           </div>
-          {/* Plain #book works without JavaScript. The source card rides along as a data attribute and a
+          {/* The action is there from the first frame (a negative delay clamps to "already shown"): nobody
+              waits for the way to book. Plain #book works without JavaScript. The source card rides along as a data attribute and a
               custom event so Booking can prefill Calendly's service question. */}
-          <a className="act w" style={{ animationDelay: ".74s" }} href="#book" data-source={`cell-${data.id}`}
+          <a className="act w" style={{ animationDelay: "-.04s" }} href="#book" data-source={`cell-${data.id}`}
             onClick={() => window.dispatchEvent(new CustomEvent("codehive:book", { detail: data.name }))}>{ASK}</a>
         </div>
         <ServiceAnimation>{children}</ServiceAnimation>

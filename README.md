@@ -19,11 +19,11 @@ Small, safe change: commit on `main`, push, live in about a minute. Anything you
 `components/LiquidCell.tsx` mounts the liquid-metal shader with a mask that was preprocessed once (`public/codehive-cell.processed.png`). If `public/codehive-cell.svg` changes, regenerate it: rasterise the svg at 1024px, run `toProcessedLiquidMetal` from `@paper-design/shaders` on it in a browser, save the `pngBlob`. Running the preprocessing at page load costs about 1.8 s of main-thread time on a phone.
 
 ## How the cells play
-Each service cell is `components/Cell.tsx`. Its motion is plain CSS `@keyframes`, authored on a 0–100% timeline (1 s of animation time). Nothing is tied to scroll position: `lib/usePlayOnEnter.ts` waits until a quarter of the section is on screen, then plays every animation inside it once at a playback rate that stretches the 1 s timeline to 7 s (`usePlayOnEnter(ref, 7)`). The reader scrolls on when they are ready; the next cell plays when it arrives. No pinning, no GSAP.
+Each service cell is `components/Cell.tsx`. Its motion is plain CSS `@keyframes`, authored on a 0–100% timeline (1 s of animation time). Nothing is tied to scroll position: `lib/usePlayOnEnter.ts` waits until a quarter of the section is on screen, then plays every animation inside it once at a playback rate that stretches the 1 s timeline to 3 s (`usePlayOnEnter(ref, 3)`; the services intro uses 7 s). The reader scrolls on when they are ready; the next cell plays when it arrives. No pinning, no GSAP.
 
 Rules for anything you animate inside a cell:
 - give it class `anim` (or `w` for streamed words) and `animation-name`
-- keep `animation-duration` at 1s, or a delay+duration that adds up to ≤1s (the hook stretches that 1s to 7s on screen)
+- keep `animation-duration` at 1s, or a delay+duration that adds up to ≤1s (the hook stretches that 1s to 3s on screen for a card, 7s for the intro)
 - animate transform and opacity where you can; colour and stroke changes work but cost more on weak phones
 
 Text streams in via `components/Stream.tsx`: each word is a span with an `animation-delay` between t0 and t1. All words are always in the DOM, so screen readers read the full text.

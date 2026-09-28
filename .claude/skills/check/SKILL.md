@@ -17,7 +17,7 @@ What the checks cover, so you know which one to trust:
   cannot reach 4.5:1 with the agreed shade, the user accepted that by eye), two pill buttons >= 48px,
   every drifting snippet centre inside the cell hexagon, and reveal pacing at 700 px/s.
 - `cards.mjs`: page height vs live, six intro links in order, intro plays and finishes, every card
-  <= 680px tall at 1280x720, text plays on entry and finishes in 8 s, loops run in view and pause off
+  <= 680px tall at 1280x720, text plays on entry with the action already shown and finishes in 4 s, loops run in view and pause off
   screen, no horizontal overflow at 375, reduced motion parks everything at the end state.
 
 Rules learned the hard way:

@@ -46,12 +46,12 @@ honey. Hero B (`site-v3/layout-refs/hero-b-copy-over.html`) is the reference.
 
 ### Play on enter (text and intro)
 - `lib/usePlayOnEnter.ts` collects every Web Animation inside a ref, holds them at 0, and once the element
-  is in view plays them all once at rate 1/duration. The intro and each card's text column play over 7 s. Nothing is scrubbed by scroll and nothing is pinned.
+  is in view plays them all once at rate 1/duration. The intro plays over 7 s, each card's text column over 3 s. Nothing is scrubbed by scroll and nothing is pinned.
 - Motion is plain CSS `@keyframes` whose 0–100% is that timeline. `.anim` (in `app/globals.css`) sets duration
   1s, linear, fill both, paused; an element needs `.anim` plus an `animation-name`. `.w` is the streamed-word
   variant (`components/Stream.tsx`, one `.w` span per word, the space between spans, never inside).
 - Card text timeline: question partly visible at 0 (negative `t0`), the "you" turn in by 0.3, the codehive
-  bubble fades in at 0.32–0.36, its heading 0.36–0.46, body 0.47–0.62, chips 0.63–0.72, action 0.74.
+  bubble fades in at 0.32–0.36, its heading 0.36–0.46, body 0.47–0.62, chips 0.63–0.72; the action is shown from 0.
 - Keyframes in a CSS module get hashed names; keyframes referenced by inline `animationName` live in plain
   global css next to the component (`services-intro.css`, `components/cells/*.css`), prefixed per component.
 - Reduced motion: the hook sets every animation to its end and never plays.

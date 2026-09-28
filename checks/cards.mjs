@@ -35,11 +35,11 @@ const ids = ["01", "02", "03", "04", "05", "06"];
     const sel = `#cell-${id}`;
     await p.evaluate((s) => document.querySelector(s).scrollIntoView({ block: "start", behavior: "instant" }), sel); await p.waitForTimeout(500);
     let s = await p.evaluate((s) => { const el = document.querySelector(s); const t = el.querySelector('[class*="text"]').getAnimations({ subtree: true }); const f = el.querySelector('[class*="frame"]').getAnimations({ subtree: true }); return { tn: t.length, trun: t.filter((x) => x.playState === "running").length, fn: f.length, frun: f.filter((x) => x.playState === "running").length, cta: +getComputedStyle(el.querySelector(".act")).opacity }; }, sel);
-    ok(s.trun > 0 && s.cta === 0, `card ${id}: text plays on entry (${s.trun}/${s.tn})`);
+    ok(s.trun > 0 && s.cta > 0.9, `card ${id}: text plays on entry, action already shown (${s.trun}/${s.tn}, cta ${s.cta})`);
     ok(s.fn > 0 && s.frun === s.fn, `card ${id}: animation loop running in view (${s.frun}/${s.fn})`);
-    await p.waitForTimeout(7800);
+    await p.waitForTimeout(3800);
     s = await p.evaluate((s) => { const el = document.querySelector(s); const t = el.querySelector('[class*="text"]').getAnimations({ subtree: true }); return { tn: t.length, tfin: t.filter((x) => x.playState === "finished").length, cta: +getComputedStyle(el.querySelector(".act")).opacity, sw: document.documentElement.scrollWidth }; }, sel);
-    ok(s.tfin === s.tn && s.cta > 0.9, `card ${id}: text finished after 8 s (${s.tfin}/${s.tn}, cta ${s.cta})`);
+    ok(s.tfin === s.tn && s.cta > 0.9, `card ${id}: text finished after 4 s (${s.tfin}/${s.tn}, cta ${s.cta})`);
     ok(s.sw <= 1280, `card ${id}: no horizontal overflow (${s.sw})`);
     if (id === "02") await p.screenshot({ path: "shots/v3-card02-1280-end.png" });
   }
