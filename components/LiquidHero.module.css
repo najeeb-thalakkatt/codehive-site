@@ -33,5 +33,6 @@
 
 
 @media (prefers-reduced-motion: reduce) { .code li { animation: none; top: calc(22% + var(--i) * 8%); } }
+:global(html[data-motion="off"]) .code li { animation: none; top: calc(22% + var(--i) * 8%); }
 @media (min-width: 1280px) { .h1 { font-size: 96px; letter-spacing: -3px; } }
 @media (max-width: 720px) { .cell { width: 110vmin; } .hero { min-height: calc(110vmin + 64px); } .h1 { font-size: clamp(48px, 12vw, 64px); } }

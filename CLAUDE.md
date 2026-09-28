@@ -55,6 +55,9 @@ honey. Hero B (`site-v3/layout-refs/hero-b-copy-over.html`) is the reference.
 - Keyframes in a CSS module get hashed names; keyframes referenced by inline `animationName` live in plain
   global css next to the component (`services-intro.css`, `components/cells/*.css`), prefixed per component.
 - Reduced motion: the hook sets every animation to its end and never plays.
+- "Pause motion" (footer, `components/MotionToggle.tsx`, WCAG 2.2.2) sets `html[data-motion="off"]`, remembered in
+  localStorage and applied before paint by `app/layout.tsx`. It means the same as reduced motion: anything new that
+  moves must honour both (`motionOff()` / `onMotionChange()` in `lib/motion.ts`, or the attribute selector in CSS).
 
 ### Service cards and their animations
 - `components/Cell.tsx` is the compact card: header row (number, name), a "you" bubble and a

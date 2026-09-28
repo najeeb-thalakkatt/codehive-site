@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
+import { motionOff, onMotionChange } from "@/lib/motion";
 
 /** Full-page hex lattice with an amber glow that hops cell to cell. Density follows scroll:
  *  full on the hero, quiet behind the cells, medium after. */
@@ -8,7 +9,7 @@ export default function HiveCanvas() {
   useEffect(() => {
     const cv = ref.current; if (!cv) return;
     const ctx = cv.getContext("2d"); if (!ctx) return;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let off = motionOff(); // reduced motion or "Pause motion": the lattice without glow
     const R = 46, SQ3 = Math.sqrt(3);
     let W = 0, H = 0, dpr = 1, grid: HTMLCanvasElement | null = null, cells: [number, number][] = [], cellsEnd = 0;
     const flows: { at: number; prev: number; hops: number; wait: number; hue: string }[] = [];
@@ -27,7 +28,9 @@ export default function HiveCanvas() {
       }
       const last = document.querySelector<HTMLElement>("section[id^=cell-]:last-of-type");
       cellsEnd = last ? last.offsetTop + last.offsetHeight : 0;
+      if (off) still(); // resizing clears the canvas and no frame loop is running to repaint it
     };
+    const still = () => { ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H); if (grid) ctx.drawImage(grid, 0, 0, W, H); };
     const neighbours = (i: number) => { const out: number[] = []; const w = SQ3 * R * 1.05; const [x, y] = cells[i]; for (let j = 0; j < cells.length; j++) { if (j === i) continue; const dx = cells[j][0] - x, dy = cells[j][1] - y; if (dx * dx + dy * dy < w * w) out.push(j); } return out; };
     const light = (i: number, s: number, hue: string) => lit.set(i, { t: 0, d: 2.2 + Math.random() * 1.6, s, hue });
     const drawHex = (x: number, y: number, r: number) => { ctx.beginPath(); for (let k = 0; k < 6; k++) { const a = Math.PI / 6 + k * Math.PI / 3; const px = x + r * Math.cos(a), py = y + r * Math.sin(a); k ? ctx.lineTo(px, py) : ctx.moveTo(px, py); } ctx.closePath(); };
@@ -64,10 +67,15 @@ export default function HiveCanvas() {
       ctx.shadowBlur = 0;
       raf = requestAnimationFrame(frame);
     };
-    const onVis = () => { if (!document.hidden && !raf && !reduce) { last = 0; raf = requestAnimationFrame(frame); } };
+    const onVis = () => { if (!document.hidden && !raf && !off) { last = 0; raf = requestAnimationFrame(frame); } };
+    const onMotion = () => {
+      off = motionOff();
+      if (off) { cancelAnimationFrame(raf); raf = 0; flows.length = 0; lit.clear(); still(); } else onVis();
+    };
     resize(); window.addEventListener("resize", resize); document.addEventListener("visibilitychange", onVis);
-    if (reduce) { ctx.setTransform(dpr, 0, 0, dpr, 0, 0); if (grid) ctx.drawImage(grid, 0, 0, W, H); } else raf = requestAnimationFrame(frame);
-    return () => { cancelAnimationFrame(raf); window.removeEventListener("resize", resize); document.removeEventListener("visibilitychange", onVis); };
+    const unsub = onMotionChange(onMotion);
+    if (off) still(); else raf = requestAnimationFrame(frame);
+    return () => { cancelAnimationFrame(raf); unsub(); window.removeEventListener("resize", resize); document.removeEventListener("visibilitychange", onVis); };
   }, []);
   return <canvas ref={ref} aria-hidden="true" style={{ position: "fixed", inset: 0, width: "100%", height: "100%", zIndex: 0, pointerEvents: "none" }} />;
 }

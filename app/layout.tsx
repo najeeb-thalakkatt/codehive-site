@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import localFont from "next/font/local";
 import "./globals.css";
+import { MOTION_KEY } from "@/lib/motion";
 
 // Fonts are checked in under app/fonts (latin subset, variable where Google offers it) and served
 // from the site itself: no request to Google at runtime and none at build time either, so the
@@ -29,11 +30,15 @@ const orgLd = { "@context": "https://schema.org", "@type": "Organization", name:
 
 const umamiId = process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID;
 
+// "Pause motion" (footer) is remembered per browser; set it before first paint so nothing starts moving.
+const motionInit = `try{if(localStorage.getItem(${JSON.stringify(MOTION_KEY)})==="off")document.documentElement.dataset.motion="off"}catch(e){}`;
+
 export const viewport = { themeColor: "#0b0d10", viewportFit: "cover" as const };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`}>
+    <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`} suppressHydrationWarning>
+      <head><script dangerouslySetInnerHTML={{ __html: motionInit }} /></head>
       <body>
         <a className="skip" href="#main">Skip to content</a>
         {children}

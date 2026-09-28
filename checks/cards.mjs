@@ -61,6 +61,23 @@ const ids = ["01", "02", "03", "04", "05", "06"];
   await p.screenshot({ path: "shots/v3-card02-375.png", fullPage: false });
   await p.close();
 }
+// --- "Pause motion" in the footer: parks everything, persists across reload, resumes
+{
+  const p = await b.newPage({ viewport: { width: 1280, height: 720 } });
+  await p.goto("http://localhost:3000/", { waitUntil: "networkidle" }); await p.waitForTimeout(800);
+  const running = () => p.evaluate(() => document.getAnimations().filter((a) => a.playState === "running").length);
+  ok((await running()) > 0, "pause: hero moves before the toggle");
+  await p.click("footer button"); await p.waitForTimeout(300);
+  ok((await running()) === 0, "pause: nothing running after Pause motion");
+  await p.evaluate(() => document.querySelector("#cell-02").scrollIntoView({ block: "start", behavior: "instant" })); await p.waitForTimeout(600);
+  const pr = await p.evaluate(() => document.querySelector('#cell-02 [class*="frame"]').getAnimations({ subtree: true })[0].effect.getComputedTiming().progress);
+  ok(Math.abs(pr - 0.95) < 0.01, `pause: card loop parked on the finished scene (progress ${pr?.toFixed(3)})`);
+  await p.reload({ waitUntil: "networkidle" }); await p.waitForTimeout(600);
+  ok((await running()) === 0 && (await p.textContent("footer button")) === "Play motion", "pause: remembered across reload");
+  await p.click("footer button"); await p.waitForTimeout(600);
+  ok((await running()) > 0, "pause: Play motion resumes");
+  await p.close();
+}
 // --- reduced motion
 {
   const p = await b.newPage({ viewport: { width: 1280, height: 720 }, reducedMotion: "reduce" });

@@ -1,6 +1,7 @@
 "use client";
 import dynamic from "next/dynamic";
 import { useEffect, useState, type CSSProperties } from "react";
+import { motionOff, onMotionChange } from "@/lib/motion";
 import s from "./LiquidHero.module.css";
 
 // The shader is WebGL and client-only; loading it after hydration keeps it out of the first paint
@@ -22,17 +23,15 @@ const SNIPPETS = [
 
 /** Hero: a honey liquid-metal hive cell (the logo, braces cut out) with the copy over it.
  *  The mask is `public/codehive-cell.svg`, preprocessed once into `codehive-cell.processed.png`
- *  (see LiquidCell.tsx for why). Reduced motion freezes the metal (speed 0) and parks the snippets.
+ *  (see LiquidCell.tsx for why). Reduced motion and "Pause motion" freeze the metal (speed 0) and park the snippets.
  *  colorBack is transparent so only the cell paints and the page's HiveCanvas lattice shows through
  *  around it (the reference had an opaque bg-000 hero). */
 export default function LiquidHero() {
   const [speed, setSpeed] = useState(0.6);
   useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const apply = () => setSpeed(mq.matches ? 0 : 0.6);
+    const apply = () => setSpeed(motionOff() ? 0 : 0.6);
     apply();
-    mq.addEventListener("change", apply);
-    return () => mq.removeEventListener("change", apply);
+    return onMotionChange(apply);
   }, []);
 
   return (

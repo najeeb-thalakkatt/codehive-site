@@ -1,13 +1,14 @@
 "use client";
 import { useEffect, type RefObject } from "react";
+import { motionOff, onMotionChange } from "./motion";
 
 /**
  * Plays every CSS animation inside `sectionRef` once, when the section scrolls into view.
  *
  * The choreography lives in plain CSS @keyframes authored on a 0–100% timeline (1s of animation
  * time). Nothing is tied to scroll position: the section enters, the scene plays over `duration`
- * seconds, and the reader scrolls on when they are ready. `prefers-reduced-motion` gets the
- * finished state immediately.
+ * seconds, and the reader scrolls on when they are ready. `prefers-reduced-motion` and "Pause motion"
+ * get the finished state immediately (also when paused mid-play).
  *
  * Convention: every animated element has `animation-play-state: paused` and a delay+duration that
  * fits inside 1s. Calling play() on a CSSAnimation takes it out of CSS play-state control, so the
@@ -21,8 +22,8 @@ export function usePlayOnEnter(sectionRef: RefObject<HTMLElement | null>, durati
     const el = sectionRef.current;
     if (!el) return;
     const anims = el.getAnimations({ subtree: true });
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) { for (const a of anims) a.finish(); onDone?.(anims); return; }
+    const end = () => { for (const a of anims) a.finish(); onDone?.(anims); };
+    if (motionOff()) { end(); return; }
     for (const a of anims) { a.pause(); a.currentTime = 0; }
     const io = new IntersectionObserver((entries) => {
       if (!entries.some((e) => e.isIntersecting)) return;
@@ -31,6 +32,7 @@ export function usePlayOnEnter(sectionRef: RefObject<HTMLElement | null>, durati
       if (onDone) Promise.all(anims.map((a) => a.finished)).then(() => onDone(anims), () => {}); // rejects if cancelled on unmount
     }, { threshold: 0.15, rootMargin: "0px 0px -10% 0px" }); // fires once 15% of the element is inside the viewport less its bottom 10%
     io.observe(el);
-    return () => io.disconnect();
+    const unsub = onMotionChange(() => { if (motionOff()) { io.disconnect(); end(); } });
+    return () => { io.disconnect(); unsub(); };
   }, [sectionRef, duration, onDone]);
 }

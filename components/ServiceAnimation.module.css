@@ -10,3 +10,5 @@
 @media (prefers-reduced-motion: reduce) {
   .stage :global(.anim), .stage :global(.stg) { animation-play-state: paused !important; animation-iteration-count: 1; animation-delay: -12.35s; }
 }
+/* "Pause motion" in the footer parks the loop the same way, in CSS, so it can be undone */
+:global(html[data-motion="off"]) .stage :global(.anim), :global(html[data-motion="off"]) .stage :global(.stg) { animation-play-state: paused !important; animation-iteration-count: 1; animation-delay: -12.35s; }
