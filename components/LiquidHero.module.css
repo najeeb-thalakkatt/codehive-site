@@ -1,10 +1,11 @@
 /* Hero: honey liquid-metal hive cell with the copy over it. Ported from site-v3/liquid-hero.
    The ground is transparent so the page's HiveCanvas lattice shows through, as everywhere else. */
 /* as tall as the cell plus room for the nav, not the viewport: the intro follows right under the cell */
-.hero { position: relative; min-height: calc(min(84vmin, 720px) + 96px); padding-top: 48px; overflow: hidden; display: grid; place-items: center; isolation: isolate; }
+.hero { position: relative; min-height: calc(min(84vmin, 720px) + 96px); padding-top: 48px; overflow-x: clip; overflow-y: visible; view-timeline: --hero block; view-timeline-inset: 0px; /* ignore html scroll-padding-top: the handover starts at scroll 0 */ display: grid; place-items: center; isolation: isolate; }
 
 /* the cell: a square stage the shader fills; sized by viewport so it stays centred */
-.cell { position: absolute; left: 50%; top: 50%; width: min(84vmin, 720px); aspect-ratio: 1; transform: translate(-50%, -50%); pointer-events: none; filter: drop-shadow(0 0 60px rgba(242, 184, 75, .25)); }
+/* centred with left/top, not a transform, so the handover can use the individual translate, rotate and scale */
+.cell { --cw: min(84vmin, 720px); position: absolute; left: calc(50% - var(--cw) / 2); top: calc(50% - var(--cw) / 2); width: var(--cw); aspect-ratio: 1; pointer-events: none; filter: drop-shadow(0 0 60px rgba(242, 184, 75, .25)); }
 .cell > canvas, .cell > div { width: 100% !important; height: 100% !important; }
 
 /* code snippets drifting through the honey */
@@ -35,4 +36,21 @@
 @media (prefers-reduced-motion: reduce) { .code li { animation: none; top: calc(22% + var(--i) * 8%); } }
 :global(html[data-motion="off"]) .code li { animation: none; top: calc(22% + var(--i) * 8%); }
 @media (min-width: 1280px) { .h1 { font-size: 96px; letter-spacing: -3px; } }
-@media (max-width: 720px) { .cell { width: 110vmin; } .hero { min-height: calc(110vmin + 64px); } .h1 { font-size: clamp(48px, 12vw, 64px); } }
+@media (max-width: 720px) { .cell { --cw: 110vmin; } .hero { min-height: calc(110vmin + 64px); } .h1 { font-size: clamp(48px, 12vw, 64px); } }
+
+/* Handover: the one scroll-linked motion on the site. While the hero scrolls out (its exit range), the
+   liquid cell travels to a cell of the background lattice and settles into it: it shrinks to lattice size
+   on the way, turns 60° only in the last part (upright until 55%, so it does not start tilted), and fades.
+   LiquidHero measures the target from the cell's centre into --lx/--ly/--ls. Browsers without scroll
+   timelines, reduced motion and "Pause motion" keep the static hero. */
+@keyframes handover {
+  0% { translate: 0 0; scale: 1; rotate: 0deg; opacity: 1; animation-timing-function: cubic-bezier(.45, 0, .25, 1); }
+  55% { rotate: 0deg; animation-timing-function: cubic-bezier(.45, 0, .25, 1); }
+  85% { opacity: 1; }
+  100% { translate: var(--lx, 0px) var(--ly, 0px); scale: var(--ls, .15); rotate: 60deg; opacity: 0; }
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html:not([data-motion="off"])) .cell { animation: handover linear both; animation-duration: auto; animation-timeline: --hero; animation-range: exit 0% exit 100%; }
+  }
+}

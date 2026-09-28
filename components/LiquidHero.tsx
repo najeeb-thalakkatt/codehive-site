@@ -1,6 +1,6 @@
 "use client";
 import dynamic from "next/dynamic";
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { motionOff, onMotionChange } from "@/lib/motion";
 import s from "./LiquidHero.module.css";
 
@@ -28,15 +28,40 @@ const SNIPPETS = [
  *  around it (the reference had an opaque bg-000 hero). */
 export default function LiquidHero() {
   const [speed, setSpeed] = useState(0.6);
+  const hero = useRef<HTMLElement>(null);
+  const cell = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const apply = () => setSpeed(motionOff() ? 0 : 0.6);
     apply();
     return onMotionChange(apply);
   }, []);
+  // Handover target (see the css), in document space from the cell's centre. The hex in the mask is 89% of
+  // the cell's height; a lattice cell is 92px tall (HiveCanvas R 46).
+  useEffect(() => {
+    const h = hero.current, c = cell.current;
+    if (!h || !c) return;
+    const measure = () => {
+      const hr = h.getBoundingClientRect();
+      const x0 = hr.left + hr.width / 2, y0 = hr.top + scrollY + hr.height / 2, hexH = 0.89 * c.offsetWidth;
+      const set = (k: string, v: number) => c.style.setProperty(k, `${v.toFixed(2)}${k.endsWith("s") ? "" : "px"}`);
+      // the lattice is fixed to the viewport: take the cell nearest the gap between the intro's heading and
+      // honeycomb (one cell in from the right on a phone), a fifth down, as it sits when the hero has just
+      // left (scrollY = the hero's bottom)
+      const R = 46, w = Math.sqrt(3) * R, rh = 1.5 * R;
+      const r = Math.round((innerHeight * 0.2) / rh), off = r % 2 ? w / 2 : 0;
+      const col = Math.round(((innerWidth > 720 ? innerWidth * 0.55 : innerWidth - w) - off) / w);
+      set("--lx", col * w + off - x0);
+      set("--ly", r * rh + hr.bottom + scrollY - y0);
+      set("--ls", (2 * R) / hexH);
+    };
+    measure();
+    addEventListener("resize", measure); addEventListener("load", measure);
+    return () => { removeEventListener("resize", measure); removeEventListener("load", measure); };
+  }, []);
 
   return (
-    <section className={s.hero} id="top" aria-labelledby="hero-title">
-      <div className={s.cell} aria-hidden="true">
+    <section ref={hero} className={s.hero} id="top" aria-labelledby="hero-title">
+      <div ref={cell} className={s.cell} aria-hidden="true">
         <LiquidCell speed={speed} />
         <ul className={s.code}>
           {SNIPPETS.map((t, i) => (

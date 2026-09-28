@@ -1,4 +1,5 @@
-.intro { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 64px; align-items: center; padding-top: 48px; padding-bottom: 64px; }
+/* its own layer above the hero, so the hero's liquid cell passes behind the heading and the honeycomb on its way out */
+.intro { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 64px; align-items: center; padding-top: 48px; padding-bottom: 64px; }
 .text { display: flex; flex-direction: column; gap: 24px; }
 .h2 { font-size: clamp(40px, 5.6vw, 72px); line-height: 1.02; }
 .clip { display: inline-block; overflow: hidden; vertical-align: bottom; padding-bottom: .08em; margin-bottom: -.08em; }

@@ -41,12 +41,17 @@ A WebGL liquid-metal shader (`@paper-design/shaders-react`, the one dependency w
 `public/codehive-cell.svg`, the logo cell with the braces cut out. Loaded with `next/dynamic` after
 hydration so the copy is the LCP and the 83 kB shader chunk stays off the first load. `colorBack` is
 transparent so the HiveCanvas lattice shows through. A 760×420 radial darkening (`.shade`) sits behind the copy; it is the one gradient on the site.
+Handover (the one scroll-linked motion): as the hero scrolls out, the liquid cell shrinks to lattice size,
+turns 60° in the last 45% and fades into a cell of the HiveCanvas lattice. CSS `animation-timeline: --hero`
+(view timeline, inset 0), individual `translate`/`rotate`/`scale`; `LiquidHero.tsx` measures the target into
+`--lx/--ly/--ls`. No scroll timelines (Firefox), reduced motion or "Pause motion": static hero.
 Reduced motion sets `speed` 0 and parks the drifting snippets. Buttons are pills, ink on dark: no amber on the
 honey. Hero B (`site-v3/layout-refs/hero-b-copy-over.html`) is the reference.
 
 ### Play on enter (text and intro)
 - `lib/usePlayOnEnter.ts` collects every Web Animation inside a ref, holds them at 0, and once the element
-  is in view plays them all once at rate 1/duration. The intro plays over 7 s, each card's text column over 3 s. Nothing is scrubbed by scroll and nothing is pinned.
+  is in view plays them all once at rate 1/duration. The intro plays over 7 s, each card's text column over 3 s. Nothing is pinned, and nothing is scrubbed by
+  scroll except the hero handover below.
 - Motion is plain CSS `@keyframes` whose 0–100% is that timeline. `.anim` (in `app/globals.css`) sets duration
   1s, linear, fill both, paused; an element needs `.anim` plus an `animation-name`. `.w` is the streamed-word
   variant (`components/Stream.tsx`, one `.w` span per word, the space between spans, never inside).
