@@ -1,10 +1,7 @@
 /* One service card that fits a 720px-tall viewport at 1280 wide: tight paddings, 28/22/14px type. */
 .card { position: relative; padding: 24px 32px; background: var(--bg1); border: 1px solid var(--line1); border-radius: var(--radius-lg); display: flex; flex-direction: column; gap: 20px; scroll-margin-top: 80px; }
-.head { display: flex; justify-content: space-between; align-items: center; gap: 16px; font-family: var(--font-mono); font-size: 13px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: var(--amber); }
-.title { display: flex; align-items: center; gap: 8px; }
-.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--amber); flex: none; }
+.head { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 13px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: var(--amber); }
 .num { color: var(--ink1); }
-.count { color: var(--ink3); white-space: nowrap; }
 .body { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 32px; align-items: center; }
 .text { display: flex; flex-direction: column; gap: 12px; }
 .bubble { display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; }

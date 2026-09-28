@@ -57,7 +57,7 @@ honey. Hero B (`site-v3/layout-refs/hero-b-copy-over.html`) is the reference.
 - Reduced motion: the hook sets every animation to its end and never plays.
 
 ### Service cards and their animations
-- `components/Cell.tsx` is the compact card: header row (dot, number, name, `0N / 06`), a "you" bubble and a
+- `components/Cell.tsx` is the compact card: header row (number, name), a "you" bubble and a
   "codehive" bubble with chips and the action on the left, `ServiceAnimation` on the right; one column under
   900px. Cards must fit a 720px-tall viewport at 1280 wide (check with `v3.mjs`-style measurements).
 - `components/ServiceAnimation.tsx` is a 640×600 frame scaled to its width (`lib/useScaleToFit.ts`,

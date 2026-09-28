@@ -1,12 +1,10 @@
 "use client";
 import { useRef } from "react";
-import { BOOK, SERVICES, type Service } from "@/content/services";
+import { BOOK, type Service } from "@/content/services";
 import { usePlayOnEnter } from "@/lib/usePlayOnEnter";
 import Stream from "./Stream";
 import ServiceAnimation from "./ServiceAnimation";
 import s from "./Cell.module.css";
-
-const TOTAL = String(SERVICES.length).padStart(2, "0");
 
 /** One service card, from site-v3/layout-refs/section-compact-card.html: header row, a "you"
  *  bubble and a "codehive" bubble with the chips and the action on the left, the looping
@@ -18,8 +16,7 @@ export default function Cell({ data, children }: { data: Service; children?: Rea
   return (
     <section className={s.card} id={`cell-${data.id}`} aria-label={data.name}>
       <header className={s.head}>
-        <div className={s.title}><span className={s.dot} /><span className={s.num}>{data.id}</span><span>{data.name}</span></div>
-        <div className={s.count}>{data.id} / {TOTAL}</div>
+        <span className={s.num}>{data.id}</span><span>{data.name}</span>
       </header>
       <div className={s.body}>
         <div ref={text} className={s.text}>
