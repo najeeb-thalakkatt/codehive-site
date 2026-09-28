@@ -6,7 +6,7 @@ body { margin: 0; background: var(--bg0); color: var(--ink1); font-family: var(-
    otherwise the lattice paints over every headline and form field. */
 main, footer { position: relative; z-index: 1; }
 a { color: var(--amber); } a:hover { color: var(--amber2); }
-h1, h2, h3 { font-family: var(--font-display); font-weight: 700; letter-spacing: -.02em; line-height: 1.04; margin: 0; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 700; letter-spacing: -.02em; line-height: 1.04; margin: 0; text-wrap: balance; }
 .mono { font-family: var(--font-mono); }
 .wrap { max-width: 1280px; margin: 0 auto; padding: 0 clamp(20px, 5vw, 64px); }
 .eyebrow { display: flex; align-items: center; font-family: var(--font-mono); font-size: 13px; letter-spacing: 1px; color: var(--amber); text-transform: uppercase; }

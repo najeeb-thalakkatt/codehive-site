@@ -1,7 +1,7 @@
 /* One service card that fits a 720px-tall viewport at 1280 wide: tight paddings, 28/22/14px type. */
 .card { position: relative; padding: 24px 32px; background: var(--bg1); border: 1px solid var(--line1); border-radius: var(--radius-lg); display: flex; flex-direction: column; gap: 20px; scroll-margin-top: 80px; }
 .head { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 13px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: var(--amber); }
-.num { color: var(--ink1); }
+.num { color: var(--ink1); font-variant-numeric: tabular-nums; }
 .body { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 32px; align-items: center; }
 /* every other card mirrors the columns on wide screens; DOM order stays text first for reading order and the play hook */
 @media (min-width: 901px) { .body[data-flip] { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); } .body[data-flip] > :last-child { order: -1; } }
