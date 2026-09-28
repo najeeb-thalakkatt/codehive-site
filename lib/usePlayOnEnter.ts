@@ -12,21 +12,25 @@ import { useEffect, type RefObject } from "react";
  * Convention: every animated element has `animation-play-state: paused` and a delay+duration that
  * fits inside 1s. Calling play() on a CSSAnimation takes it out of CSS play-state control, so the
  * paused declaration only matters until we start it.
+ *
+ * `onDone` gets the animations once they have all reached their end (straight away under reduced
+ * motion). Pass a module-level function, not an inline one: it is an effect dependency.
  */
-export function usePlayOnEnter(sectionRef: RefObject<HTMLElement | null>, duration = 7) {
+export function usePlayOnEnter(sectionRef: RefObject<HTMLElement | null>, duration = 7, onDone?: (anims: Animation[]) => void) {
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
     const anims = el.getAnimations({ subtree: true });
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) { for (const a of anims) { a.pause(); a.currentTime = 999; } return; }
+    if (reduce) { for (const a of anims) a.finish(); onDone?.(anims); return; }
     for (const a of anims) { a.pause(); a.currentTime = 0; }
     const io = new IntersectionObserver((entries) => {
       if (!entries.some((e) => e.isIntersecting)) return;
       io.disconnect();
       for (const a of anims) { a.playbackRate = 1 / duration; a.play(); }
+      if (onDone) Promise.all(anims.map((a) => a.finished)).then(() => onDone(anims), () => {}); // rejects if cancelled on unmount
     }, { threshold: 0.15, rootMargin: "0px 0px -10% 0px" }); // fires once 15% of the element is inside the viewport less its bottom 10%
     io.observe(el);
     return () => io.disconnect();
-  }, [sectionRef, duration]);
+  }, [sectionRef, duration, onDone]);
 }

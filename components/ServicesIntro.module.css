@@ -7,6 +7,7 @@
 .hive { display: block; width: 384px; height: 216px; overflow: visible; }
 .hive text { text-anchor: middle; font-family: var(--font-mono); font-size: 13px; font-weight: 500; letter-spacing: 1px; }
 .k { cursor: pointer; outline: none; }
+.k polygon, .k text { transition: fill 150ms var(--ease-out); }
 .k:hover polygon, .k:focus-visible polygon { fill: var(--amber); }
 .k:hover text, .k:focus-visible text { fill: var(--bg0); }
 /* cell centres: 3+3 on the site grid (pitch 106 / 92) */

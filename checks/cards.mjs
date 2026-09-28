@@ -22,6 +22,10 @@ const ids = ["01", "02", "03", "04", "05", "06"];
   await p.waitForTimeout(10500);
   st = await p.evaluate(() => { const a = document.querySelector("#services").getAnimations({ subtree: true }); return { n: a.length, fin: a.filter((x) => x.playState === "finished").length, fill: getComputedStyle(document.querySelector('nav[aria-label="Six services"] polygon')).fill }; });
   ok(st.fin === st.n, `intro: finished after 10 s, highlight stopped (${st.fin}/${st.n}, first cell fill ${st.fill})`);
+  await p.hover('nav[aria-label="Six services"] a:nth-child(3)'); await p.waitForTimeout(300);
+  const hf = await p.evaluate(() => getComputedStyle(document.querySelector('nav[aria-label="Six services"] a:nth-child(3) polygon')).fill);
+  ok(hf === "rgb(242, 184, 75)", `intro: hex fills amber on hover after the play (${hf})`);
+  await p.mouse.move(0, 0); await p.waitForTimeout(300);
   await p.screenshot({ path: "shots/v3-intro-1280.png" });
   for (const id of ids) {
     const r = await p.evaluate((s) => { const c = document.querySelector(s).getBoundingClientRect(); return Math.round(c.height); }, `#cell-${id}`);

@@ -7,6 +7,11 @@ import "./services-intro.css";
 
 const HEX = "0,-58 50.2,-29 50.2,29 0,58 -50.2,29 -50.2,-29";
 const WORDS = ["Six", "things", "we", "do."];
+// The highlight's colour animations hold their end state (fill: both), and a held animation value beats
+// the :hover and :focus-visible fill. Their 100% equals the static fill, so once played, let go of them.
+const release = (anims: Animation[]) => {
+  for (const a of anims) if (a instanceof CSSAnimation && /^si[fnt]\d$/.test(a.animationName)) a.effect?.updateTiming({ fill: "backwards" });
+};
 
 /** Services intro, from site-v3/layout-refs/services-intro.html. The heading words rise in one by
  *  one, the subline fades up, six hex cells drop in and a highlight runs 01 → 06 once and stops.
@@ -14,7 +19,7 @@ const WORDS = ["Six", "things", "we", "do."];
  *  is 3+3 on the site grid (r=58, 6px gap) and 2+2+2 under 720px, positions set per cell in css. */
 export default function ServicesIntro() {
   const ref = useRef<HTMLElement>(null);
-  usePlayOnEnter(ref, 7); // the artboard's 10 s loop compressed so the honeycomb is drawn by ~3.4 s
+  usePlayOnEnter(ref, 7, release); // the artboard's 10 s loop compressed so the honeycomb is drawn by ~3.4 s
   return (
     <section ref={ref} id="services" className={`wrap ${s.intro}`}>
       <div className={s.text}>
