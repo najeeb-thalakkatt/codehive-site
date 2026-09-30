@@ -17,7 +17,7 @@ export default function NewNav() {
     return () => io.disconnect();
   }, []);
   return (
-    <header ref={ref} className={s.nav}>
+    <header ref={ref} className={`${s.nav} ${v.wide}`}>
       <div className={`wrap ${s.row}`}>
         <a href="/new/#top" className={s.logo}><Mark />codehive</a>
         <nav aria-label="Primary" className={s.links}>

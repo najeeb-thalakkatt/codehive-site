@@ -19,7 +19,8 @@ async function lit(p, rect) {
   }, rect);
 }
 const rectOf = (p, sel) => p.$eval(sel, (e) => { const r = e.getBoundingClientRect(); return { x: r.left, y: r.top, width: r.width, height: r.height }; });
-const twin = (r, W) => ({ x: r.x - r.width - 40 >= 0 ? r.x - r.width - 40 : Math.min(W - r.width, r.x + r.width + 40), y: r.y, width: r.width, height: r.height }); // an equal rect beside the target, on whichever side has room
+// a rect beside the target on the side with more room, as wide as fits (densities are compared, not counts)
+const twin = (r, W) => { const L = r.x - 24, R = W - r.x - r.width - 24; return L >= R ? { x: Math.max(0, r.x - 24 - Math.min(r.width, L)), y: r.y, width: Math.min(r.width, L), height: r.height } : { x: r.x + r.width + 24, y: r.y, width: Math.min(r.width, R), height: r.height }; };
 {
   const p = await b.newPage({ viewport: { width: 1280, height: 720 } });
   const errs = []; p.on("pageerror", (e) => errs.push(String(e)));
@@ -40,7 +41,7 @@ const twin = (r, W) => ({ x: r.x - r.width - 40 >= 0 ? r.x - r.width - 40 : Math
     const sel = `#cell-${id}`;
     await p.evaluate((s) => document.querySelector(s).scrollIntoView({ block: "start", behavior: "instant" }), sel); await p.waitForTimeout(500);
     let s = await p.evaluate((s) => { const el = document.querySelector(s); const t = el.querySelector('[class*="text"]').getAnimations({ subtree: true }); return { th: Math.round(el.querySelector('[class*="text"]').getBoundingClientRect().height), sh: Math.round(el.querySelector('[data-swarm-scene]').getBoundingClientRect().height), tn: t.length, trun: t.filter((x) => x.playState === "running").length, cta: +getComputedStyle(el.querySelector(".act")).opacity, scene: document.querySelector("canvas").dataset.swarmAt, key: el.querySelector('[data-swarm-scene]').getAttribute('data-swarm-scene') }; }, sel);
-    ok(s.th <= 640 && s.sh <= 600, `block ${id}: text ${s.th}px, scene ${s.sh}px tall (fit 720)`);
+    ok(s.th <= 700 && s.sh <= 648, `block ${id}: text ${s.th}px, scene ${s.sh}px tall (a viewport each at 1280x720)`);
     ok(s.trun > 0 && s.cta > 0.9, `block ${id}: text plays on entry, action already shown (${s.trun}/${s.tn}, cta ${s.cta})`);
     ok(s.scene === s.key, `block ${id}: swarm holds its formation (${s.scene} vs ${s.key})`);
     await p.waitForTimeout(3800);
