@@ -1,11 +1,13 @@
-/* Transparent nav on the void: no fade, no bar. The pill only appears once the hero's own pill has scrolled
-   away, so a view never holds two filled buttons. */
-.nav { position: fixed; left: 0; right: 0; top: 0; padding-top: env(safe-area-inset-top, 0px); z-index: 20; pointer-events: none; }
+/* No bar, but a soft fade of the page ground (the one gradient the site allows, as in Nav.tsx) so copy scrolling
+   under the links dims before it collides. The pill only appears once the hero's own pill has scrolled away, so a
+   view never holds two filled buttons. */
+.nav { position: fixed; left: 0; right: 0; top: 0; padding-top: env(safe-area-inset-top, 0px); padding-bottom: 16px; z-index: 20; pointer-events: none; background: linear-gradient(to bottom, var(--bg0) 0%, color-mix(in srgb, var(--bg0) 85%, transparent) 60%, transparent 100%); }
 .row { height: 80px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
 .logo { pointer-events: auto; display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink1); font-family: var(--font-display); font-weight: 700; font-size: 20px; letter-spacing: -.5px; }
 .links { pointer-events: auto; display: flex; align-items: center; gap: 28px; font-family: var(--font-mono); font-size: var(--t-nav, 13px); letter-spacing: 1px; text-transform: uppercase; }
 .links a { padding: 12px 0; }
-.pill { min-height: 44px; padding: 14px 22px; font-size: 15px; text-transform: none; letter-spacing: 0; opacity: 0; visibility: hidden; transform: translateY(-4px); transition: opacity 200ms var(--ease-out), transform 200ms var(--ease-out), visibility 0s 200ms; }
+/* enters in 200 ms, leaves in 120 ms: exits are quieter than enters */
+.pill { min-height: 44px; padding: 14px 22px; font-size: 15px; text-transform: none; letter-spacing: 0; opacity: 0; visibility: hidden; transform: translateY(-4px); transition: opacity 120ms var(--ease-out), transform 120ms var(--ease-out), visibility 0s 120ms; }
 .nav[data-past-hero] .pill { opacity: 1; visibility: visible; transform: none; transition: opacity 200ms var(--ease-out), transform 200ms var(--ease-out), visibility 0s; }
 @media (prefers-reduced-motion: reduce) { .pill { transition: none; } }
 :global(html[data-motion="off"]) .pill { transition: none; }

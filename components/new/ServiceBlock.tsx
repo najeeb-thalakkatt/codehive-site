@@ -9,12 +9,13 @@ import s from "./ServiceBlock.module.css";
  *  block. Same 3 s play-once timeline: the question is complete from the first frame, the codehive turn
  *  comes in at 0.32–0.46, body 0.47–0.62, chips 0.63–0.72, and the action is there from the start.
  *  The visual column is empty space the swarm fills: `data-swarm-scene` names the formation
- *  (components/new/scenes.ts, keyed like `animation` in content/services.ts). */
-export default function ServiceBlock({ data, flip = false }: { data: Service; flip?: boolean }) {
+ *  (components/new/scenes.ts, keyed like `animation` in content/services.ts). `wide` lays the block out as a
+ *  full-width band with the copy centred beneath, breaking the run of mirrored splits once. */
+export default function ServiceBlock({ data, flip = false, wide = false }: { data: Service; flip?: boolean; wide?: boolean }) {
   const text = useRef<HTMLDivElement>(null);
   usePlayOnEnter(text, 3);
   return (
-    <section className={`wrap ${s.block}`} id={`cell-${data.id}`} aria-label={data.name} data-flip={flip || undefined}>
+    <section className={`wrap ${s.block} ${wide ? s.wide : ""}`} id={`cell-${data.id}`} aria-label={data.name} data-flip={(flip && !wide) || undefined}>
       <div ref={text} className={s.text}>
         <p className={`eyebrow ${s.head}`}><span className={s.num}>{data.id}</span>{data.name}</p>
         <p className={s.who}>you</p>
@@ -31,7 +32,7 @@ export default function ServiceBlock({ data, flip = false }: { data: Service; fl
         <a className="act w" style={{ animationDelay: "-.04s" }} href="#book" data-source={`cell-${data.id}`}
           onClick={() => window.dispatchEvent(new CustomEvent("codehive:book", { detail: data.name }))}>{ASK}</a>
       </div>
-      <div className={s.scene} data-swarm-scene={data.animation} aria-hidden="true" />
+      <div className={s.scene} data-swarm-scene={data.animation} data-swarm-fit={wide ? "width" : undefined} aria-hidden="true" />
     </section>
   );
 }

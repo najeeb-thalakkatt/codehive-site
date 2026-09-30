@@ -15,7 +15,9 @@ type Anchor = { key: string; el: HTMLElement; cx: number; cy: number; S: number;
  *  draw the nearest formation's finished state once and keep it in step with scroll. `data-swarm` and
  *  `data-swarm-at` on the canvas report the stage and the dominant formation for the checks.
  *  Behind the swarm a sparse field of small and a few large outlines drifts across the whole viewport at all
- *  times, with a parallax on the pointer (the figures follow it a little too), so the ground is never still. */
+ *  times, with a parallax on the pointer (the figures follow it a little too), so the ground is never still.
+ *  Story beats (a particle's colour and dimming) cross-fade over 180 ms instead of flipping. Touch pointers are
+ *  ignored: a scrolling finger is not a pointer. In the still branch every layer moves with the page (no parallax). */
 export default function Swarm() {
   const ref = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
@@ -30,12 +32,15 @@ export default function Swarm() {
     const F = () => new Float32Array(MAX);
     const sx = F(), sy = F(), x = F(), y = F(), vx = F(), vy = F(), ph = F(), hw = F(), ha = F(), dl = F(), jk = F(), ax = F(), ay = F(), par = F(), al = F(), rs = F();
     const sz = new Uint8Array(MAX), col = new Uint8Array(MAX);
+    // story state per particle: current and previous colour column, the cross-fade between them, the eased dimming
+    const curCol = new Uint8Array(MAX), prevCol = new Uint8Array(MAX), blend = F(), mulE = F();
     const pickW = (w: number[]) => { let r = Math.random(); for (let i = 0; i < w.length; i++) { if (r < w[i]) return i; r -= w[i]; } return w.length - 1; };
     for (let i = 0; i < MAX; i++) {
       ph[i] = Math.random() * Math.PI * 2; hw[i] = 0.6 + Math.random() * 0.6; ha[i] = 1.5 + Math.random() * 1.5;
       dl[i] = Math.random() * 0.5; jk[i] = Math.random(); ax[i] = Math.random(); ay[i] = Math.random(); par[i] = 0.5 + Math.random() * 0.4;
       al[i] = 0.35 + Math.random() * 0.55; rs[i] = Math.random() < 0.1 ? 8 + Math.random() * 12 : 0;
       sz[i] = pickW([0.5, 0.35, 0.15]); col[i] = pickW([0.45, 0.2, 0.2, 0.15]);
+      curCol[i] = prevCol[i] = col[i]; blend[i] = 1; mulE[i] = 1;
     }
     // the background field: small outlines drifting at depth, and a few large ones nearer the viewer. They
     // never join a formation; they wrap around the viewport, move a little with scroll and with the pointer
@@ -67,7 +72,8 @@ export default function Swarm() {
         return [{ key, el, cx: 0, cy: 0, S: 0, scene: scenes.get(id)! }];
       });
     };
-    const measure = () => { for (const a of anchors) { const r = a.el.getBoundingClientRect(); a.cx = r.left + r.width / 2; a.cy = r.top + r.height / 2 + window.scrollY; a.S = 0.5 * Math.min(r.width, r.height); } };
+    // `data-swarm-fit="width"` sizes the formation by the anchor's width (a wide band) instead of its shorter side
+    const measure = () => { for (const a of anchors) { const r = a.el.getBoundingClientRect(); a.cx = r.left + r.width / 2; a.cy = r.top + r.height / 2 + window.scrollY; a.S = a.el.dataset.swarmFit === "width" ? 0.475 * r.width : 0.5 * Math.min(r.width, r.height); } };
     const resize = () => {
       dpr = Math.min(2, window.devicePixelRatio || 1); W = window.innerWidth; H = window.innerHeight; phone = W <= 820;
       const n0 = n; n = phone ? 700 : MAX; if (n !== n0) collect();
@@ -88,7 +94,7 @@ export default function Swarm() {
 
     let px = -1e9, py = -1e9; // pointer, viewport px
     let mx = 0, my = 0; // smoothed pointer offset from the centre, -0.5..0.5, for the parallax
-    const onMove = (e: PointerEvent) => { px = e.clientX; py = e.clientY; };
+    const onMove = (e: PointerEvent) => { if (e.pointerType === "touch") return; px = e.clientX; py = e.clientY; };
     const onLeave = () => { px = py = -1e9; };
 
     /** The background field: drift, wrap, scroll and pointer parallax by depth; small ones from the atlas, the
@@ -96,17 +102,21 @@ export default function Swarm() {
     const drawField = (dt: number, stat: boolean, scrollY: number) => {
       if (!atlas) return;
       const cs = CELL, half = cs / 2, cd = cs * dpr, wrap = (v: number, m: number) => ((v % m) + m) % m;
+      // the field fades in over 600 ms with the swarm's entrance; in the still branch it is simply there, and every
+      // layer scrolls with the page (depth 1) so nothing slides against the copy
+      const fade = stat ? 1 : 1 - (1 - clamp01((now - t0) / 0.6)) ** 3;
       for (let i = 0; i < ambN; i++) {
         if (!stat) { bx[i] += (bvx[i] + 3 * Math.sin(now * 0.3 + bp[i])) * dt; by[i] += (bvy[i] + 3 * Math.cos(now * 0.27 + bp[i])) * dt; }
-        const X = wrap(bx[i] + mx * 50 * bd[i], W + 40) - 20, Y = wrap(by[i] - scrollY * 0.12 * bd[i] + my * 30 * bd[i], H + 40) - 20;
-        ctx.globalAlpha = ba[i];
+        const X = wrap(bx[i] + mx * 50 * bd[i], W + 40) - 20, Y = wrap(by[i] - scrollY * (stat ? 1 : 0.12 * bd[i]) + my * 30 * bd[i], H + 40) - 20;
+        ctx.globalAlpha = ba[i] * fade;
         ctx.drawImage(atlas, bcol[i] * ROT_STEPS * cd, bsz[i] * cd, cd, cd, X - half, Y - half, cs, cs);
       }
-      ctx.lineWidth = 1;
       for (let i = 0; i < bigN; i++) {
         if (!stat) { gx0[i] += gvx[i] * dt; gy0[i] += gvy[i] * dt; }
-        const X = wrap(gx0[i] + mx * 90 * gd[i], W + 80) - 40, Y = wrap(gy0[i] - scrollY * 0.2 * gd[i] + my * 50 * gd[i], H + 80) - 40, r = gr[i], rot = stat ? gp[i] : gp[i] + now * grs[i];
-        ctx.globalAlpha = ga[i]; ctx.strokeStyle = colours[gcol[i]] || "#fff";
+        const X = wrap(gx0[i] + mx * 90 * gd[i], W + 80) - 40, Y = wrap(gy0[i] - scrollY * (stat ? 1 : 0.2 * gd[i]) + my * 50 * gd[i], H + 80) - 40, r = gr[i], rot = stat ? gp[i] : gp[i] + now * grs[i];
+        // depth cue: the nearer outlines (larger depth) draw a little heavier
+        ctx.lineWidth = 0.7 + (gd[i] - 1) * 1.1;
+        ctx.globalAlpha = ga[i] * fade; ctx.strokeStyle = colours[gcol[i]] || "#fff";
         ctx.beginPath();
         for (let k = 0; k < 6; k++) { const a = Math.PI / 6 + rot + (k * Math.PI) / 3; const qx = X + r * Math.cos(a), qy = Y + r * Math.sin(a); k ? ctx.lineTo(qx, qy) : ctx.moveTo(qx, qy); }
         ctx.closePath(); ctx.stroke();
@@ -120,7 +130,7 @@ export default function Swarm() {
       if (!atlas) return false;
       const scrollY = window.scrollY, wrapH = 1.2 * H, entering = stage === "entering", t = now;
       // pointer parallax: ease towards the pointer (or back to the centre when it leaves)
-      const tmx = px > -1e8 ? px / W - 0.5 : 0, tmy = py > -1e8 ? py / H - 0.5 : 0, ease = stat ? 1 : 1 - Math.exp(-3 * dt);
+      const tmx = !stat && px > -1e8 ? px / W - 0.5 : 0, tmy = !stat && py > -1e8 ? py / H - 0.5 : 0, ease = stat ? 1 : 1 - Math.exp(-3 * dt);
       mx += (tmx - mx) * ease; my += (tmy - my) * ease;
       drawField(dt, stat, scrollY);
       // the sections that can hold particles right now: within half a viewport of the middle. Cohesion is
@@ -144,11 +154,11 @@ export default function Swarm() {
           K += k;
         }
         if (K > 1) { tx /= K; ty /= K; K = 1; }
-        const gx = ax[i] * W, gy = (((ay[i] * wrapH - scrollY * par[i]) % wrapH) + wrapH) % wrapH - 0.1 * H;
+        const gx = ax[i] * W, gy = (((ay[i] * wrapH - scrollY * (stat ? 1 : par[i])) % wrapH) + wrapH) % wrapH - 0.1 * H;
         tx += (1 - K) * gx; ty += (1 - K) * gy;
         if (stat) { x[i] = tx; y[i] = ty; vx[i] = vy[i] = 0; }
         else if (entering) {
-          const E = clamp01((t - t0 - dl[i]) / 2), e = 1 - (1 - E) ** 3;
+          const E = clamp01((t - t0 - dl[i]) / 1.6), e = 1 - (1 - E) ** 4;
           x[i] = sx[i] + (tx - sx[i]) * e; y[i] = sy[i] + (ty - sy[i]) * e;
           if (E < 1) allIn = false;
         } else {
@@ -165,14 +175,19 @@ export default function Swarm() {
         }
         // colour and dimming come from the dominant formation's story once it holds the particle; two thirds
         // fade out on the way to the ambient field (and stop being drawn), a third keeps drifting
-        let c = col[i], mul = 1;
-        if (dom && kd > 0.5) { const [pc, pm] = dom.scene.paint(dom.scene.m[i], stat ? dom.scene.stillT : t, i, col[i]); c = pc; mul = 1 + (pm - 1) * kd; }
-        const a = al[i] * mul * (K > 0.02 ? 1 : 0.5) * (i % 3 === 0 ? 1 : K);
+        // the story's colour and dimming for this particle; a change cross-fades over 180 ms (two draws while it
+        // blends), a dimming change eases with the same time constant. Still mode jumps to the end state.
+        let pc = col[i], pm = 1;
+        if (dom && kd > 0.5) { const r = dom.scene.paint(dom.scene.m[i], stat ? dom.scene.stillT : t, i, col[i]); pc = r[0]; pm = 1 + (r[1] - 1) * kd; }
+        if (pc !== curCol[i]) { prevCol[i] = curCol[i]; curCol[i] = pc; blend[i] = 0; }
+        if (stat) { blend[i] = 1; mulE[i] = pm; } else { blend[i] = Math.min(1, blend[i] + dt / 0.18); mulE[i] += (pm - mulE[i]) * (1 - Math.exp(-dt / 0.18)); }
+        const a = al[i] * mulE[i] * (K > 0.02 ? 1 : 0.5) * (i % 3 === 0 ? 1 : K);
         const X = x[i], Y = y[i];
         if (a < 0.02 || X < -cs || Y < -cs || X > W + cs || Y > H + cs) continue;
-        const rot = rs[i] ? Math.floor(((((t * rs[i] + 60 * ph[i]) % 60) + 60) % 60) / 10) : 0;
-        ctx.globalAlpha = a;
-        ctx.drawImage(atlas, (c * ROT_STEPS + rot) * cd, sz[i] * cd, cd, cd, X - half, Y - half, cs, cs);
+        const rot = rs[i] ? Math.floor(((((t * rs[i] + 60 * ph[i]) % 60) + 60) % 60) / 10) : 0, b = blend[i];
+        if (b < 1) { ctx.globalAlpha = a * (1 - b); ctx.drawImage(atlas, (prevCol[i] * ROT_STEPS + rot) * cd, sz[i] * cd, cd, cd, X - half, Y - half, cs, cs); }
+        ctx.globalAlpha = a * b;
+        ctx.drawImage(atlas, (curCol[i] * ROT_STEPS + rot) * cd, sz[i] * cd, cd, cd, X - half, Y - half, cs, cs);
       }
       ctx.globalAlpha = 1;
       if (entering && allIn) setStage("settled");
@@ -180,14 +195,12 @@ export default function Swarm() {
     };
     const still = () => { draw(0, true); };
 
-    let raf = 0, last = 0, tick = 0, active = true;
+    let raf = 0, last = 0;
     const frame = (ts: number) => {
       if (document.hidden) { raf = 0; return; }
       if (!last) last = ts; const dt = Math.min(0.25, (ts - last) / 1000); now = ts / 1000;
-      // between sections the field is sparse and slow: every other frame is enough
-      if (!active && stage === "settled" && (tick++ & 1)) { raf = requestAnimationFrame(frame); return; }
       last = ts;
-      active = draw(dt, false);
+      draw(dt, false); // every frame: the background field is always on screen and a half-rate drift reads as a tremor
       raf = requestAnimationFrame(frame);
     };
     const start = () => { if (!raf && !document.hidden && !off) { last = 0; raf = requestAnimationFrame(frame); } };
@@ -201,19 +214,21 @@ export default function Swarm() {
     };
 
     resize(); collect(); measure();
+    const first = anchors[0]?.scene;
+    if (first) for (let i = 0; i < MAX; i++) dl[i] = 0.5 * Math.min(1, Math.hypot(first.x[i], first.y[i])); // the cell closes from the centre out
     if (off) { setStage("still"); still(); }
     else { scatter(); t0 = performance.now() / 1000; now = t0; setStage("entering"); start(); }
 
     const onLoad = () => { measure(); if (off) still(); };
     window.addEventListener("resize", resize); window.addEventListener("load", onLoad);
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("pointermove", onMove, { passive: true }); document.addEventListener("pointerleave", onLeave);
+    window.addEventListener("pointermove", onMove, { passive: true }); document.addEventListener("pointerleave", onLeave); window.addEventListener("pointercancel", onLeave);
     document.addEventListener("visibilitychange", onVis);
     const unsub = onMotionChange(onMotion);
     return () => {
       cancelAnimationFrame(raf); cancelAnimationFrame(scrollRaf); unsub();
       window.removeEventListener("resize", resize); window.removeEventListener("load", onLoad); window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("pointermove", onMove); document.removeEventListener("pointerleave", onLeave); document.removeEventListener("visibilitychange", onVis);
+      window.removeEventListener("pointermove", onMove); document.removeEventListener("pointerleave", onLeave); window.removeEventListener("pointercancel", onLeave); document.removeEventListener("visibilitychange", onVis);
     };
   }, []);
   return <canvas ref={ref} aria-hidden="true" data-swarm="loading" style={{ position: "fixed", inset: 0, width: "100%", height: "100%", zIndex: 0, pointerEvents: "none" }} />;

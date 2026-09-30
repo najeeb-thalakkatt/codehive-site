@@ -39,18 +39,23 @@ const twin = (r, W) => { const L = r.x - 24, R = W - r.x - r.width - 24; return 
   // blocks: fit, play-once text, the formation held
   for (const id of ["02", "04", "06"]) {
     const sel = `#cell-${id}`;
-    await p.evaluate((s) => document.querySelector(s).scrollIntoView({ block: "start", behavior: "instant" }), sel); await p.waitForTimeout(500);
-    let s = await p.evaluate((s) => { const el = document.querySelector(s); const t = el.querySelector('[class*="text"]').getAnimations({ subtree: true }); return { th: Math.round(el.querySelector('[class*="text"]').getBoundingClientRect().height), sh: Math.round(el.querySelector('[data-swarm-scene]').getBoundingClientRect().height), tn: t.length, trun: t.filter((x) => x.playState === "running").length, cta: +getComputedStyle(el.querySelector(".act")).opacity, scene: document.querySelector("canvas").dataset.swarmAt, key: el.querySelector('[data-swarm-scene]').getAttribute('data-swarm-scene') }; }, sel);
+    // the formation: with the section at the top of the viewport its scene square is on screen
+    await p.evaluate((s) => document.querySelector(s).scrollIntoView({ block: "start", behavior: "instant" }), sel); await p.waitForTimeout(1500);
+    let s = await p.evaluate((s) => { const el = document.querySelector(s); return { th: Math.round(el.querySelector('[class*="text"]').getBoundingClientRect().height), sh: Math.round(el.querySelector('[data-swarm-scene]').getBoundingClientRect().height), scene: document.querySelector("canvas").dataset.swarmAt, key: el.querySelector('[data-swarm-scene]').getAttribute('data-swarm-scene') }; }, sel);
     ok(s.th <= 700 && s.sh <= 648, `block ${id}: text ${s.th}px, scene ${s.sh}px tall (a viewport each at 1280x720)`);
-    ok(s.trun > 0 && s.cta > 0.9, `block ${id}: text plays on entry, action already shown (${s.trun}/${s.tn}, cta ${s.cta})`);
     ok(s.scene === s.key, `block ${id}: swarm holds its formation (${s.scene} vs ${s.key})`);
-    await p.waitForTimeout(3800);
     const sr = await rectOf(p, `${sel} [data-swarm-scene]`), sIn = await lit(p, sr), sOut = await lit(p, twin(sr, 1280));
     ok(sIn > 0.01 && sIn > 3 * sOut, `block ${id}: figure drawn in the scene column (${(sIn * 100).toFixed(1)}% lit vs ${(sOut * 100).toFixed(1)}%)`);
+    // the text: bring its column fully into view (the wide band's copy sits below its formation) and it plays once
+    await p.evaluate((s) => document.querySelector(s).querySelector('[class*="text"]').scrollIntoView({ block: "end", behavior: "instant" }), sel); await p.waitForTimeout(500);
+    s = await p.evaluate((s) => { const el = document.querySelector(s); const t = el.querySelector('[class*="text"]').getAnimations({ subtree: true }); return { tn: t.length, trun: t.filter((x) => x.playState === "running").length, cta: +getComputedStyle(el.querySelector(".act")).opacity }; }, sel);
+    ok(s.trun > 0 && s.cta > 0.9, `block ${id}: text plays on entry, action already shown (${s.trun}/${s.tn}, cta ${s.cta})`);
+    await p.waitForTimeout(3800);
     s = await p.evaluate((s) => { const t = document.querySelector(s).querySelector('[class*="text"]').getAnimations({ subtree: true }); return { tn: t.length, tfin: t.filter((x) => x.playState === "finished").length, sw: document.documentElement.scrollWidth }; }, sel);
     ok(s.tfin === s.tn && s.sw <= 1280, `block ${id}: text finished after 4 s (${s.tfin}/${s.tn}), no overflow (${s.sw})`);
   }
-  await p.evaluate(() => document.querySelector("#contact").scrollIntoView({ block: "start", behavior: "instant" })); await p.waitForTimeout(600);
+  await p.evaluate(() => document.querySelector("#contact").scrollIntoView({ block: "start", behavior: "instant" })); await p.waitForTimeout(1800);
+  ok((await p.evaluate(() => document.querySelector("canvas").dataset.swarmAt)) === "cell", "contact: the swarm forms the cell again (bookend)");
   ok(await p.$eval("header", (h) => h.hasAttribute("data-past-hero")), "nav: pill shown once past the hero");
   await p.screenshot({ path: "shots/new-contact-1280.png" });
   ok(errs.length === 0, `no page errors ${errs.join(";")}`);

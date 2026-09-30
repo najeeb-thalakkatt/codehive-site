@@ -25,7 +25,7 @@ export default function Page() {
         <ServicesIntro />
         {SERVICES.map((c, i) => (
           <Suspense key={c.id} fallback={null}>
-            <ServiceBlock data={c} flip={i % 2 === 1} />
+            <ServiceBlock data={c} flip={i % 2 === 1} wide={c.animation === "production"} />
           </Suspense>
         ))}
         <NewContact />
