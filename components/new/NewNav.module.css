@@ -9,4 +9,4 @@
 .nav[data-past-hero] .pill { opacity: 1; visibility: visible; transform: none; transition: opacity 200ms var(--ease-out), transform 200ms var(--ease-out), visibility 0s; }
 @media (prefers-reduced-motion: reduce) { .pill { transition: none; } }
 :global(html[data-motion="off"]) .pill { transition: none; }
-@media (max-width: 720px) { .links { gap: 20px; } .pill { display: none; } }
+@media (max-width: 720px) { .links { gap: 20px; } .nav .pill { display: none; } }

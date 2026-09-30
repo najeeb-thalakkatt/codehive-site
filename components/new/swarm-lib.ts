@@ -2,7 +2,6 @@
  *  atlas of tiny outlined hexagons the swarm is drawn with. No DOM beyond an offscreen canvas. */
 
 export const SIZES = [2, 3, 4]; // hex radius in css px, picked 50 / 35 / 15 %
-export const COL_VARS = ["--amber", "--amber2", "--ink2", "--ink1"]; // picked 45 / 20 / 20 / 15 %
 export const ROT_STEPS = 6; // 0..50° in 10° steps: a hexagon repeats every 60°
 export const CELL = 2 * SIZES[SIZES.length - 1] + 3; // one atlas cell, css px, room for the stroke
 
@@ -49,7 +48,7 @@ export function hexHomes(n: number, rnd: () => number = Math.random): Homes {
   return { x, y };
 }
 
-/** Sprite atlas: SIZES × colours × ROT_STEPS outlined hexagons at device resolution. Column = colour ×
+/** Sprite atlas: SIZES × colours (scenes.ts COL_VARS) × ROT_STEPS outlined hexagons at device resolution. Column = colour ×
  *  ROT_STEPS + rotation, row = size. Drawing one is a single drawImage: no path, no shadow, per particle. */
 export function buildAtlas(dpr: number, colours: string[]): HTMLCanvasElement {
   const c = document.createElement("canvas");

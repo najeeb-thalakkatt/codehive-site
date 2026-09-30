@@ -16,7 +16,7 @@ export default function NewHero() {
           <a className="act" href="#services">See the services</a>
         </div>
       </div>
-      <div className={s.target} data-swarm-target aria-hidden="true" />
+      <div className={s.target} data-swarm-scene="cell" aria-hidden="true" />
     </section>
   );
 }

@@ -1,14 +1,19 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { motionOff, onMotionChange } from "@/lib/motion";
-import { CELL, COL_VARS, ROT_STEPS, buildAtlas, cellHomes, clamp01, smoothstep, type Homes } from "./swarm-lib";
+import { CELL, ROT_STEPS, buildAtlas, clamp01, smoothstep } from "./swarm-lib";
+import { COL_VARS, SCENES, type Scene } from "./scenes";
 
-/** The /new background: a swarm of tiny outlined hexagons. On load they fly in from around the hero and
- *  settle into the logo cell over the hero's right column (measured from `[data-swarm-target]`), hover
- *  there and scatter around the pointer. As the hero scrolls out (`[data-swarm-hero]`) they peel off in
- *  waves into a sparse field drifting down the rest of the page. One fixed canvas, one rAF loop, sprites
- *  from an atlas: no paths or shadows per particle. Reduced motion and "Pause motion" draw the settled
- *  scene once and keep it in step with scroll; nothing moves. `data-swarm` reports the stage for checks. */
+type Anchor = { key: string; el: HTMLElement; cx: number; cy: number; S: number; scene: Scene };
+
+/** The /new background: one swarm of tiny outlined hexagons for the whole page. On load they fly in and
+ *  settle into the logo cell over the hero's right column; as you scroll, the section nearest the middle
+ *  of the viewport pulls them into its own formation (`[data-swarm-scene]`, one per service, drawn by
+ *  components/new/scenes.ts), and between sections they drift as a sparse field. The same particles
+ *  travel from figure to figure, so the page reads as one story told by the swarm. One fixed canvas, one
+ *  rAF loop, sprites from an atlas: no paths or shadows per particle. Reduced motion and "Pause motion"
+ *  draw the nearest formation's finished state once and keep it in step with scroll. `data-swarm` and
+ *  `data-swarm-at` on the canvas report the stage and the dominant formation for the checks. */
 export default function Swarm() {
   const ref = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
@@ -17,12 +22,11 @@ export default function Swarm() {
     let off = motionOff();
     const MAX = 1600;
     let W = 0, H = 0, dpr = 1, phone = false, n = MAX, atlas: HTMLCanvasElement | null = null, atlasDpr = 0;
-    // shape placement in document space (cx, cy), radius S; the hero's bottom for the scroll coupling
-    let cxDoc = 0, cyDoc = 0, S = 0, heroEnd = 0, hasTarget = false;
-    // per particle: home (unit), entrance start, position, velocity, hover phase/rate/amplitude, delay,
-    // cohesion jitter, ambient home (fractions of W and 1.2H) and parallax, base alpha, spin rate
+    let anchors: Anchor[] = [];
+    // per particle: start of the entrance, position, velocity, hover phase/rate/amplitude, delay, cohesion
+    // jitter, ambient home (fractions of W and 1.2H) and parallax, base alpha, spin rate, size, own colour
     const F = () => new Float32Array(MAX);
-    const hx = F(), hy = F(), sx = F(), sy = F(), x = F(), y = F(), vx = F(), vy = F(), ph = F(), hw = F(), ha = F(), dl = F(), jk = F(), ax = F(), ay = F(), par = F(), al = F(), rs = F();
+    const sx = F(), sy = F(), x = F(), y = F(), vx = F(), vy = F(), ph = F(), hw = F(), ha = F(), dl = F(), jk = F(), ax = F(), ay = F(), par = F(), al = F(), rs = F();
     const sz = new Uint8Array(MAX), col = new Uint8Array(MAX);
     const pickW = (w: number[]) => { let r = Math.random(); for (let i = 0; i < w.length; i++) { if (r < w[i]) return i; r -= w[i]; } return w.length - 1; };
     for (let i = 0; i < MAX; i++) {
@@ -31,34 +35,36 @@ export default function Swarm() {
       al[i] = 0.35 + Math.random() * 0.55; rs[i] = Math.random() < 0.1 ? 8 + Math.random() * 12 : 0;
       sz[i] = pickW([0.5, 0.35, 0.15]); col[i] = pickW([0.45, 0.2, 0.2, 0.15]);
     }
-    let homes: Homes | null = null;
     let stage: "loading" | "entering" | "settled" | "still" = "loading", t0 = 0, now = 0;
     const setStage = (s: typeof stage) => { stage = s; cv.dataset.swarm = s; };
     setStage(off ? "still" : "loading");
 
-    const measure = () => {
-      const tgt = document.querySelector<HTMLElement>("[data-swarm-target]");
-      const hero = document.querySelector<HTMLElement>("[data-swarm-hero]");
-      hasTarget = !!tgt;
-      if (tgt) { const r = tgt.getBoundingClientRect(); cxDoc = r.left + r.width / 2; cyDoc = r.top + r.height / 2 + window.scrollY; S = 0.46 * Math.min(r.width, r.height); }
-      heroEnd = hero ? hero.getBoundingClientRect().bottom + window.scrollY : H;
+    // one formation per `[data-swarm-scene]` element, sampled once for the largest count; measured on
+    // resize and load like LiquidHero.measure, in document space so the figure scrolls with its section
+    // formations are sampled for the live particle count (a phone draws 600, so its shapes are built from 600)
+    const scenes = new Map<string, Scene>();
+    const collect = () => {
+      anchors = [...document.querySelectorAll<HTMLElement>("[data-swarm-scene]")].flatMap((el) => {
+        const key = el.dataset.swarmScene || "", make = SCENES[key], id = `${key}:${n}`; if (!make) return [];
+        if (!scenes.has(id)) scenes.set(id, make(n));
+        return [{ key, el, cx: 0, cy: 0, S: 0, scene: scenes.get(id)! }];
+      });
     };
+    const measure = () => { for (const a of anchors) { const r = a.el.getBoundingClientRect(); a.cx = r.left + r.width / 2; a.cy = r.top + r.height / 2 + window.scrollY; a.S = 0.46 * Math.min(r.width, r.height); } };
     const resize = () => {
-      dpr = Math.min(2, window.devicePixelRatio || 1); W = window.innerWidth; H = window.innerHeight; phone = W <= 820; n = phone ? 600 : MAX;
+      dpr = Math.min(2, window.devicePixelRatio || 1); W = window.innerWidth; H = window.innerHeight; phone = W <= 820;
+      const n0 = n; n = phone ? 600 : MAX; if (n !== n0) collect();
       cv.width = W * dpr; cv.height = H * dpr; cv.style.width = `${W}px`; cv.style.height = `${H}px`;
-      if (atlasDpr !== dpr) {
-        const cs = getComputedStyle(document.documentElement);
-        atlas = buildAtlas(dpr, COL_VARS.map((v) => cs.getPropertyValue(v).trim())); atlasDpr = dpr;
-      }
+      if (atlasDpr !== dpr) { const cs = getComputedStyle(document.documentElement); atlas = buildAtlas(dpr, COL_VARS.map((v) => cs.getPropertyValue(v).trim())); atlasDpr = dpr; }
       measure();
       if (off) still();
     };
-    // scatter starts: polar around the shape, 1.6–3.4 radii out, a third of them from beyond the viewport
+    // scatter starts: polar around the first figure, 1.6–3.4 radii out, a third of them from beyond the viewport
     const scatter = () => {
-      const cy = cyDoc - window.scrollY, far = Math.max(W, H);
+      const a = anchors[0], cx = a ? a.cx : W / 2, cy = (a ? a.cy : H / 2) - window.scrollY, S = a ? a.S : 0.3 * H, far = Math.max(W, H);
       for (let i = 0; i < MAX; i++) {
-        const a = Math.random() * Math.PI * 2, r = i % 3 === 0 ? far * (0.6 + Math.random() * 0.4) : S * (1.6 + Math.random() * 1.8);
-        x[i] = sx[i] = cxDoc + r * Math.cos(a); y[i] = sy[i] = cy + r * Math.sin(a); vx[i] = vy[i] = 0;
+        const ang = Math.random() * Math.PI * 2, r = i % 3 === 0 ? far * (0.6 + Math.random() * 0.4) : S * (1.6 + Math.random() * 1.8);
+        x[i] = sx[i] = cx + r * Math.cos(ang); y[i] = sy[i] = cy + r * Math.sin(ang); vx[i] = vy[i] = 0;
       }
     };
 
@@ -66,58 +72,77 @@ export default function Swarm() {
     const onMove = (e: PointerEvent) => { px = e.clientX; py = e.clientY; };
     const onLeave = () => { px = py = -1e9; };
 
-    /** One frame. `stat` draws the rest state (no hover, no entrance, no spring): reduced motion, or a resize. */
+    const near: { a: Anchor; d: number }[] = [];
+    /** One frame. `stat` draws the rest state (no hover, no entrance, no spring, each story at its end). */
     const draw = (dt: number, stat: boolean) => {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
-      if (!atlas || !homes) return;
-      const scrollY = window.scrollY, cy = cyDoc - scrollY;
-      const p = hasTarget ? clamp01(scrollY / Math.max(1, heroEnd - 0.5 * H)) : 1;
-      const wrapH = 1.2 * H, entering = stage === "entering", t = now;
+      if (!atlas) return false;
+      const scrollY = window.scrollY, wrapH = 1.2 * H, entering = stage === "entering", t = now;
+      // the sections that can hold particles right now: within half a viewport of the middle. Cohesion is
+      // full inside a quarter viewport and gone by half, so two neighbouring formations blend only in the
+      // stretch between them (a morph on the way) and never smear each other
+      near.length = 0;
+      for (const a of anchors) { const d = Math.abs(a.cy - scrollY - H / 2) / H; if (d < 0.5) near.push({ a, d }); }
+      near.sort((p, q) => p.d - q.d);
+      const dom = near[0]?.a; cv.dataset.swarmAt = dom ? dom.key : "";
       let allIn = true;
-      const cs = CELL, half = cs / 2, cd = cs * dpr;
+      const cs = CELL, half = cs / 2, cd = cs * dpr, hov = stat ? 0 : 1;
       for (let i = 0; i < n; i++) {
-        const k = 1 - smoothstep(0.1 + 0.25 * jk[i], 0.9, p);
-        // shape target with its hover, ambient target on a field that wraps down the page, blended by cohesion
-        const hov = stat ? 0 : 1;
-        const fx = cxDoc + hx[i] * S + hov * ha[i] * Math.sin(t * hw[i] + ph[i]);
-        const fy = cy + hy[i] * S + hov * ha[i] * Math.cos(t * hw[i] * 0.8 + ph[i]);
+        // targets: each nearby formation pulls with its own cohesion (particles peel off in waves, by jitter);
+        // what is left goes to the ambient field, which wraps down the page
+        let tx = 0, ty = 0, K = 0, kd = 0;
+        for (let q = 0; q < near.length; q++) {
+          const { a, d } = near[q]; const k = 1 - smoothstep(0.2 + 0.15 * jk[i], 0.5, d); if (k <= 0) continue;
+          if (q === 0) kd = k;
+          tx += k * (a.cx + a.scene.x[i] * a.S + hov * ha[i] * Math.sin(t * hw[i] + ph[i]));
+          ty += k * (a.cy - scrollY + a.scene.y[i] * a.S + hov * ha[i] * Math.cos(t * hw[i] * 0.8 + ph[i]));
+          K += k;
+        }
+        if (K > 1) { tx /= K; ty /= K; K = 1; }
         const gx = ax[i] * W, gy = (((ay[i] * wrapH - scrollY * par[i]) % wrapH) + wrapH) % wrapH - 0.1 * H;
-        const tx = gx + (fx - gx) * k, ty = gy + (fy - gy) * k;
+        tx += (1 - K) * gx; ty += (1 - K) * gy;
         if (stat) { x[i] = tx; y[i] = ty; vx[i] = vy[i] = 0; }
         else if (entering) {
           const E = clamp01((t - t0 - dl[i]) / 2), e = 1 - (1 - E) ** 3;
           x[i] = sx[i] + (tx - sx[i]) * e; y[i] = sy[i] + (ty - sy[i]) * e;
           if (E < 1) allIn = false;
         } else {
-          // a damped spring to the target; the pointer pushes nearby particles off it
-          vx[i] += (tx - x[i]) * 14 * dt; vy[i] += (ty - y[i]) * 14 * dt;
-          const dx = x[i] - px, dy = y[i] - py, d2 = dx * dx + dy * dy;
-          if (d2 < 110 * 110 && d2 > 0.01) { const d = Math.sqrt(d2), f = ((1 - d / 110) * 900 * dt) / d; vx[i] += dx * f; vy[i] += dy * f; }
-          const damp = Math.exp(-6 * dt); vx[i] *= damp; vy[i] *= damp;
-          x[i] += vx[i] * dt; y[i] += vy[i] * dt;
+          // a damped spring to the target, in substeps of at most 50 ms so a slow frame (a phone, a busy
+          // tab) still gets there in the same real time; the pointer pushes nearby particles off it
+          for (let sdt = dt; sdt > 0; sdt -= 0.05) {
+            const h = Math.min(0.05, sdt);
+            vx[i] += (tx - x[i]) * 14 * h; vy[i] += (ty - y[i]) * 14 * h;
+            const dx = x[i] - px, dy = y[i] - py, d2 = dx * dx + dy * dy;
+            if (d2 < 110 * 110 && d2 > 0.01) { const d = Math.sqrt(d2), f = ((1 - d / 110) * 900 * h) / d; vx[i] += dx * f; vy[i] += dy * f; }
+            const damp = Math.exp(-6 * h); vx[i] *= damp; vy[i] *= damp;
+            x[i] += vx[i] * h; y[i] += vy[i] * h;
+          }
         }
-        // two thirds fade out as they leave the shape (and stop being drawn); the rest is the ambient field
-        const a = al[i] * (k > 0.02 ? 1 : 0.5) * (phone ? 0.55 : 1) * (i % 3 === 0 ? 1 : k);
+        // colour and dimming come from the dominant formation's story once it holds the particle; two thirds
+        // fade out on the way to the ambient field (and stop being drawn), a third keeps drifting
+        let c = col[i], mul = 1;
+        if (dom && kd > 0.5) { const [pc, pm] = dom.scene.paint(dom.scene.m[i], stat ? dom.scene.stillT : t, i, col[i]); c = pc; mul = 1 + (pm - 1) * kd; }
+        const a = al[i] * mul * (K > 0.02 ? 1 : 0.5) * (i % 3 === 0 ? 1 : K);
         const X = x[i], Y = y[i];
         if (a < 0.02 || X < -cs || Y < -cs || X > W + cs || Y > H + cs) continue;
         const rot = rs[i] ? Math.floor(((((t * rs[i] + 60 * ph[i]) % 60) + 60) % 60) / 10) : 0;
         ctx.globalAlpha = a;
-        ctx.drawImage(atlas, (col[i] * ROT_STEPS + rot) * cd, sz[i] * cd, cd, cd, X - half, Y - half, cs, cs);
+        ctx.drawImage(atlas, (c * ROT_STEPS + rot) * cd, sz[i] * cd, cd, cd, X - half, Y - half, cs, cs);
       }
       ctx.globalAlpha = 1;
       if (entering && allIn) setStage("settled");
-      return p;
+      return near.length > 0;
     };
     const still = () => { draw(0, true); };
 
-    let raf = 0, last = 0, tick = 0;
+    let raf = 0, last = 0, tick = 0, active = true;
     const frame = (ts: number) => {
       if (document.hidden) { raf = 0; return; }
-      if (!last) last = ts; const dt = Math.min(0.05, (ts - last) / 1000); now = ts / 1000;
-      // below the hero the field is sparse and slow: every other frame is enough
-      if (stage === "settled" && window.scrollY > heroEnd && (tick++ & 1)) { raf = requestAnimationFrame(frame); return; }
+      if (!last) last = ts; const dt = Math.min(0.25, (ts - last) / 1000); now = ts / 1000;
+      // between sections the field is sparse and slow: every other frame is enough
+      if (!active && stage === "settled" && (tick++ & 1)) { raf = requestAnimationFrame(frame); return; }
       last = ts;
-      draw(dt, false);
+      active = draw(dt, false);
       raf = requestAnimationFrame(frame);
     };
     const start = () => { if (!raf && !document.hidden && !off) { last = 0; raf = requestAnimationFrame(frame); } };
@@ -127,14 +152,10 @@ export default function Swarm() {
     const onMotion = () => {
       off = motionOff();
       if (off) { cancelAnimationFrame(raf); raf = 0; setStage("still"); still(); }
-      else { setStage(homes ? "settled" : "loading"); still(); start(); }
+      else { setStage("settled"); still(); start(); }
     };
 
-    resize();
-    // the homes come from a 192 px raster of the logo cell, a few ms once; the entrance starts from wherever
-    // the particles are (their scatter starts) the moment they exist
-    homes = cellHomes(MAX);
-    for (let i = 0; i < MAX; i++) { hx[i] = homes.x[i]; hy[i] = homes.y[i]; }
+    resize(); collect(); measure();
     if (off) { setStage("still"); still(); }
     else { scatter(); t0 = performance.now() / 1000; now = t0; setStage("entering"); start(); }
 

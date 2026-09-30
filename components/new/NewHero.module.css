@@ -1,5 +1,5 @@
 /* Two columns: the copy left, the swarm's landing square right. The canvas is fixed behind the page and
-   only measures `[data-swarm-target]`, so the right column is empty space that reserves the figure's place. */
+   only measures `[data-swarm-scene]`, so the right column is empty space that reserves the figure's place. */
 .hero { position: relative; min-height: 100svh; padding-top: 120px; padding-bottom: 64px; display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 64px; align-items: center; }
 .copy { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-start; gap: 24px; text-wrap: pretty; }
 .h1 { font-size: var(--t-display); max-width: 10ch; text-wrap: balance; }

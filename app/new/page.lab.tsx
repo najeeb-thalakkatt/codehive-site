@@ -8,7 +8,6 @@ import ServiceBlock from "@/components/new/ServiceBlock";
 import NewContact from "@/components/new/NewContact";
 import Footer from "@/components/Footer";
 import { SERVICES } from "@/content/services";
-import { visuals } from "@/components/cells";
 import v from "@/components/new/v4.module.css";
 
 /** /new: the constellation design experiment (see new-design/DESIGN.md for the reference and
@@ -24,14 +23,11 @@ export default function Page() {
       <main id="main" className={v.v4}>
         <NewHero />
         <ServicesIntro />
-        {SERVICES.map((c, i) => {
-          const V = visuals[c.animation];
-          return (
-            <Suspense key={c.id} fallback={null}>
-              <ServiceBlock data={c} flip={i % 2 === 1}>{V ? <V /> : null}</ServiceBlock>
-            </Suspense>
-          );
-        })}
+        {SERVICES.map((c, i) => (
+          <Suspense key={c.id} fallback={null}>
+            <ServiceBlock data={c} flip={i % 2 === 1} />
+          </Suspense>
+        ))}
         <NewContact />
       </main>
       <Footer />

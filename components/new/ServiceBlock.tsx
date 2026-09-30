@@ -3,13 +3,14 @@ import { useRef } from "react";
 import { ASK, type Service } from "@/content/services";
 import { usePlayOnEnter } from "@/lib/usePlayOnEnter";
 import Stream from "../Stream";
-import ServiceAnimation from "../ServiceAnimation";
 import s from "./ServiceBlock.module.css";
 
 /** One service on /new: the compact card's conversation (Cell.tsx) laid out as a floating two-column
  *  block. Same 3 s play-once timeline: the question is complete from the first frame, the codehive turn
- *  comes in at 0.32–0.46, body 0.47–0.62, chips 0.63–0.72, and the action is there from the start. */
-export default function ServiceBlock({ data, flip = false, children }: { data: Service; flip?: boolean; children?: React.ReactNode }) {
+ *  comes in at 0.32–0.46, body 0.47–0.62, chips 0.63–0.72, and the action is there from the start.
+ *  The visual column is empty space the swarm fills: `data-swarm-scene` names the formation
+ *  (components/new/scenes.ts, keyed like `animation` in content/services.ts). */
+export default function ServiceBlock({ data, flip = false }: { data: Service; flip?: boolean }) {
   const text = useRef<HTMLDivElement>(null);
   usePlayOnEnter(text, 3);
   return (
@@ -30,7 +31,7 @@ export default function ServiceBlock({ data, flip = false, children }: { data: S
         <a className="act w" style={{ animationDelay: "-.04s" }} href="#book" data-source={`cell-${data.id}`}
           onClick={() => window.dispatchEvent(new CustomEvent("codehive:book", { detail: data.name }))}>{ASK}</a>
       </div>
-      <ServiceAnimation bare>{children}</ServiceAnimation>
+      <div className={s.scene} data-swarm-scene={data.animation} aria-hidden="true" />
     </section>
   );
 }
