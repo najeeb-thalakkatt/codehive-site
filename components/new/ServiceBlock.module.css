@@ -1,0 +1,21 @@
+/* A service as a two-column block floating on the void: no card, no border, no fill. Text left, the looping
+   visual right, mirrored on every other block above 900px (DOM order stays text first for reading and the
+   play hook). The conversation framing stays as two small labels, "you" and "codehive", instead of bubbles. */
+.block { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 56px; align-items: center; padding-top: calc(var(--gap-section) / 2); padding-bottom: calc(var(--gap-section) / 2); scroll-margin-top: 80px; }
+@media (min-width: 901px) { .block[data-flip] { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); } .block[data-flip] > :last-child { order: -1; } }
+.text { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+.head { margin: 0 0 6px; gap: 12px; }
+.num { color: var(--ink1); font-variant-numeric: tabular-nums; }
+.who { margin: 0; font-family: var(--font-mono); font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: var(--ink3); }
+.us { color: var(--amber); margin-top: 10px; animation-name: usin; }
+.h2 { font-size: var(--t-heading); max-width: 18ch; text-wrap: pretty; }
+.h3 { font-size: 22px; line-height: 1.2; letter-spacing: -.02em; max-width: 520px; text-wrap: pretty; animation-name: usin; }
+.p { margin: 0; font-size: 16px; line-height: 1.5; color: var(--ink2); max-width: 560px; text-wrap: pretty; }
+.chips { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 0; font-family: var(--font-mono); font-size: 13px; letter-spacing: .3px; color: var(--ink2); }
+.chips li + li::before { content: "·"; margin: 0 10px; color: var(--ink3); }
+.text :global(.act) { padding: 0; }
+@keyframes usin { 0%, 32% { opacity: 0; transform: translateY(6px); } 36%, 100% { opacity: 1; transform: none; } }
+@media (max-width: 900px) {
+  .block { grid-template-columns: 1fr; gap: 32px; padding-top: calc(var(--gap-section) / 3); padding-bottom: calc(var(--gap-section) / 3); }
+  .h3 { font-size: 21px; }
+}

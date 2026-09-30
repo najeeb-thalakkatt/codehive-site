@@ -1,5 +1,7 @@
 /* aspect-ratio reserves the frame's height before hydration, so mounting the scaler shifts nothing */
 .frame { position: relative; width: 100%; aspect-ratio: 640 / 600; overflow: hidden; border-radius: var(--radius-md); background: var(--bg0); border: 1px solid var(--line1); }
+/* bare: the same frame without its box, for /new where nothing is carded */
+.bare { background: none; border: 0; border-radius: 0; }
 .stage { position: absolute; left: 0; top: 0; width: 640px; height: 600px; transform-origin: top left; }
 /* the visuals are drawn in a 560×520 .stg; in the artboards it sits inside 40px of padding */
 .stage :global(.stg) { left: 40px; top: 40px; animation: stagefade 13s linear infinite paused; }

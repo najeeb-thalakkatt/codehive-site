@@ -1,0 +1,10 @@
+/* Route-level scale for /new, the "constellation" experiment: hierarchy comes from size and tracking, not
+   weight. Every headline is weight 400 at display sizes, body 18px, one amber pill per view, nothing boxed.
+   `.v4 h2` (0,1,1) also restyles the reused ServicesIntro heading, whose module class is (0,1,0): keep it. */
+.v4 { --t-display: clamp(56px, 8.6vw, 112px); --t-heading-lg: clamp(44px, 5.4vw, 78px); --t-heading: clamp(28px, 3vw, 40px); --t-body: 18px; --t-nav: 13px; --track-display: -.04em; --gap-section: var(--space-7); }
+.v4 h1, .v4 h2, .v4 h3 { font-weight: 400; letter-spacing: var(--track-display); line-height: 1.05; }
+/* the one filled button: amber with ink on it, a pill (hexagons are never rounded, buttons always are) */
+.pill { display: inline-flex; align-items: center; min-height: 48px; padding: 16px 28px; border-radius: var(--radius-pill); background: var(--amber); color: var(--bg0); font-family: var(--font-display); font-weight: 700; font-size: 16px; line-height: 1; text-decoration: none; white-space: nowrap; transition: background-color 150ms var(--ease-out), transform 150ms var(--ease-out); }
+.pill:hover { background: var(--amber2); color: var(--bg0); }
+.pill:active { transform: translateY(1px); }
+.pill:focus-visible { outline: none; box-shadow: var(--focus-ring); }

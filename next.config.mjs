@@ -8,5 +8,8 @@ const nextConfig = {
   trailingSlash: true,
   images: { unoptimized: true },
   experimental: { inlineCss: true },
+  // Lab routes: a `page.lab.tsx` is a page only when DESIGN_NEW=1 (see .env.example) adds `lab.tsx` here.
+  // Without it the file is an ordinary module, so the deploy (no such variable) never builds the route.
+  pageExtensions: process.env.DESIGN_NEW === "1" ? ["lab.tsx", "tsx", "ts", "jsx", "js"] : ["tsx", "ts", "jsx", "js"],
 };
 export default nextConfig;

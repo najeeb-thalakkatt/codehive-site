@@ -52,6 +52,7 @@ Source: `prototype/index.html`, keyframes prefixed `s2`, `s3`, `s4`, `s5`. Templ
 - [x] Cell 06 "Plain backend": own visual (all six visuals ported from the service animations canvas, 2026-09-23)
 - [ ] Calendly: add "Plain backend" to the "Which service are you looking for?" options (must match `name` in content/services.ts)
 - [ ] Add a `/work` page only when there is a real AI case study to show; never a placeholder
+- [ ] `/new` lab route (2026-09-30): the constellation design in our brand, built locally behind `DESIGN_NEW=1`. Judge by eye, then either promote it over `app/page.tsx` or delete `app/new` and `components/new`
 
 ## Not doing
 - No blog, no team page, no client logos until there are clients

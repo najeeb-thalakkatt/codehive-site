@@ -7,7 +7,7 @@ import { MOTION_KEY } from "@/lib/motion";
 // Fonts are checked in under app/fonts (latin subset, variable where Google offers it) and served
 // from the site itself: no request to Google at runtime and none at build time either, so the
 // static export builds the same on a laptop and on the GitHub Actions runner.
-const display = localFont({ src: "./fonts/familjen-grotesk.woff2", weight: "500 700", variable: "--font-display", display: "swap" });
+const display = localFont({ src: "./fonts/familjen-grotesk.woff2", weight: "400 700", variable: "--font-display", display: "swap" });
 const body = localFont({ src: "./fonts/schibsted-grotesk.woff2", weight: "400 700", variable: "--font-body", display: "swap" });
 const mono = localFont({ src: [{ path: "./fonts/ibm-plex-mono-400.woff2", weight: "400" }, { path: "./fonts/ibm-plex-mono-500.woff2", weight: "500" }], variable: "--font-mono", display: "swap" });
 
