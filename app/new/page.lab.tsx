@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Swarm from "@/components/new/Swarm";
 import NewNav from "@/components/new/NewNav";
 import NewHero from "@/components/new/NewHero";
-import ServicesIntro from "@/components/ServicesIntro";
+import NewIntro from "@/components/new/NewIntro";
 import ServiceBlock from "@/components/new/ServiceBlock";
 import NewContact from "@/components/new/NewContact";
 import Footer from "@/components/Footer";
@@ -22,7 +22,7 @@ export default function Page() {
       <NewNav />
       <main id="main" className={v.v4}>
         <NewHero />
-        <ServicesIntro />
+        <NewIntro />
         {SERVICES.map((c, i) => (
           <Suspense key={c.id} fallback={null}>
             <ServiceBlock data={c} flip={i % 2 === 1} wide={c.animation === "production"} />

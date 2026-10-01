@@ -9,11 +9,11 @@ import { liquidMetalFragmentShader, LiquidMetalShapes, ShaderFitOptions, default
  *  (R = edge gradient, G = opacity, 1024²), so the shader starts with zero main-thread work.
  *  Uniforms mirror the component's, with the Hero B parameters (addendum T7: amber-600 tint, softer,
  *  no blue fringe) so the honey is mostly dark bands and the copy reads. Regenerate the png if the mask changes. */
-export default function LiquidCell({ speed }: { speed: number }) {
+export default function LiquidCell({ speed, size = 720 }: { speed: number; size?: number }) {
   return (
     <ShaderMount
-      width={720}
-      height={720}
+      width={size}
+      height={size}
       speed={speed}
       frame={0}
       fragmentShader={liquidMetalFragmentShader}

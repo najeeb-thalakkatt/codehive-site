@@ -1,13 +1,11 @@
 /* Route-level scale for /new, the "constellation" experiment: hierarchy comes from size and tracking, not
    weight. Every headline is weight 400 at display sizes, body 18px, one amber pill per view, nothing boxed.
-   `.v4 h2` (0,1,1) also restyles the reused ServicesIntro heading, whose module class is (0,1,0): keep it. */
+   */
 .v4 { --t-display: clamp(56px, 7.6vw, 150px); --t-heading-lg: clamp(44px, 4.8vw, 92px); --t-heading: clamp(28px, 2.7vw, 52px); --t-body: clamp(17px, 1.05vw, 20px); --t-nav: 13px; --track-display: -.04em; --gap-section: var(--space-7); }
 /* the reference spans the screen (a 1912 px screen shows the headline at 150 px and the figure over the right half):
    widen the site's 1280 px container on this route only, for the reused intro and nav as well */
 .v4 :global(.wrap), .wide :global(.wrap) { max-width: 1720px; padding-inline: clamp(20px, 5vw, 96px); }
 .v4 h1, .v4 h2, .v4 h3 { font-weight: 400; letter-spacing: var(--track-display); line-height: 1.05; }
-/* the intro is reused from the live page; on this route its headline carries the section, so no eyebrow */
-.v4 :global(#services) > div > :global(.eyebrow) { display: none; }
 /* the one filled button: amber with ink on it, a pill (hexagons are never rounded, buttons always are) */
 .pill { display: inline-flex; align-items: center; min-height: 48px; padding: 16px 28px; border-radius: var(--radius-pill); background: var(--amber); color: var(--bg0); font-family: var(--font-display); font-weight: 700; font-size: 16px; line-height: 1; text-decoration: none; white-space: nowrap; transition: background-color 150ms var(--ease-out), transform 150ms var(--ease-out); }
 .pill:hover { background: var(--amber2); color: var(--bg0); }
