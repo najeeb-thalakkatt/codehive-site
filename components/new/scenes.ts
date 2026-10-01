@@ -102,4 +102,13 @@ export function backend(n: number): Scene {
   s.stillT = 2.5; return s;
 }
 
-export const SCENES: Record<string, (n: number) => Scene> = { cell, strategy, applications, models, production, enablement, backend };
+/** A small hive for the services index: a cell outline drawn by the swarm with a few bees inside. Every point is
+ *  from the same shape, so any subset (a group deals its particles round-robin to several hives) forms a whole one. */
+export function hive(n: number): Scene {
+  const s = alloc(n);
+  for (let i = 0; i < n; i++) { if (rnd() < 0.85) { hexEdge(0, 0, 0.9, 0.06, P); s.m[i] = 0; } else { P[0] = gauss() * 0.28; P[1] = gauss() * 0.28; s.m[i] = 1; } s.x[i] = P[0]; s.y[i] = P[1]; }
+  s.paint = (m, _t, _i, baked) => (m === 0 ? [AMBER, 1] : [baked, 0.9]);
+  return s;
+}
+
+export const SCENES: Record<string, (n: number) => Scene> = { cell, hive, strategy, applications, models, production, enablement, backend };

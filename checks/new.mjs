@@ -35,7 +35,14 @@ const twin = (r, W) => { const L = r.x - 24, R = W - r.x - r.width - 24; return 
   ok(inside > 0.02 && inside > 4 * outside, `swarm: figure in the target column (${(inside * 100).toFixed(1)}% lit vs ${(outside * 100).toFixed(1)}% beside it)`);
   await p.evaluate(() => document.querySelector("#services").scrollIntoView({ block: "start", behavior: "instant" })); await p.waitForTimeout(1500);
   const field = await lit(p, { x: 0, y: 0, width: 1280, height: 720 });
-  ok(field < 0.06, `swarm: sparse field between formations (intro), a quarter of the figure at most (${(field * 100).toFixed(2)}% lit)`);
+  ok(field < 0.06, `swarm: the intro stays sparse, six small hives and the field (${(field * 100).toFixed(2)}% lit)`);
+  // the services index: the swarm forms the hives, and each item wanders (a transform set by the swarm) with its label
+  const bee = async () => p.$$eval("#services [data-bee]", (els) => els.map((e) => e.style.transform));
+  const b1 = await bee(); await p.waitForTimeout(700); const b2 = await bee();
+  ok((await p.getAttribute("canvas", "data-swarm-at")) === "hive" && b1.length === 6, `intro: six hives held by the swarm (${b1.length})`);
+  ok(b1.every((t) => t.startsWith("translate3d")) && b1.some((t, i) => t !== b2[i]), "intro: the items wander like bees (transforms change)");
+  const hr = await rectOf(p, '#services [data-swarm-scene="hive"]'), hIn = await lit(p, hr);
+  ok(hIn > 0.03, `intro: a hive is drawn in its square (${(hIn * 100).toFixed(1)}% lit)`);
   // blocks: fit, play-once text, the formation held
   for (const id of ["02", "04", "06"]) {
     const sel = `#cell-${id}`;
@@ -99,6 +106,7 @@ const twin = (r, W) => { const L = r.x - 24, R = W - r.x - r.width - 24; return 
   await p.evaluate(() => document.querySelector("#cell-04").scrollIntoView({ block: "center", behavior: "instant" })); await p.waitForTimeout(400);
   const rm = await p.evaluate(() => document.querySelector("canvas").dataset.swarmAt);
   ok(rm === "production", `reduced motion: formation follows scroll while still (${rm})`);
+  ok((await p.$$eval("#services [data-bee]", (els) => els.every((e) => !e.style.transform))), "reduced motion: the intro items do not wander");
   await p.screenshot({ path: "shots/new-hero-reduced.png" });
   await p.close();
 }

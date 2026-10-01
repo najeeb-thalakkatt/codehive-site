@@ -4,7 +4,11 @@ import { motionOff, onMotionChange } from "@/lib/motion";
 import { CELL, ROT_STEPS, buildAtlas, clamp01, smoothstep } from "./swarm-lib";
 import { COL_VARS, SCENES, type Scene } from "./scenes";
 
-type Anchor = { key: string; el: HTMLElement; cx: number; cy: number; S: number; scene: Scene };
+/** One hive of a group: its own centre and size, the element that wanders with it (`[data-bee]`), its bee phase and offset. */
+type Member = { el: HTMLElement; cx: number; cy: number; S: number; bee: HTMLElement | null; ph: number; ox: number; oy: number };
+/** A formation's place on the page. A group (`data-swarm-group`) is one anchor with several members: the first
+ *  `count` particles are dealt round-robin to the members, each forming the scene at its own spot; the rest stay ambient. */
+type Anchor = { key: string; el: HTMLElement; cx: number; cy: number; S: number; scene: Scene; members?: Member[]; count: number };
 
 /** The /new background: one swarm of tiny outlined hexagons for the whole page. On load they fly in and
  *  settle into the logo cell over the hero's right column; as you scroll, the section nearest the middle
@@ -17,7 +21,10 @@ type Anchor = { key: string; el: HTMLElement; cx: number; cy: number; S: number;
  *  Behind the swarm a sparse field of small and a few large outlines drifts across the whole viewport at all
  *  times, with a parallax on the pointer (the figures follow it a little too), so the ground is never still.
  *  Story beats (a particle's colour and dimming) cross-fade over 180 ms instead of flipping. Touch pointers are
- *  ignored: a scrolling finger is not a pointer. In the still branch every layer moves with the page (no parallax). */
+ *  ignored: a scrolling finger is not a pointer. In the still branch every layer moves with the page (no parallax).
+ *  The motion is a swarm's, not a drift: every particle buzzes around its home on two frequencies, one in eight is a
+ *  scout that ranges further, the flight between formations is turbulent, and grouped hives (the services index) wander
+ *  like bees, taking their `[data-bee]` element (the label) with them. */
 export default function Swarm() {
   const ref = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
@@ -36,7 +43,8 @@ export default function Swarm() {
     const curCol = new Uint8Array(MAX), prevCol = new Uint8Array(MAX), blend = F(), mulE = F();
     const pickW = (w: number[]) => { let r = Math.random(); for (let i = 0; i < w.length; i++) { if (r < w[i]) return i; r -= w[i]; } return w.length - 1; };
     for (let i = 0; i < MAX; i++) {
-      ph[i] = Math.random() * Math.PI * 2; hw[i] = 0.6 + Math.random() * 0.6; ha[i] = 1.5 + Math.random() * 1.5;
+      // the buzz: quick (3–7 rad/s) and small (1.6–4 px), and one in sixteen is a scout that ranges three times further
+      ph[i] = Math.random() * Math.PI * 2; hw[i] = 3 + Math.random() * 4; ha[i] = (1.6 + Math.random() * 2.4) * (Math.random() < 0.06 ? 3.2 : 1);
       dl[i] = Math.random() * 0.5; jk[i] = Math.random(); ax[i] = Math.random(); ay[i] = Math.random(); par[i] = 0.5 + Math.random() * 0.4;
       al[i] = 0.35 + Math.random() * 0.55; rs[i] = Math.random() < 0.1 ? 8 + Math.random() * 12 : 0;
       sz[i] = pickW([0.5, 0.35, 0.15]); col[i] = pickW([0.45, 0.2, 0.2, 0.15]);
@@ -66,14 +74,32 @@ export default function Swarm() {
     // formations are sampled for the live particle count (a phone draws 600, so its shapes are built from 600)
     const scenes = new Map<string, Scene>();
     const collect = () => {
+      const groups = new Map<string, Anchor>();
       anchors = [...document.querySelectorAll<HTMLElement>("[data-swarm-scene]")].flatMap((el) => {
         const key = el.dataset.swarmScene || "", make = SCENES[key], id = `${key}:${n}`; if (!make) return [];
         if (!scenes.has(id)) scenes.set(id, make(n));
-        return [{ key, el, cx: 0, cy: 0, S: 0, scene: scenes.get(id)! }];
+        const g = el.dataset.swarmGroup;
+        if (!g) return [{ key, el, cx: 0, cy: 0, S: 0, scene: scenes.get(id)!, count: n }];
+        const mb: Member = { el, cx: 0, cy: 0, S: 0, bee: el.closest<HTMLElement>("[data-bee]"), ph: 0, ox: 0, oy: 0 };
+        const have = groups.get(g);
+        if (have) { mb.ph = have.members!.length * 1.7; have.members!.push(mb); have.count = Math.min(n, have.members!.length * (phone ? 56 : 110)); return []; }
+        const a: Anchor = { key, el, cx: 0, cy: 0, S: 0, scene: scenes.get(id)!, members: [mb], count: phone ? 56 : 110 };
+        groups.set(g, a); return [a];
       });
     };
     // `data-swarm-fit="width"` sizes the formation by the anchor's width (a wide band) instead of its shorter side
-    const measure = () => { for (const a of anchors) { const r = a.el.getBoundingClientRect(); a.cx = r.left + r.width / 2; a.cy = r.top + r.height / 2 + window.scrollY; a.S = a.el.dataset.swarmFit === "width" ? 0.475 * r.width : 0.5 * Math.min(r.width, r.height); } };
+    const measure = () => {
+      for (const a of anchors) {
+        if (a.members) {
+          // each hive where its element is, minus the bee offset it currently carries; the group's centre is their mean
+          let sy = 0, sx = 0;
+          for (const m of a.members) { const r = m.el.getBoundingClientRect(); m.cx = r.left + r.width / 2 - m.ox; m.cy = r.top + r.height / 2 + window.scrollY - m.oy; m.S = 0.5 * Math.min(r.width, r.height); sx += m.cx; sy += m.cy; }
+          a.cx = sx / a.members.length; a.cy = sy / a.members.length; a.S = a.members[0].S;
+          continue;
+        }
+        const r = a.el.getBoundingClientRect(); a.cx = r.left + r.width / 2; a.cy = r.top + r.height / 2 + window.scrollY; a.S = a.el.dataset.swarmFit === "width" ? 0.475 * r.width : 0.5 * Math.min(r.width, r.height);
+      }
+    };
     const resize = () => {
       dpr = Math.min(2, window.devicePixelRatio || 1); W = window.innerWidth; H = window.innerHeight; phone = W <= 820;
       const n0 = n; n = phone ? 700 : MAX; if (n !== n0) collect();
@@ -106,7 +132,8 @@ export default function Swarm() {
       // layer scrolls with the page (depth 1) so nothing slides against the copy
       const fade = stat ? 1 : 1 - (1 - clamp01((now - t0) / 0.6)) ** 3;
       for (let i = 0; i < ambN; i++) {
-        if (!stat) { bx[i] += (bvx[i] + 3 * Math.sin(now * 0.3 + bp[i])) * dt; by[i] += (bvy[i] + 3 * Math.cos(now * 0.27 + bp[i])) * dt; }
+        // a bee's path, not a drift: the heading keeps turning and a faster wiggle rides on top
+        if (!stat) { bx[i] += (bvx[i] + 12 * Math.sin(now * 0.7 + bp[i]) + 9 * Math.sin(now * 2.9 + bp[i] * 2.1)) * dt; by[i] += (bvy[i] + 12 * Math.cos(now * 0.6 + bp[i]) + 9 * Math.cos(now * 3.3 + bp[i] * 1.7)) * dt; }
         const X = wrap(bx[i] + mx * 50 * bd[i], W + 40) - 20, Y = wrap(by[i] - scrollY * (stat ? 1 : 0.12 * bd[i]) + my * 30 * bd[i], H + 40) - 20;
         ctx.globalAlpha = ba[i] * fade;
         ctx.drawImage(atlas, bcol[i] * ROT_STEPS * cd, bsz[i] * cd, cd, cd, X - half, Y - half, cs, cs);
@@ -140,22 +167,42 @@ export default function Swarm() {
       for (const a of anchors) { const d = Math.abs(a.cy - scrollY - H / 2) / H; if (d < 0.5) near.push({ a, d }); }
       near.sort((p, q) => p.d - q.d);
       const dom = near[0]?.a; cv.dataset.swarmAt = dom ? dom.key : "";
+      // grouped hives wander like bees (a slow loop with a quicker wobble on it) and carry their label along; still
+      // mode parks them where the layout put them
+      for (const a of anchors) {
+        if (!a.members) continue;
+        const live = !stat && Math.abs(a.cy - scrollY - H / 2) < 1.2 * H;
+        for (const m of a.members) {
+          const ox = live ? 9 * Math.sin(t * 0.9 + m.ph) + 4 * Math.sin(t * 2.6 + m.ph * 2.3) : 0, oy = live ? 6 * Math.sin(t * 1.3 + m.ph * 1.9) + 3 * Math.sin(t * 3.4 + m.ph) : 0;
+          if (ox !== m.ox || oy !== m.oy) { m.ox = ox; m.oy = oy; if (m.bee) m.bee.style.transform = ox || oy ? `translate3d(${ox.toFixed(1)}px, ${oy.toFixed(1)}px, 0)` : ""; }
+        }
+      }
       let allIn = true;
       const cs = CELL, half = cs / 2, cd = cs * dpr, hov = stat ? 0 : 1;
       for (let i = 0; i < n; i++) {
         // targets: each nearby formation pulls with its own cohesion (particles peel off in waves, by jitter);
         // what is left goes to the ambient field, which wraps down the page
-        let tx = 0, ty = 0, K = 0, kd = 0;
+        let tx = 0, ty = 0, K = 0, kd = 0, bz = 0;
         for (let q = 0; q < near.length; q++) {
-          const { a, d } = near[q]; const k = 1 - smoothstep(0.2 + 0.15 * jk[i], 0.5, d); if (k <= 0) continue;
+          const { a, d } = near[q]; if (i >= a.count) continue;
+          const k = 1 - smoothstep(0.2 + 0.15 * jk[i], 0.5, d); if (k <= 0) continue;
           if (q === 0) kd = k;
-          tx += k * (a.cx + mx * 36 + a.scene.x[i] * a.S * (1 + mx * 0.08) + hov * ha[i] * Math.sin(t * hw[i] + ph[i]));
-          ty += k * (a.cy - scrollY + my * 24 + a.scene.y[i] * a.S + hov * ha[i] * Math.cos(t * hw[i] * 0.8 + ph[i]));
+          // a group deals its particles round-robin to its hives; each hive carries its bee offset
+          const m = a.members ? a.members[i % a.members.length] : null;
+          const acx = m ? m.cx + m.ox : a.cx, acy = m ? m.cy + m.oy : a.cy, aS = m ? m.S : a.S;
+          // how hard this particle buzzes here: scaled down on small figures, and stirred by a wave of agitation that
+          // sweeps across the formation every few seconds, so the shape resolves, stirs and resolves again
+          const sx0 = a.scene.x[i], sy0 = a.scene.y[i], wv = Math.sin(t * 0.9 - (sx0 * 2 + sy0) * 1.4 + q);
+          bz += k * (aS < 117 ? 0.5 : aS > 260 ? 1 : aS / 260) * (0.5 + (wv > 0 ? 1.1 * wv * wv : 0));
+          tx += k * (acx + mx * 36 + sx0 * aS * (1 + mx * 0.08));
+          ty += k * (acy - scrollY + my * 24 + sy0 * aS);
           K += k;
         }
-        if (K > 1) { tx /= K; ty /= K; K = 1; }
-        const gx = ax[i] * W, gy = (((ay[i] * wrapH - scrollY * (stat ? 1 : par[i])) % wrapH) + wrapH) % wrapH - 0.1 * H;
+        if (K > 1) { tx /= K; ty /= K; bz /= K; K = 1; }
+        const gx = ax[i] * W + hov * 16 * Math.sin(t * 0.8 + ph[i] * 3), gy = (((ay[i] * wrapH - scrollY * (stat ? 1 : par[i])) % wrapH) + wrapH) % wrapH - 0.1 * H + hov * 12 * Math.cos(t * 1.1 + ph[i] * 2);
         tx += (1 - K) * gx; ty += (1 - K) * gy;
+        // in flight between a formation and the field the path is turbulent: strongest half way, nothing at either end
+        if (hov && K > 0 && K < 1) { const tb = 4 * K * (1 - K) * 46; tx += tb * Math.sin(t * 2.1 + ph[i] * 5); ty += tb * Math.cos(t * 1.7 + ph[i] * 4); }
         if (stat) { x[i] = tx; y[i] = ty; vx[i] = vy[i] = 0; }
         else if (entering) {
           const E = clamp01((t - t0 - dl[i]) / 1.6), e = 1 - (1 - E) ** 4;
@@ -166,7 +213,7 @@ export default function Swarm() {
           // tab) still gets there in the same real time; the pointer pushes nearby particles off it
           for (let sdt = dt; sdt > 0; sdt -= 0.05) {
             const h = Math.min(0.05, sdt);
-            vx[i] += (tx - x[i]) * 14 * h; vy[i] += (ty - y[i]) * 14 * h;
+            vx[i] += (tx - x[i]) * 18 * h; vy[i] += (ty - y[i]) * 18 * h;
             const dx = x[i] - px, dy = y[i] - py, d2 = dx * dx + dy * dy;
             if (d2 < 110 * 110 && d2 > 0.01) { const d = Math.sqrt(d2), f = ((1 - d / 110) * 900 * h) / d; vx[i] += dx * f; vy[i] += dy * f; }
             const damp = Math.exp(-6 * h); vx[i] *= damp; vy[i] *= damp;
@@ -182,7 +229,10 @@ export default function Swarm() {
         if (pc !== curCol[i]) { prevCol[i] = curCol[i]; curCol[i] = pc; blend[i] = 0; }
         if (stat) { blend[i] = 1; mulE[i] = pm; } else { blend[i] = Math.min(1, blend[i] + dt / 0.18); mulE[i] += (pm - mulE[i]) * (1 - Math.exp(-dt / 0.18)); }
         const a = al[i] * mulE[i] * (K > 0.02 ? 1 : 0.5) * (i % 3 === 0 ? 1 : K);
-        const X = x[i], Y = y[i];
+        // the buzz rides on top of the spring's position (two frequencies per axis), so it is as quick as a bee
+        // without the spring smoothing it away
+        const A = hov * ha[i] * bz, w = hw[i], p0 = ph[i];
+        const X = x[i] + A * (Math.sin(t * w + p0) + 0.55 * Math.sin(t * w * 2.31 + p0 * 1.7)), Y = y[i] + A * (Math.cos(t * w * 0.83 + p0) + 0.55 * Math.sin(t * w * 1.87 + p0 * 2.3));
         if (a < 0.02 || X < -cs || Y < -cs || X > W + cs || Y > H + cs) continue;
         const rot = rs[i] ? Math.floor(((((t * rs[i] + 60 * ph[i]) % 60) + 60) % 60) / 10) : 0, b = blend[i];
         if (b < 1) { ctx.globalAlpha = a * (1 - b); ctx.drawImage(atlas, (prevCol[i] * ROT_STEPS + rot) * cd, sz[i] * cd, cd, cd, X - half, Y - half, cs, cs); }
@@ -227,6 +277,7 @@ export default function Swarm() {
     const unsub = onMotionChange(onMotion);
     return () => {
       cancelAnimationFrame(raf); cancelAnimationFrame(scrollRaf); unsub();
+      for (const an of anchors) for (const m of an.members ?? []) if (m.bee) m.bee.style.transform = "";
       window.removeEventListener("resize", resize); window.removeEventListener("load", onLoad); window.removeEventListener("scroll", onScroll);
       window.removeEventListener("pointermove", onMove); document.removeEventListener("pointerleave", onLeave); window.removeEventListener("pointercancel", onLeave); document.removeEventListener("visibilitychange", onVis);
     };
