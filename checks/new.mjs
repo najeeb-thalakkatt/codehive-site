@@ -33,13 +33,9 @@ const twin = (r, W) => { const L = r.x - 24, R = W - r.x - r.width - 24; return 
   const tr = await rectOf(p, '[data-swarm-scene="cell"]');
   const inside = await lit(p, tr), outside = await lit(p, twin(tr, 1280));
   ok(inside > 0.02 && inside > 4 * outside, `swarm: figure in the target column (${(inside * 100).toFixed(1)}% lit vs ${(outside * 100).toFixed(1)}% beside it)`);
-  // the lab slider: twice the particles draw a denser cell, Reset returns to the default
-  await p.fill("#lab-particles", "4800"); await p.waitForTimeout(1500);
-  const n1 = await p.getAttribute("canvas", "data-swarm-n"), dense = await lit(p, tr);
-  ok(n1 === "4800" && dense > 1.3 * inside, `lab slider: 4800 particles draw a denser cell (${(dense * 100).toFixed(1)}% lit vs ${(inside * 100).toFixed(1)}%)`);
-  await p.click('[aria-label="Lab: particle count"] button'); await p.waitForTimeout(1500);
-  const n2 = await p.getAttribute("canvas", "data-swarm-n"), back = await lit(p, tr);
-  ok(n2 === "2400" && Math.abs(back - inside) < 0.25 * inside, `lab slider: Reset returns to 2400 (${(back * 100).toFixed(1)}% lit)`);
+  // the cell is the dense figure: 8000 particles hold it, and the braces stay a clear cut-out
+  const nHero = await p.getAttribute("canvas", "data-swarm-n");
+  ok(nHero === "8000" && inside > 0.3, `swarm: the hero cell runs 8000 particles (${nHero}, ${(inside * 100).toFixed(1)}% lit)`);
   await p.evaluate(() => document.querySelector("#services").scrollIntoView({ block: "start", behavior: "instant" })); await p.waitForTimeout(1500);
   const field = await lit(p, { x: 0, y: 0, width: 1280, height: 720 });
   ok(field < 0.06, `swarm: the intro stays sparse, six small hives and the field (${(field * 100).toFixed(2)}% lit)`);
@@ -55,9 +51,10 @@ const twin = (r, W) => { const L = r.x - 24, R = W - r.x - r.width - 24; return 
     const sel = `#cell-${id}`;
     // the formation: with the section at the top of the viewport its scene square is on screen
     await p.evaluate((s) => document.querySelector(s).scrollIntoView({ block: "start", behavior: "instant" }), sel); await p.waitForTimeout(1500);
-    let s = await p.evaluate((s) => { const el = document.querySelector(s); return { th: Math.round(el.querySelector('[class*="text"]').getBoundingClientRect().height), sh: Math.round(el.querySelector('[data-swarm-scene]').getBoundingClientRect().height), scene: document.querySelector("canvas").dataset.swarmAt, key: el.querySelector('[data-swarm-scene]').getAttribute('data-swarm-scene') }; }, sel);
+    let s = await p.evaluate((s) => { const el = document.querySelector(s); return { th: Math.round(el.querySelector('[class*="text"]').getBoundingClientRect().height), sh: Math.round(el.querySelector('[data-swarm-scene]').getBoundingClientRect().height), scene: document.querySelector("canvas").dataset.swarmAt, n: document.querySelector("canvas").dataset.swarmN, key: el.querySelector('[data-swarm-scene]').getAttribute('data-swarm-scene') }; }, sel);
     ok(s.th <= 700 && s.sh <= 648, `block ${id}: text ${s.th}px, scene ${s.sh}px tall (a viewport each at 1280x720)`);
     ok(s.scene === s.key, `block ${id}: swarm holds its formation (${s.scene} vs ${s.key})`);
+    ok(s.n === "2400", `block ${id}: the service figure runs the base 2400 particles (${s.n})`);
     // (judged at the end of this block: a figure's story starts dim, 06 is mostly unlit for its first 2.5 s, and
     // waiting here would let the text finish before it is checked)
     const sr = await rectOf(p, `${sel} [data-swarm-scene]`); let sIn = await lit(p, sr), sOut = await lit(p, twin(sr, 1280));

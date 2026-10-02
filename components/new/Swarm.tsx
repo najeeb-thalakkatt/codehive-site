@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { motionOff, onMotionChange } from "@/lib/motion";
-import { CELL, COUNT_CAP, COUNT_DESK, COUNT_EVENT, COUNT_KEY, COUNT_PHONE, PHONE_W, ROT_STEPS, buildAtlas, clamp01, clampCount, defaultCount, smoothstep } from "./swarm-lib";
+import { BASE_DESK, BASE_PHONE, CELL, HERO_DESK, HERO_PHONE, PHONE_W, ROT_STEPS, buildAtlas, clamp01, smoothstep } from "./swarm-lib";
 import { COL_VARS, SCENES, type Scene } from "./scenes";
 
 /** One hive of a group: its own centre and size, the element that wanders with it (`[data-bee]`), its bee phase and offset. */
@@ -27,18 +27,17 @@ type Anchor = { key: string; el: HTMLElement; cx: number; cy: number; S: number;
  *  like bees, taking their `[data-bee]` element (the label) with them.
  *  A figure can also run a story on a loop (hybrid/engine.ts): the swarm ticks it each frame while it is near, so its
  *  particles relocate on cue, and scrubs the CSS animations of the overlay inside its anchor to the same loop time.
- *  The count is 2400 (700 on phones) unless the lab slider (LabParticles.tsx) set another: the arrays are allocated
- *  for the cap, `n` of them are live, and `data-swarm-n` reports it. */
+ *  Two counts: `n` is the base swarm (2400, 700 on phones) that every section shares; the logo cell is sampled for
+ *  more (8000, 2300 on phones) so its braces read clearly. The extras above `n` are live only while a cell is near:
+ *  they fade in as it takes hold and out as it lets go, and never join the field or a service figure.
+ *  `data-swarm-n` reports how many particles the last frame ran. */
 export default function Swarm() {
   const ref = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     const cv = ref.current; if (!cv) return;
     const ctx = cv.getContext("2d"); if (!ctx) return;
     let off = motionOff();
-    const MAX = COUNT_CAP;
-    // the lab slider's count, if one was set (remembered across loads); null means the default for the viewport
-    let want: number | null = null;
-    try { const v = Number(localStorage.getItem(COUNT_KEY)); if (v > 0) want = clampCount(v); } catch {}
+    const MAX = HERO_DESK;
     let W = 0, H = 0, dpr = 1, phone = false, n = 0, atlas: HTMLCanvasElement | null = null, atlasDpr = 0;
     let anchors: Anchor[] = [];
     // per particle: start of the entrance, position, velocity, hover phase/rate/amplitude, delay, cohesion
@@ -78,19 +77,19 @@ export default function Swarm() {
 
     // one formation per `[data-swarm-scene]` element, sampled once for the largest count; measured on
     // resize and load like LiquidHero.measure, in document space so the figure scrolls with its section
-    // formations are sampled for the live particle count (a phone draws 600, so its shapes are built from 600)
+    // formations are sampled for the count that draws them (a phone runs 700, so its shapes are built from 700)
     const scenes = new Map<string, Scene>();
     const collect = () => {
       const groups = new Map<string, Anchor>();
       anchors = [...document.querySelectorAll<HTMLElement>("[data-swarm-scene]")].flatMap((el) => {
-        const key = el.dataset.swarmScene || "", make = SCENES[key], id = `${key}:${n}`; if (!make) return [];
-        if (!scenes.has(id)) scenes.set(id, make(n));
-        const g = el.dataset.swarmGroup, per = Math.max(24, Math.round(((phone ? 56 : 110) * n) / (phone ? COUNT_PHONE : COUNT_DESK))); // particles per hive of a group
-        if (!g) { const sc = scenes.get(id)!; return [{ key, el, cx: 0, cy: 0, S: 0, scene: sc, count: sc.count ?? n, anims: [], op: -1 }]; }
+        const key = el.dataset.swarmScene || "", make = SCENES[key], cnt = key === "cell" ? (phone ? HERO_PHONE : HERO_DESK) : n, id = `${key}:${cnt}`; if (!make) return [];
+        if (!scenes.has(id)) scenes.set(id, make(cnt));
+        const g = el.dataset.swarmGroup;
+        if (!g) { const sc = scenes.get(id)!; return [{ key, el, cx: 0, cy: 0, S: 0, scene: sc, count: sc.count ?? cnt, anims: [], op: -1 }]; }
         const mb: Member = { el, cx: 0, cy: 0, S: 0, bee: el.closest<HTMLElement>("[data-bee]"), ph: 0, ox: 0, oy: 0 };
         const have = groups.get(g);
-        if (have) { mb.ph = have.members!.length * 1.7; have.members!.push(mb); have.count = Math.min(n, have.members!.length * per); return []; }
-        const a: Anchor = { key, el, cx: 0, cy: 0, S: 0, scene: scenes.get(id)!, members: [mb], count: per, anims: [], op: -1 };
+        if (have) { mb.ph = have.members!.length * 1.7; have.members!.push(mb); have.count = Math.min(n, have.members!.length * (phone ? 56 : 110)); return []; }
+        const a: Anchor = { key, el, cx: 0, cy: 0, S: 0, scene: scenes.get(id)!, members: [mb], count: phone ? 56 : 110, anims: [], op: -1 };
         groups.set(g, a); return [a];
       });
       collectAnims();
@@ -113,7 +112,7 @@ export default function Swarm() {
     };
     const resize = () => {
       dpr = Math.min(2, window.devicePixelRatio || 1); W = window.innerWidth; H = window.innerHeight; phone = W <= PHONE_W;
-      const n0 = n; n = clampCount(want ?? defaultCount(W)); cv.dataset.swarmN = String(n); if (n !== n0) collect();
+      const n0 = n; n = phone ? BASE_PHONE : BASE_DESK; if (n !== n0) collect();
       seedField();
       cv.width = W * dpr; cv.height = H * dpr; cv.style.width = `${W}px`; cv.style.height = `${H}px`;
       if (atlasDpr !== dpr) { const cs = getComputedStyle(document.documentElement); colours = COL_VARS.map((v) => cs.getPropertyValue(v).trim()); atlas = buildAtlas(dpr, colours); atlasDpr = dpr; }
@@ -162,6 +161,7 @@ export default function Swarm() {
       ctx.globalAlpha = 1;
     };
     const near: { a: Anchor; d: number }[] = [];
+    let lastLive = -1;
     /** One frame. `stat` draws the rest state (no hover, no entrance, no spring, each story at its end). */
     const draw = (dt: number, stat: boolean) => {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
@@ -205,7 +205,10 @@ export default function Swarm() {
       }
       let allIn = true;
       const cs = CELL, half = cs / 2, cd = cs * dpr, hov = stat ? 0 : 1;
-      for (let i = 0; i < n; i++) {
+      // the base swarm always runs; the extras only while a figure that uses them (the cell) is near
+      let live = n; for (const { a } of near) if (a.count > live) live = Math.min(MAX, a.count);
+      if (live !== lastLive) { lastLive = live; cv.dataset.swarmN = String(live); }
+      for (let i = 0; i < live; i++) {
         // targets: each nearby formation pulls with its own cohesion (particles peel off in waves, by jitter);
         // what is left goes to the ambient field, which wraps down the page
         let tx = 0, ty = 0, K = 0, kd = 0, bz = 0;
@@ -255,7 +258,7 @@ export default function Swarm() {
         if (dom && kd > 0.5) { const r = dom.scene.paint(dom.scene.m[i], stat ? dom.scene.stillT : t, i, col[i]); pc = r[0]; pm = dom.scene.abs ? 1 + (r[1] / al[i] - 1) * kd : 1 + (r[1] - 1) * kd; }
         if (pc !== curCol[i]) { prevCol[i] = curCol[i]; curCol[i] = pc; blend[i] = 0; }
         if (stat) { blend[i] = 1; mulE[i] = pm; } else { blend[i] = Math.min(1, blend[i] + dt / 0.18); mulE[i] += (pm - mulE[i]) * (1 - Math.exp(-dt / 0.18)); }
-        const a = al[i] * mulE[i] * (K > 0.02 ? 1 : 0.5) * (i % 3 === 0 ? 1 : K);
+        const a = al[i] * mulE[i] * (K > 0.02 ? 1 : 0.5) * (i < n && i % 3 === 0 ? 1 : K);
         // the buzz rides on top of the spring's position (two frequencies per axis), so it is as quick as a bee
         // without the spring smoothing it away
         const A = hov * ha[i] * bz, w = hw[i], p0 = ph[i];
@@ -292,22 +295,13 @@ export default function Swarm() {
 
     resize(); collect(); measure();
     const first = anchors[0]?.scene;
-    if (first) for (let i = 0; i < n; i++) dl[i] = 0.5 * Math.min(1, Math.hypot(first.x[i], first.y[i])); // the cell closes from the centre out
+    if (first) for (let i = 0; i < first.x.length; i++) dl[i] = 0.5 * Math.min(1, Math.hypot(first.x[i], first.y[i])); // the cell closes from the centre out
     if (off) { setStage("still"); still(); }
     else { scatter(); t0 = performance.now() / 1000; now = t0; setStage("entering"); start(); }
 
     const onLoad = () => { measure(); collectAnims(); if (off) still(); };
     // a block swapped its figure (the lab's A/B switch): read the anchors again
     const onRefresh = () => { collect(); measure(); if (off) still(); };
-    // the lab slider changed the count: particles that join start in the field and fly to their homes; every figure
-    // is sampled again for the new count (the old samples are dropped, so dragging does not pile them up)
-    const onCount = (e: Event) => {
-      const d = (e as CustomEvent<number | null>).detail; want = typeof d === "number" && d > 0 ? clampCount(d) : null;
-      const n0 = n; n = clampCount(want ?? defaultCount(W)); if (n === n0) return;
-      for (let i = n0; i < n; i++) { x[i] = sx[i] = ax[i] * W; y[i] = sy[i] = Math.random() * H; vx[i] = vy[i] = 0; curCol[i] = prevCol[i] = col[i]; blend[i] = 1; mulE[i] = 1; }
-      cv.dataset.swarmN = String(n); scenes.clear(); collect(); measure(); if (off) still();
-    };
-    window.addEventListener(COUNT_EVENT, onCount);
     window.addEventListener("codehive:swarm-refresh", onRefresh);
     window.addEventListener("resize", resize); window.addEventListener("load", onLoad);
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -317,7 +311,7 @@ export default function Swarm() {
     return () => {
       cancelAnimationFrame(raf); cancelAnimationFrame(scrollRaf); unsub();
       for (const an of anchors) for (const m of an.members ?? []) if (m.bee) m.bee.style.transform = "";
-      window.removeEventListener(COUNT_EVENT, onCount); window.removeEventListener("codehive:swarm-refresh", onRefresh);
+      window.removeEventListener("codehive:swarm-refresh", onRefresh);
       window.removeEventListener("resize", resize); window.removeEventListener("load", onLoad); window.removeEventListener("scroll", onScroll);
       window.removeEventListener("pointermove", onMove); document.removeEventListener("pointerleave", onLeave); window.removeEventListener("pointercancel", onLeave); document.removeEventListener("visibilitychange", onVis);
     };

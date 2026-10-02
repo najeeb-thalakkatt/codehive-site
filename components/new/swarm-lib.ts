@@ -5,16 +5,10 @@ export const SIZES = [2, 3, 4]; // hex radius in css px, picked 50 / 35 / 15 %
 export const ROT_STEPS = 6; // 0..50° in 10° steps: a hexagon repeats every 60°
 export const CELL = 2 * SIZES[SIZES.length - 1] + 3; // one atlas cell, css px, room for the stroke
 
-// how many particles the swarm draws: the default per viewport, and the range the lab slider (LabParticles.tsx) may
-// set instead. The swarm allocates for the cap once; the slider's value is remembered under COUNT_KEY and sent to
-// the swarm as a COUNT_EVENT (detail: the count, or null for the default)
-export const COUNT_DESK = 2400, COUNT_PHONE = 700, COUNT_MIN = 400, COUNT_CAP = 8000, PHONE_W = 820;
-export const COUNT_KEY = "codehive-lab-particles", COUNT_EVENT = "codehive:swarm-count";
-export const defaultCount = (w: number) => (w <= PHONE_W ? COUNT_PHONE : COUNT_DESK);
-export const clampCount = (v: number) => Math.max(COUNT_MIN, Math.min(COUNT_CAP, Math.round(v)));
-/** a small seeded generator (mulberry32): the same sequence every time, so a figure sampled for more particles
- *  keeps the homes it already had */
-export const seeded = (a: number) => () => { a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+// how many particles the swarm draws. The base count is the swarm every section shares (service figures, the hives
+// of the index, the drifting field). The logo cell is denser so the braces read as a clear cut-out: it adds extra
+// particles that exist only while a cell holds them (hero and contact) and are never part of the field
+export const BASE_DESK = 2400, BASE_PHONE = 700, HERO_DESK = 8000, HERO_PHONE = 2300, PHONE_W = 820;
 
 export type Homes = { x: Float32Array; y: Float32Array }; // unit space: the hexagon's circumradius is 1
 
