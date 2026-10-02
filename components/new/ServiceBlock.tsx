@@ -50,7 +50,9 @@ export default function ServiceBlock({ data, flip = false, wide = false }: { dat
           onClick={() => window.dispatchEvent(new CustomEvent("codehive:book", { detail: data.name }))}>{ASK}</a>
       </div>
       <div className={s.vis}>
-        <div key={key} className={s.scene} data-swarm-scene={key} data-swarm-fit="width" aria-hidden="true">
+        {/* the swarm owns this element's inline opacity (it fades the overlay with its hold on the figure) and may set it
+            before React hydrates this block: tell React not to compare the style attribute */}
+        <div key={key} className={s.scene} data-swarm-scene={key} data-swarm-fit="width" aria-hidden="true" suppressHydrationWarning>
           <div className={`hy hy-desk hy-${key}`}>{OVERLAYS[key]}</div>
           <div className={`hy hy-phone hy-${key}p`}>{OVERLAYS[`${key}p`]}</div>
         </div>

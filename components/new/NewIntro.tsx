@@ -15,7 +15,8 @@ export default function NewIntro() {
     <section id="services" className={`wrap ${s.intro}`} aria-labelledby="services-title">
       <nav aria-label="Six services" className={s.field}>
         {SERVICES.map((c, i) => (
-          <a key={c.id} href={`#cell-${c.id}`} className={s.item} data-bee style={{ left: `${SPOTS[i][0]}%`, top: `${SPOTS[i][1]}%` }}>
+          // the swarm writes a transform on this element (the bee wander), possibly before hydration
+          <a key={c.id} href={`#cell-${c.id}`} className={s.item} data-bee suppressHydrationWarning style={{ left: `${SPOTS[i][0]}%`, top: `${SPOTS[i][1]}%` }}>
             <span className={s.hive} data-swarm-scene="hive" data-swarm-group="services" aria-hidden="true" />
             <span className={s.label}><span className={s.num}>{c.id}</span><span className={s.name}>{c.name}</span></span>
           </a>
