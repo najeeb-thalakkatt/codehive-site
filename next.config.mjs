@@ -4,6 +4,9 @@
 // are under 7 KB together; inlining them removes two render-blocking round trips on slow 4G.
 const nextConfig = {
   reactStrictMode: true,
+  // A second build directory on request (NEXT_DIST_DIR=.next-build): `next build` into the default .next while a
+  // `next dev` is running corrupts the dev server. scripts/run-checks.sh builds this way. The export still goes to out/.
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   output: "export",
   trailingSlash: true,
   images: { unoptimized: true },

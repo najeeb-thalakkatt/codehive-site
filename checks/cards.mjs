@@ -2,6 +2,7 @@ import { chromium } from "playwright";
 import { mkdirSync } from "node:fs";
 mkdirSync(new URL("./shots/", import.meta.url).pathname, { recursive: true });
 process.chdir(new URL("./", import.meta.url).pathname);
+const ORIGIN = process.env.CHECK_ORIGIN ?? "http://localhost:3000"; // run-checks.sh sets it when :3000 is taken
 const fails = []; const ok = (c, m) => { if (!c) fails.push(m); console.log(`${c ? "ok  " : "FAIL"} ${m}`); };
 const b = await chromium.launch({ args: ["--use-gl=swiftshader", "--ignore-gpu-blocklist"] });
 const ids = ["01", "02", "03", "04", "05", "06"];
@@ -9,7 +10,7 @@ const ids = ["01", "02", "03", "04", "05", "06"];
 {
   const p = await b.newPage({ viewport: { width: 1280, height: 720 } });
   const errs = []; p.on("pageerror", (e) => errs.push(String(e)));
-  await p.goto("http://localhost:3000/", { waitUntil: "networkidle" }); await p.waitForTimeout(800);
+  await p.goto(ORIGIN + "/", { waitUntil: "networkidle" }); await p.waitForTimeout(800);
   const H = await p.evaluate(() => document.documentElement.scrollHeight);
   const live = await b.newPage({ viewport: { width: 1280, height: 720 } }); await live.goto("https://codehives.se/", { waitUntil: "networkidle" });
   const Hlive = await live.evaluate(() => document.documentElement.scrollHeight); await live.close();
@@ -52,7 +53,7 @@ const ids = ["01", "02", "03", "04", "05", "06"];
 // --- phone
 {
   const p = await b.newPage({ viewport: { width: 375, height: 812 }, isMobile: true, deviceScaleFactor: 2 });
-  await p.goto("http://localhost:3000/", { waitUntil: "networkidle" }); await p.waitForTimeout(800);
+  await p.goto(ORIGIN + "/", { waitUntil: "networkidle" }); await p.waitForTimeout(800);
   await p.evaluate(() => document.querySelector("#services").scrollIntoView({ block: "start", behavior: "instant" })); await p.waitForTimeout(10500);
   await p.screenshot({ path: "shots/v3-intro-375.png" });
   await p.evaluate(() => document.querySelector("#cell-02").scrollIntoView({ block: "start", behavior: "instant" })); await p.waitForTimeout(7800);
@@ -64,7 +65,7 @@ const ids = ["01", "02", "03", "04", "05", "06"];
 // --- "Pause motion" in the footer: parks everything, persists across reload, resumes
 {
   const p = await b.newPage({ viewport: { width: 1280, height: 720 } });
-  await p.goto("http://localhost:3000/", { waitUntil: "networkidle" }); await p.waitForTimeout(800);
+  await p.goto(ORIGIN + "/", { waitUntil: "networkidle" }); await p.waitForTimeout(800);
   const running = () => p.evaluate(() => document.getAnimations().filter((a) => a.playState === "running").length);
   ok((await running()) > 0, "pause: hero moves before the toggle");
   await p.click("footer button"); await p.waitForTimeout(300);
@@ -81,7 +82,7 @@ const ids = ["01", "02", "03", "04", "05", "06"];
 // --- reduced motion
 {
   const p = await b.newPage({ viewport: { width: 1280, height: 720 }, reducedMotion: "reduce" });
-  await p.goto("http://localhost:3000/", { waitUntil: "networkidle" }); await p.waitForTimeout(800);
+  await p.goto(ORIGIN + "/", { waitUntil: "networkidle" }); await p.waitForTimeout(800);
   const r = await p.evaluate(() => { const t = document.querySelector('#cell-03 [class*="text"]').getAnimations({ subtree: true }); const f = document.querySelector('#cell-03 [class*="frame"]').getAnimations({ subtree: true }); const i = document.querySelector("#services").getAnimations({ subtree: true }); return { tend: t.every((x) => x.playState === "finished"), iend: i.length > 0 && i.every((x) => x.playState === "finished"), fn: f.length, fpaused: f.filter((x) => x.playState === "paused").length, ft: Math.round(f[0]?.currentTime ?? -1), cta: +getComputedStyle(document.querySelector("#cell-03 .act")).opacity, speed: document.querySelector("#top canvas") ? "canvas" : "none" }; });
   ok(r.tend && r.cta > 0.9, `reduced motion: card text at finished state (cta ${r.cta})`);
   ok(r.iend, `reduced motion: intro at finished state`);

@@ -3,6 +3,7 @@ import { chromium } from "playwright";
 import { mkdirSync } from "node:fs";
 mkdirSync(new URL("./shots/", import.meta.url).pathname, { recursive: true });
 process.chdir(new URL("./", import.meta.url).pathname);
+const ORIGIN = process.env.CHECK_ORIGIN ?? "http://localhost:3000"; // run-checks.sh sets it when :3000 is taken
 const fails = []; const ok = (c, m) => { if (!c) fails.push(m); console.log(`${c ? "ok  " : "FAIL"} ${m}`); };
 const lum = (r, g, b) => { const f = (c) => { c /= 255; return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; }; return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b); };
 const contrast = (l1, l2) => (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
@@ -22,7 +23,7 @@ async function stats(p, rect) {
 }
 for (const [W, H, mob] of [[1280, 720, false], [375, 812, true]]) {
   const p = await b.newPage({ viewport: { width: W, height: H }, isMobile: mob, deviceScaleFactor: 1 });
-  await p.goto("http://localhost:3000/", { waitUntil: "networkidle" }); await p.waitForTimeout(2500);
+  await p.goto(ORIGIN + "/", { waitUntil: "networkidle" }); await p.waitForTimeout(2500);
   // T7.2 luminance behind the copy block with the copy hidden
   await p.addStyleTag({ content: '[class*="copy"] { visibility: hidden !important; }' });
   await p.waitForTimeout(300);
@@ -57,7 +58,7 @@ for (const [W, H, mob] of [[1280, 720, false], [375, 812, true]]) {
 // T9 pacing at 720 tall: scroll at ~700 px/s and sample when the card top reaches 60% of the viewport
 {
   const p = await b.newPage({ viewport: { width: 1280, height: 720 } });
-  await p.goto("http://localhost:3000/", { waitUntil: "networkidle" }); await p.waitForTimeout(800);
+  await p.goto(ORIGIN + "/", { waitUntil: "networkidle" }); await p.waitForTimeout(800);
   const words = (sel) => p.$$eval(`${sel} h2 .w`, (ws) => ws.filter((w) => +getComputedStyle(w).opacity > 0.9).length + "/" + ws.length);
   for (const id of ["01", "02", "03"]) {
     const top = await p.evaluate((s) => document.querySelector(s).getBoundingClientRect().top + scrollY, `#cell-${id}`);
