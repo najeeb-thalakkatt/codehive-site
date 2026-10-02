@@ -1,36 +1,25 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { ASK, type Service } from "@/content/services";
 import { usePlayOnEnter } from "@/lib/usePlayOnEnter";
 import Stream from "../Stream";
 import { OVERLAYS } from "./hybrid/overlays";
-import { NAMES } from "./hybrid/cfgs";
+import { PICK } from "./hybrid/cfgs";
 import "./hybrid/hybrid.css";
 import "./hybrid/generated.css";
 import s from "./ServiceBlock.module.css";
 
-type Variant = "a" | "b";
-// the option shown until the founder picks: the one whose held frame reads clearest at a glance
-const DEFAULT: Record<string, Variant> = { "01": "b", "02": "a", "03": "b", "04": "a", "05": "a", "06": "b" };
-
-/** One service on /new: the compact card's conversation (Cell.tsx) laid out as a floating two-column
- *  block. Same 3 s play-once timeline: the question is complete from the first frame, the codehive turn
+/** One service on the page: the conversation (a "you" turn and a "codehive" turn) laid out as a floating
+ *  two-column block. A 3 s play-once timeline: the question is complete from the first frame, the codehive turn
  *  comes in at 0.32–0.46, body 0.47–0.62, chips 0.63–0.72, and the action is there from the start.
  *  The visual is a hybrid figure from the Claude Design canvas: the swarm draws the structure in the empty
  *  square (`data-swarm-scene` names the figure, e.g. `s02a`), and a thin overlay of labels inside the square says
- *  what it means. The canvas has two options per service; while this is a lab route a small A/B switch under the
- *  figure swaps them (remembered per service), and tells the swarm to read its anchors again.
+ *  what it means. The canvas has two options per service; the chosen one is `PICK` (scripts/port-hybrid.py).
  *  `wide` lays the block out as a full-width band with the copy centred beneath (the 1600 x 400 stage). */
 export default function ServiceBlock({ data, flip = false, wide = false }: { data: Service; flip?: boolean; wide?: boolean }) {
   const text = useRef<HTMLDivElement>(null);
   usePlayOnEnter(text, 3);
-  const [v, setV] = useState<Variant>(DEFAULT[data.id] ?? "a");
-  const store = `codehive-lab-s${data.id}`;
-  useEffect(() => { try { const x = localStorage.getItem(store); if (x === "a" || x === "b") setV(x); } catch {} }, [store]);
-  // after the figure's markup has changed, the swarm collects the new anchor and its overlay animations
-  useEffect(() => { window.dispatchEvent(new Event("codehive:swarm-refresh")); }, [v]);
-  const pick = (x: Variant) => { setV(x); try { localStorage.setItem(store, x); } catch {} };
-  const key = `s${data.id}${v}`;
+  const key = PICK[data.id];
   return (
     <section className={`wrap ${s.block} ${wide ? s.wide : ""}`} id={`cell-${data.id}`} aria-label={data.name} data-flip={(flip && !wide) || undefined}>
       <div ref={text} className={s.text}>
@@ -52,14 +41,9 @@ export default function ServiceBlock({ data, flip = false, wide = false }: { dat
       <div className={s.vis}>
         {/* the swarm owns this element's inline opacity (it fades the overlay with its hold on the figure) and may set it
             before React hydrates this block: tell React not to compare the style attribute */}
-        <div key={key} className={s.scene} data-swarm-scene={key} data-swarm-fit="width" aria-hidden="true" suppressHydrationWarning>
+        <div className={s.scene} data-swarm-scene={key} data-swarm-fit="width" aria-hidden="true" suppressHydrationWarning>
           <div className={`hy hy-desk hy-${key}`}>{OVERLAYS[key]}</div>
           <div className={`hy hy-phone hy-${key}p`}>{OVERLAYS[`${key}p`]}</div>
-        </div>
-        <div className={s.ab} role="group" aria-label={`Lab: figure option for ${data.name}`}>
-          {(["a", "b"] as const).map((x) => (
-            <button key={x} type="button" className={s.abBtn} aria-pressed={v === x} onClick={() => pick(x)}>{x.toUpperCase()} · {NAMES[`s${data.id}${x}`]}</button>
-          ))}
         </div>
       </div>
     </section>

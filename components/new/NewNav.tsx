@@ -5,7 +5,7 @@ import { BOOK } from "@/content/services";
 import s from "./NewNav.module.css";
 import v from "./v4.module.css";
 
-/** Nav for /new: transparent, logo left, two mono links and the amber pill right. The pill is shown only
+/** Nav of the home page: transparent, logo left, two mono links and the amber pill right. The pill is shown only
  *  once the hero (`[data-swarm-hero]`) has scrolled above the nav, so the first view has one filled button. */
 export default function NewNav() {
   const ref = useRef<HTMLElement>(null);
@@ -19,10 +19,10 @@ export default function NewNav() {
   return (
     <header ref={ref} className={`${s.nav} ${v.wide}`}>
       <div className={`wrap ${s.row}`}>
-        <a href="/new/#top" className={s.logo}><Mark />codehive</a>
+        <a href="/#top" className={s.logo}><Mark />codehive</a>
         <nav aria-label="Primary" className={s.links}>
-          <a href="/new/#services" className="navlink">Services</a>
-          <a href="/new/#contact" className="navlink">Contact</a>
+          <a href="/#services" className="navlink">Services</a>
+          <a href="/#contact" className="navlink">Contact</a>
           <a href="#book" className={`${v.pill} ${s.pill}`}>{BOOK}</a>
         </nav>
       </div>

@@ -1,11 +1,11 @@
-// /new (the constellation design lab route): swarm assembles into the cell, disperses past the hero, honours
+// The home page (v4, the swarm design): swarm assembles into the cell, disperses past the hero, honours
 // reduced motion and Pause motion; blocks play once and loop in view; phone overflow; block fit at 1280x720.
-// usage: [BASE=http://localhost:4173/new/] node checks/new.mjs   (serve out/ WITHOUT -s: it rewrites /new/ to /)
+// usage: [BASE=http://localhost:4173/] node checks/page.mjs   (scripts/run-checks.sh builds, serves and sets CHECK_ORIGIN)
 import { chromium } from "playwright";
 import { mkdirSync } from "node:fs";
 mkdirSync(new URL("./shots/", import.meta.url).pathname, { recursive: true });
 process.chdir(new URL("./", import.meta.url).pathname);
-const BASE = process.env.BASE ?? (process.env.CHECK_ORIGIN ?? "http://localhost:3000") + "/new/";
+const BASE = process.env.BASE ?? (process.env.CHECK_ORIGIN ?? "http://localhost:3000") + "/";
 const fails = []; const ok = (c, m) => { if (!c) fails.push(m); console.log(`${c ? "ok  " : "FAIL"} ${m}`); };
 const b = await chromium.launch({ args: ["--use-gl=swiftshader", "--ignore-gpu-blocklist"] });
 // drawn pixels of a viewport rect, read straight off the swarm canvas (alpha > 12 %): the page's text does
@@ -26,7 +26,7 @@ const twin = (r, W) => { const L = r.x - 24, R = W - r.x - r.width - 24; return 
   const errs = []; p.on("pageerror", (e) => errs.push(String(e)));
   await p.goto(BASE, { waitUntil: "networkidle" });
   const title = await p.textContent("h1");
-  if (title !== "Ship the AI feature.") { console.log(`skip: ${BASE} is not the lab route (h1 "${title}"); build with DESIGN_NEW=1 in .env.local`); await b.close(); process.exit(0); }
+  ok(title === "Ship the AI feature.", `page: the home page is the swarm design (h1 "${title}")`);
   const swarmed = await p.waitForSelector('canvas[data-swarm="settled"]', { timeout: 5000 }).then(() => true).catch(() => false);
   ok(swarmed, "swarm: settled within 5 s");
   await p.waitForTimeout(300);
@@ -77,13 +77,6 @@ const twin = (r, W) => { const L = r.x - 24, R = W - r.x - r.width - 24; return 
   }
   await p.evaluate(() => document.querySelector("#contact").scrollIntoView({ block: "start", behavior: "instant" })); await p.waitForTimeout(1800);
   ok((await p.evaluate(() => document.querySelector("canvas").dataset.swarmAt)) === "cell", "contact: the swarm forms the cell again (bookend)");
-  // the lab's A/B switch swaps the figure and the swarm follows
-  await p.evaluate(() => document.querySelector("#cell-05 [data-swarm-scene]").scrollIntoView({ block: "center", behavior: "instant" })); await p.waitForTimeout(800);
-  const before = await p.getAttribute("canvas", "data-swarm-at");
-  await p.click('#cell-05 button[aria-pressed="false"]'); await p.waitForTimeout(800);
-  const after = await p.getAttribute("canvas", "data-swarm-at");
-  ok(/^s05[ab]$/.test(before) && /^s05[ab]$/.test(after) && before !== after, `lab: A/B switch swaps the figure (${before} to ${after})`);
-  await p.click('#cell-05 button[aria-pressed="false"]'); await p.waitForTimeout(300);
   ok(await p.$eval("header", (h) => h.hasAttribute("data-past-hero")), "nav: pill shown once past the hero");
   await p.screenshot({ path: "shots/new-contact-1280.png" });
   ok(errs.length === 0, `no page errors ${errs.join(";")}`);
@@ -134,4 +127,4 @@ const twin = (r, W) => { const L = r.x - 24, R = W - r.x - r.width - 24; return 
   await p.close();
 }
 await b.close();
-if (fails.length) { console.log(`\n${fails.length} failure(s)`); process.exit(1); } console.log("\nall /new checks passed");
+if (fails.length) { console.log(`\n${fails.length} failure(s)`); process.exit(1); } console.log("\nall page checks passed");

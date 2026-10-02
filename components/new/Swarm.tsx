@@ -10,7 +10,7 @@ type Member = { el: HTMLElement; cx: number; cy: number; S: number; bee: HTMLEle
  *  `count` particles are dealt round-robin to the members, each forming the scene at its own spot; the rest stay ambient. */
 type Anchor = { key: string; el: HTMLElement; cx: number; cy: number; S: number; scene: Scene; members?: Member[]; count: number; anims: Animation[]; op: number };
 
-/** The /new background: one swarm of tiny outlined hexagons for the whole page. On load they fly in and
+/** The page background: one swarm of tiny outlined hexagons for the whole page. On load they fly in and
  *  settle into the logo cell over the hero's right column; as you scroll, the section nearest the middle
  *  of the viewport pulls them into its own formation (`[data-swarm-scene]`, one per service, drawn by
  *  components/new/scenes.ts), and between sections they drift as a sparse field. The same particles
@@ -300,18 +300,19 @@ export default function Swarm() {
     else { scatter(); t0 = performance.now() / 1000; now = t0; setStage("entering"); start(); }
 
     const onLoad = () => { measure(); collectAnims(); if (off) still(); };
-    // a block swapped its figure (the lab's A/B switch): read the anchors again
-    const onRefresh = () => { collect(); measure(); if (off) still(); };
-    window.addEventListener("codehive:swarm-refresh", onRefresh);
+    // the anchors are measured in document space, so anything that moves the sections after mount (a late font
+    // swap, the booking frame opening) must be measured again: watch the page's height, not just resize and load
+    let roRaf = 0;
+    const ro = new ResizeObserver(() => { if (!roRaf) roRaf = requestAnimationFrame(() => { roRaf = 0; measure(); if (off) still(); }); });
+    ro.observe(document.body);
     window.addEventListener("resize", resize); window.addEventListener("load", onLoad);
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("pointermove", onMove, { passive: true }); document.addEventListener("pointerleave", onLeave); window.addEventListener("pointercancel", onLeave);
     document.addEventListener("visibilitychange", onVis);
     const unsub = onMotionChange(onMotion);
     return () => {
-      cancelAnimationFrame(raf); cancelAnimationFrame(scrollRaf); unsub();
+      cancelAnimationFrame(raf); cancelAnimationFrame(scrollRaf); cancelAnimationFrame(roRaf); ro.disconnect(); unsub();
       for (const an of anchors) for (const m of an.members ?? []) if (m.bee) m.bee.style.transform = "";
-      window.removeEventListener("codehive:swarm-refresh", onRefresh);
       window.removeEventListener("resize", resize); window.removeEventListener("load", onLoad); window.removeEventListener("scroll", onScroll);
       window.removeEventListener("pointermove", onMove); document.removeEventListener("pointerleave", onLeave); window.removeEventListener("pointercancel", onLeave); document.removeEventListener("visibilitychange", onVis);
     };

@@ -1,4 +1,4 @@
-// Screenshots of one section at three viewports. usage: [BASE=http://localhost:3000/new/] node checks/screens.mjs "#cell-02" [waitMs]
+// Screenshots of one section at three viewports. usage: [BASE=http://localhost:4173/] node checks/screens.mjs "#cell-02" [waitMs]
 import { chromium } from "playwright";
 import { mkdirSync } from "node:fs";
 const dir = new URL("./shots/", import.meta.url).pathname; mkdirSync(dir, { recursive: true });

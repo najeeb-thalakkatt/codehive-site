@@ -52,7 +52,10 @@ Source: `prototype/index.html`, keyframes prefixed `s2`, `s3`, `s4`, `s5`. Templ
 - [x] Cell 06 "Plain backend": own visual (all six visuals ported from the service animations canvas, 2026-09-23)
 - [ ] Calendly: add "Plain backend" to the "Which service are you looking for?" options (must match `name` in content/services.ts)
 - [ ] Add a `/work` page only when there is a real AI case study to show; never a placeholder
-- [ ] `/new` lab route (2026-09-30): the constellation design in our brand, built locally behind `DESIGN_NEW=1`. Judge by eye, then either promote it over `app/page.tsx` or delete `app/new` and `components/new`
+- [x] `/new` lab route (2026-09-30): the constellation design in our brand. Promoted over `app/page.tsx` and live on 2026-10-02 (hero cell at 8000 particles, figures 01 B, 02 A, 03 B, 04 B, 05 B, 06 B)
+- [ ] Remove the v3 page that is no longer mounted: `LiquidHero`, `LiquidCell`, `HiveCanvas`, `ServicesIntro`, `Cell`, `ServiceAnimation`, `components/cells/`, `Contact`, `Reveal`, `lib/useScaleToFit.ts`, `checks/hero.mjs`, `checks/cards.mjs`, and the `@paper-design/shaders-react` dependency. Keep it until the founder is sure there is no going back
+- [ ] `/privacy` and the 404 page still use the v3 `Nav`; move them to `NewNav` when the v3 components go
+- [ ] OG image: re-render from the v4 hero
 
 ## Not doing
 - No blog, no team page, no client logos until there are clients

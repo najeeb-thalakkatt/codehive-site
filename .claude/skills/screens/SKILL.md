@@ -5,8 +5,9 @@ description: Take headless screenshots of a section of codehive-site at 1280x720
 
 # Screenshots
 
-`node checks/screens.mjs <selector> [waitMs]` against a server on port 3000 (`npx serve -s out -l 3000`
-after a build, or the dev server). It scrolls the selector into view, waits `waitMs` (default 800;
+`node checks/screens.mjs <selector> [waitMs]` against a server on port 3000 (the dev server), or set
+`CHECK_ORIGIN=http://localhost:4173` after `NEXT_DIST_DIR=.next-build npm run build` and
+`npx serve .next-build -l 4173`. It scrolls the selector into view, waits `waitMs` (default 800;
 use 8000 to see a card's text at its end state, 2500 for the hero shader), and writes
 `checks/shots/screen-<width>.png` for the three viewports. Then Read the pngs.
 

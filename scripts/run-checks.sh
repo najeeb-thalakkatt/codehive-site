@@ -14,7 +14,7 @@ sleep 2
 export CHECK_ORIGIN="http://localhost:$PORT"
 echo "checks against $CHECK_ORIGIN"
 status=0
-for f in checks/hero.mjs checks/cards.mjs checks/new.mjs; do
+for f in checks/page.mjs; do
   echo "== $f"
   node "$f" 2>&1 | grep -v "^ok" || true
   node "$f" >/dev/null 2>&1 || status=1

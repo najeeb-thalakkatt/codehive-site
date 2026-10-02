@@ -14,15 +14,10 @@
 /* the chips as two plain mono columns: no boxes, no separators */
 .chips { list-style: none; margin: 4px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, max-content)); gap: 4px 32px; font-family: var(--font-mono); font-size: 13px; letter-spacing: .3px; color: var(--ink2); }
 .text :global(.act) { padding: 0; }
-/* the figure's column: the square the swarm fills (its overlay inside), and the lab's A/B switch under it */
+/* the figure's column: the square the swarm fills, its overlay inside */
 .vis { display: flex; flex-direction: column; align-items: center; gap: 14px; min-width: 0; }
 /* a size container: the overlay's type and gaps are in cqw of this square, so they scale with it like the figure */
 .scene { position: relative; width: min(100%, 84svh); aspect-ratio: 1; container-type: inline-size; }
-.ab { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 18px; }
-.abBtn { background: none; border: 0; padding: 6px 0; min-height: 32px; font-family: var(--font-mono); font-size: 12px; letter-spacing: .5px; text-transform: uppercase; color: var(--ink3); cursor: pointer; transition: color 150ms var(--ease-out); }
-.abBtn:hover { color: var(--ink1); }
-.abBtn[aria-pressed="true"] { color: var(--amber); }
-.abBtn:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: var(--radius-sm); }
 /* the wide band: the formation spans the page, the copy sits centred under it */
 .wide { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 40px; }
 .wide .vis { order: -1; width: 100%; }

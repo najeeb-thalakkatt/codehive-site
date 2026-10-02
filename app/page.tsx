@@ -1,39 +1,33 @@
 import { Suspense } from "react";
-import HiveCanvas from "@/components/HiveCanvas";
-import Nav from "@/components/Nav";
-import LiquidHero from "@/components/LiquidHero";
-import ServicesIntro from "@/components/ServicesIntro";
-import Cell from "@/components/Cell";
-import Contact from "@/components/Contact";
+import Swarm from "@/components/new/Swarm";
+import NewNav from "@/components/new/NewNav";
+import NewHero from "@/components/new/NewHero";
+import NewIntro from "@/components/new/NewIntro";
+import ServiceBlock from "@/components/new/ServiceBlock";
+import NewContact from "@/components/new/NewContact";
 import Footer from "@/components/Footer";
-import Reveal from "@/components/Reveal";
 import { SERVICES } from "@/content/services";
-import { visuals } from "@/components/cells";
-import p from "./page.module.css";
+import v from "@/components/new/v4.module.css";
 
+/** The page (v4, live 2026-10-02): one swarm of outlined hexagons behind everything (Swarm), which forms the logo
+ *  cell in the hero, six small hives in the services index, one figure per service and the cell again at contact.
+ *  It began as the /new lab route (new-design/DESIGN.md is the reference); components/new is our version. */
 export default function Page() {
   return (
     <>
-      <HiveCanvas />
-      <Reveal />
-      <Nav />
-      <main id="main">
-        <LiquidHero />
-        <ServicesIntro />
-        {/* Each card in its own Suspense boundary: the HTML is already streamed, so no fallback ever
-            shows, but React hydrates each boundary as a separate short task instead of the whole
-            page in one long one. That is what keeps the main thread free on a phone. */}
-        <div className={`wrap ${p.cards}`}>
-          {SERVICES.map((c, i) => {
-            const V = visuals[c.animation];
-            return (
-              <Suspense key={c.id} fallback={null}>
-                <Cell data={c} flip={i % 2 === 1}>{V ? <V /> : null}</Cell>
-              </Suspense>
-            );
-          })}
-        </div>
-        <Contact />
+      <Swarm />
+      <NewNav />
+      <main id="main" className={v.v4}>
+        <NewHero />
+        <NewIntro />
+        {/* Each block in its own Suspense boundary: the HTML is already there, so no fallback ever shows, but React
+            hydrates each boundary as a separate short task instead of the whole page in one long one. */}
+        {SERVICES.map((c, i) => (
+          <Suspense key={c.id} fallback={null}>
+            <ServiceBlock data={c} flip={i % 2 === 1} wide={c.animation === "production"} />
+          </Suspense>
+        ))}
+        <NewContact />
       </main>
       <Footer />
     </>
