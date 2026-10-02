@@ -17,7 +17,7 @@ export default function Page() {
     <>
       <Swarm />
       <NewNav />
-      <main id="main" className={v.v4}>
+      <main id="main" className={v.v4} data-snap>
         <NewHero />
         <NewIntro />
         {/* Each block in its own Suspense boundary: the HTML is already there, so no fallback ever shows, but React

@@ -29,6 +29,7 @@ const twin = (r, W) => { const L = r.x - 24, R = W - r.x - r.width - 24; return 
   ok(title === "Ship the AI feature.", `page: the home page is the swarm design (h1 "${title}")`);
   const swarmed = await p.waitForSelector('canvas[data-swarm="settled"]', { timeout: 5000 }).then(() => true).catch(() => false);
   ok(swarmed, "swarm: settled within 5 s");
+  ok((await p.evaluate(() => getComputedStyle(document.documentElement).scrollSnapType)) === "none", "desktop: no scroll snapping with a mouse (a wheel notch must not spring back)");
   await p.waitForTimeout(300);
   const tr = await rectOf(p, '[data-swarm-scene="cell"]');
   const inside = await lit(p, tr), outside = await lit(p, twin(tr, 1280));
@@ -105,10 +106,15 @@ const twin = (r, W) => { const L = r.x - 24, R = W - r.x - r.width - 24; return 
   const cr = await rectOf(p, '#top [data-swarm-scene]'), u = cr.width / 2, cx = cr.x + u, cy = cr.y + u;
   const brace = await lit(p, { x: cx - 0.325 * u - 3, y: cy + 0.14 * u, width: 6, height: 0.2 * u }), fill = await lit(p, { x: cx - 0.7 * u, y: cy + 0.14 * u, width: 0.2 * u, height: 0.2 * u });
   ok(brace < 0.35 * fill, `phone: the braces read as a cut-out (${(brace * 100).toFixed(0)}% lit in the brace vs ${(fill * 100).toFixed(0)}% beside it)`);
-  // the services index is taller than the screen: a hive is drawn whenever its item is on screen, the last one too
-  await p.evaluate(() => { const e = document.querySelector("#services [data-bee]:last-child"); window.scrollTo(0, e.getBoundingClientRect().top + scrollY - 220); }); await p.waitForTimeout(1800);
-  const h6 = await lit(p, await rectOf(p, '#services [data-bee]:last-child [data-swarm-scene]'));
-  ok(h6 > 0.03, `phone: the last hive of the index is drawn while its item is on screen (${(h6 * 100).toFixed(1)}% lit)`);
+  // touch screens stop at each section: a scroll that ends between two sections comes to rest on a section's start
+  const snap = await p.evaluate(() => getComputedStyle(document.documentElement).scrollSnapType);
+  await p.evaluate(() => window.scrollTo({ top: 520, behavior: "instant" })); await p.waitForTimeout(1200);
+  const rest = await p.evaluate(() => ({ y: Math.round(scrollY), intro: Math.round(document.querySelector("#services").getBoundingClientRect().top) }));
+  ok(snap === "y mandatory" && rest.intro >= 0 && rest.intro <= 60, `phone: scrolling stops at a section (${snap}; left between hero and index, it rests with the index ${rest.intro}px from the top)`);
+  // resting on the index, all six items are on the first screen and the last hive is drawn
+  await p.waitForTimeout(1200);
+  const i6 = await rectOf(p, '#services [data-bee]:last-child [data-swarm-scene]'), h6 = await lit(p, i6);
+  ok(i6.y + i6.height <= 731 && h6 > 0.03, `phone: the index rests with its sixth item on screen (bottom ${Math.round(i6.y + i6.height)} of 731) and its hive drawn (${(h6 * 100).toFixed(1)}% lit)`);
   // 03: the three model names sit side by side, none on top of another
   await p.evaluate(() => document.querySelector("#cell-03 [data-swarm-scene]").scrollIntoView({ block: "center", behavior: "instant" })); await p.waitForTimeout(600);
   const names = await p.$$eval("#cell-03 .hy-phone .hy-ov:first-child span", (els) => els.map((e) => { const r = e.getBoundingClientRect(); return [Math.round(r.left), Math.round(r.right)]; }));

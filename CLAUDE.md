@@ -101,6 +101,17 @@ says what it means. They are the artboards of the "Codehive service animations" 
   moves must honour both (`motionOff()` / `onMotionChange()` in `lib/motion.ts`, or the attribute selector in CSS).
 - Anything that reparents a block's DOM after mount recreates its CSS animations and orphans the hook's handles.
 
+### Scrolling stops at each section (touch screens)
+`main[data-snap]` in `app/page.tsx` turns on native CSS scroll snapping (`app/globals.css`): hero, services index, each
+service and contact are stops, the footer is the last one, and a fling never skips a section. A section taller than
+the screen scrolls freely inside itself. `--snap-top` sets where a section's top rests; anchors land there too.
+- Touch only (`hover: none` and `pointer: coarse`). With a mouse wheel Chrome snaps to the nearest stop after every
+  notch, so one slow notch springs back and the page feels stuck; this was measured with both `mandatory` and
+  `proximity`. Do not enable it for fine pointers without solving that.
+- No JavaScript scroll handling. Reduced motion and "Pause motion" turn snapping off.
+- With snapping on, a programmatic scroll to an arbitrary offset is moved to a stop: checks on touch contexts must
+  scroll to a section, or to a point inside a section taller than the screen.
+
 ### Shared pieces and the budget
 - `components/Booking.tsx` (click-to-load Calendly frame, opened by `#book`), `Footer`, `MotionToggle`, `Stream`,
   `Mark` are shared with `/privacy` and the 404 page, which still use the older `Nav`.
