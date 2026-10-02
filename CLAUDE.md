@@ -13,8 +13,10 @@ npm run build    # the check. Run it before claiming anything works; fix type er
 npm run lint     # next lint (eslint-config-next)
 ```
 While `npm run dev` is running (the founder's, usually on :3000), never build into `.next`: it breaks the dev
-server (500s until restarted). Build aside with `NEXT_DIST_DIR=.next-build npm run build`; `scripts/run-checks.sh`
-does, and serves on :4173 when :3000 is taken (`CHECK_ORIGIN` tells the checks where).
+server (500s until restarted). Build aside with `NEXT_DIST_DIR=.next-build npm run build`: the static site then
+lands in `.next-build/`, not `out/` (serve that: `npx serve .next-build -l 4173`). `scripts/run-checks.sh` does all
+of this and takes :4173 when :3000 is busy (`CHECK_ORIGIN` tells the checks where). Only a plain `npm run build`
+writes `out/`, which is what the deploy workflow uploads.
 There is no test suite. Verification is `npm run build` plus a look in the browser, including with
 `prefers-reduced-motion` on (it must render every cell's finished state).
 No server features: no API routes, no `next/image` optimisation, no middleware. Everything must survive `output: "export"`.
