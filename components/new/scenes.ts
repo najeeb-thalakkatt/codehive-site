@@ -2,7 +2,7 @@
  *  width) plus a `paint` that colours and dims each particle over time. The logo cell and the small hives are
  *  written here; the six service figures come from the Claude Design canvas (hybrid/cfgs.ts, run by
  *  hybrid/engine.ts) in two options each. Colour indices are columns of the sprite atlas. */
-import { cellHomes } from "./swarm-lib";
+import { cellHomes, seeded } from "./swarm-lib";
 import { CFGS } from "./hybrid/cfgs";
 import { hybridScene } from "./hybrid/engine";
 
@@ -31,9 +31,10 @@ const hexEdge = (cx: number, cy: number, r: number, w: number, out: [number, num
 const alloc = (n: number): Scene => ({ x: new Float32Array(n), y: new Float32Array(n), m: new Float32Array(n), paint: (_m, _t, _i, baked) => [baked, 1], stillT: 0 });
 const P: [number, number] = [0, 0];
 
-/** 00 the logo cell: the hero. Colours are the particle's own. */
+/** 00 the logo cell: the hero. Colours are the particle's own. The homes come from a fixed sequence, so when the
+ *  count changes (the lab slider) the particles already in the cell keep their places and the new ones fill in. */
 export function cell(n: number): Scene {
-  const h = cellHomes(n); return { x: h.x, y: h.y, m: new Float32Array(n), paint: (_m, _t, _i, baked) => [baked, 1], stillT: 0 };
+  const h = cellHomes(n, seeded(7)); return { x: h.x, y: h.y, m: new Float32Array(n), paint: (_m, _t, _i, baked) => [baked, 1], stillT: 0 };
 }
 
 /** A small hive for the services index: a cell outline drawn by the swarm with a few bees inside. Every point is

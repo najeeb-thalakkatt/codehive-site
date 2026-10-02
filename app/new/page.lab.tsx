@@ -7,6 +7,7 @@ import NewIntro from "@/components/new/NewIntro";
 import ServiceBlock from "@/components/new/ServiceBlock";
 import NewContact from "@/components/new/NewContact";
 import Footer from "@/components/Footer";
+import LabParticles from "@/components/new/LabParticles";
 import { SERVICES } from "@/content/services";
 import v from "@/components/new/v4.module.css";
 
@@ -31,6 +32,7 @@ export default function Page() {
         <NewContact />
       </main>
       <Footer />
+      <LabParticles />
     </>
   );
 }

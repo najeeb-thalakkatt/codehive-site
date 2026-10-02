@@ -33,6 +33,13 @@ const twin = (r, W) => { const L = r.x - 24, R = W - r.x - r.width - 24; return 
   const tr = await rectOf(p, '[data-swarm-scene="cell"]');
   const inside = await lit(p, tr), outside = await lit(p, twin(tr, 1280));
   ok(inside > 0.02 && inside > 4 * outside, `swarm: figure in the target column (${(inside * 100).toFixed(1)}% lit vs ${(outside * 100).toFixed(1)}% beside it)`);
+  // the lab slider: twice the particles draw a denser cell, Reset returns to the default
+  await p.fill("#lab-particles", "4800"); await p.waitForTimeout(1500);
+  const n1 = await p.getAttribute("canvas", "data-swarm-n"), dense = await lit(p, tr);
+  ok(n1 === "4800" && dense > 1.3 * inside, `lab slider: 4800 particles draw a denser cell (${(dense * 100).toFixed(1)}% lit vs ${(inside * 100).toFixed(1)}%)`);
+  await p.click('[aria-label="Lab: particle count"] button'); await p.waitForTimeout(1500);
+  const n2 = await p.getAttribute("canvas", "data-swarm-n"), back = await lit(p, tr);
+  ok(n2 === "2400" && Math.abs(back - inside) < 0.25 * inside, `lab slider: Reset returns to 2400 (${(back * 100).toFixed(1)}% lit)`);
   await p.evaluate(() => document.querySelector("#services").scrollIntoView({ block: "start", behavior: "instant" })); await p.waitForTimeout(1500);
   const field = await lit(p, { x: 0, y: 0, width: 1280, height: 720 });
   ok(field < 0.06, `swarm: the intro stays sparse, six small hives and the field (${(field * 100).toFixed(2)}% lit)`);
@@ -51,8 +58,9 @@ const twin = (r, W) => { const L = r.x - 24, R = W - r.x - r.width - 24; return 
     let s = await p.evaluate((s) => { const el = document.querySelector(s); return { th: Math.round(el.querySelector('[class*="text"]').getBoundingClientRect().height), sh: Math.round(el.querySelector('[data-swarm-scene]').getBoundingClientRect().height), scene: document.querySelector("canvas").dataset.swarmAt, key: el.querySelector('[data-swarm-scene]').getAttribute('data-swarm-scene') }; }, sel);
     ok(s.th <= 700 && s.sh <= 648, `block ${id}: text ${s.th}px, scene ${s.sh}px tall (a viewport each at 1280x720)`);
     ok(s.scene === s.key, `block ${id}: swarm holds its formation (${s.scene} vs ${s.key})`);
-    const sr = await rectOf(p, `${sel} [data-swarm-scene]`), sIn = await lit(p, sr), sOut = await lit(p, twin(sr, 1280));
-    ok(sIn > 0.01 && sIn > 3 * sOut, `block ${id}: figure drawn in the scene column (${(sIn * 100).toFixed(1)}% lit vs ${(sOut * 100).toFixed(1)}%)`);
+    // (judged at the end of this block: a figure's story starts dim, 06 is mostly unlit for its first 2.5 s, and
+    // waiting here would let the text finish before it is checked)
+    const sr = await rectOf(p, `${sel} [data-swarm-scene]`); let sIn = await lit(p, sr), sOut = await lit(p, twin(sr, 1280));
     // the overlay runs on the swarm's clock: its animations are paused in css and their time moves anyway
     const ov = () => p.evaluate((s) => document.querySelector(s).getAnimations({ subtree: true }).filter((x) => x.animationName && !x.animationName.endsWith("wander")).map((x) => [x.playState, Math.round(x.currentTime)]), `${sel} [data-swarm-scene]`);
     const o1 = await ov(); await p.waitForTimeout(400); const o2 = await ov();
@@ -64,6 +72,11 @@ const twin = (r, W) => { const L = r.x - 24, R = W - r.x - r.width - 24; return 
     await p.waitForTimeout(3800);
     s = await p.evaluate((s) => { const t = document.querySelector(s).querySelector('[class*="text"]').getAnimations({ subtree: true }); return { tn: t.length, tfin: t.filter((x) => x.playState === "finished").length, sw: document.documentElement.scrollWidth }; }, sel);
     ok(s.tfin === s.tn && s.sw <= 1280, `block ${id}: text finished after 4 s (${s.tfin}/${s.tn}), no overflow (${s.sw})`);
+    // the figure: if the first look caught the dim start of its loop, look again for up to 5 s with the scene back in place
+    const drawn = () => sIn > 0.01 && sIn > 3 * sOut;
+    if (!drawn()) { await p.evaluate((s) => document.querySelector(s).scrollIntoView({ block: "start", behavior: "instant" }), sel); await p.waitForTimeout(1200); }
+    for (let k = 0; k < 10 && !drawn(); k++) { if (k) await p.waitForTimeout(500); sIn = await lit(p, sr); sOut = await lit(p, twin(sr, 1280)); }
+    ok(drawn(), `block ${id}: figure drawn in the scene column (${(sIn * 100).toFixed(1)}% lit vs ${(sOut * 100).toFixed(1)}%)`);
   }
   await p.evaluate(() => document.querySelector("#contact").scrollIntoView({ block: "start", behavior: "instant" })); await p.waitForTimeout(1800);
   ok((await p.evaluate(() => document.querySelector("canvas").dataset.swarmAt)) === "cell", "contact: the swarm forms the cell again (bookend)");

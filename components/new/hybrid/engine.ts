@@ -42,18 +42,21 @@ const G: Gen = {
   ring(cx, cy, R, n) { const p: Pt[] = []; for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2; p.push([cx + R * Math.cos(a) + gauss() * 2, cy + R * Math.sin(a) + gauss() * 2]); } return p; },
 };
 
-/** A scene factory for the swarm: `n` is the live particle count (2400 on desktop, 700 on phones). Each region
- *  keeps its share of its points (evenly spaced through the region, so a line stays a line); particles beyond the
- *  figure's total stay in the ambient field. */
+/** A scene factory for the swarm: `n` is the live particle count (2400 on desktop, 700 on phones, or the lab
+ *  slider's). Each region keeps its share of its points (evenly spaced through the region, so a line stays a line);
+ *  particles beyond the figure's total stay in the ambient field. Above the artboard's own count the regions are
+ *  sampled again (each pass draws fresh points in the same shapes), so the figure grows denser with the swarm. */
 export function hybridScene(cfg: Cfg): (n: number) => Scene {
   return (n) => {
-    const k = 1 / (cfg.W / 2), keep = Math.min(1, n / cfg.N), T = cfg.T;
+    const passes = Math.max(1, Math.ceil(n / cfg.N)), k = 1 / (cfg.W / 2), keep = Math.min(1, n / (cfg.N * passes)), T = cfg.T;
+    const regions = cfg.regions(G);
+    for (let q = 1; q < passes; q++) cfg.regions(G).forEach((r, ri) => { if (regions[ri]?.tag === r.tag) regions[ri].pts.push(...r.pts); });
     const x = new Float32Array(n), y = new Float32Array(n), m = new Float32Array(n);
     const hx = new Float32Array(n), hy = new Float32Array(n), ox = new Float32Array(n), oy = new Float32Array(n), uu = new Float32Array(n);
     const fx = new Float32Array(n), fy = new Float32Array(n), fs = new Float32Array(n).fill(-9), fd = new Float32Array(n), p2 = new Float32Array(n), ph = new Float32Array(n);
     const tagOf = new Uint8Array(n), tags: string[] = [], byTag: number[][] = [];
     let count = 0;
-    for (const r of cfg.regions(G)) {
+    for (const r of regions) {
       const ti = tags.length; tags.push(r.tag); byTag.push([]);
       const want = Math.max(Math.min(4, r.pts.length), Math.round(r.pts.length * keep));
       for (let j = 0; j < want && count < n; j++) {
