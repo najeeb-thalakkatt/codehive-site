@@ -14,6 +14,24 @@ from html.parser import HTMLParser
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 SRC = os.path.join(ROOT, "new-design", "hybrid-src")
 OUT = os.path.join(ROOT, "components", "new", "hybrid")
+# Corrections to the saved artboards, applied to the overlay markup before it is ported (each must match once):
+#  s01bp  the roadmap label sat on the three bars the swarm draws at 95 %; it goes above them
+#  s03bp  "%%" typed twice in the source made the row of model names collapse onto one spot; the row also sat on the
+#         clusters it names (the phone figure is the desktop one, scaled), so it goes under them, without tracking,
+#         so three names fit side by side at 11 px
+#  s06bp  the phone variant dropped "The brief" and "not needed", which left the brief line orphaned and the left
+#         half of the held frame empty; both come back (the keyframes for them were already in the file), "not needed"
+#         a row above the API line because the two do not fit side by side on a phone
+MONO7 = "font-family:'IBM Plex Mono',ui-monospace,Menlo,monospace;font-size:13px;font-weight:500;letter-spacing:1px;text-transform:uppercase;line-height:1.4;"
+PATCH = {
+    "s01bp": [('class="ov rm" style="left: 50%; top: 90%;', 'class="ov rm" style="left: 50%; top: 84%;')],
+    "s03bp": [('style="left:0;top:4%%;width:100%%;height:10px;"', 'style="left:0;top:20%;width:100%;height:10px;"'),
+              ('font-size:7px;letter-spacing:.5px;color:var(--ink2);', 'font-size:7px;letter-spacing:0;white-space:nowrap;color:var(--ink2);', 3)],
+    "s06bp": [
+        ('<span class="typed bt">', f'<span style="{MONO7} display:block; color: var(--ink3); font-size:7px;letter-spacing:.5px;">The brief</span><span class="typed bt">'),
+        ('<div class="ov api"', f'<div class="ov nn" style="left: 28.75%; top: 70%; width: 0; display: flex; justify-content: center;"><span style="{MONO7} white-space: nowrap; color: var(--alert); font-size:6px;letter-spacing:.3px;">not needed</span></div><div class="ov api"'),
+    ],
+}
 PICK = {"01": "b", "02": "a", "03": "b", "04": "b", "05": "b", "06": "b"}
 VOID = {"br", "line", "path", "circle", "rect", "polygon", "img"}
 ATTR = {"class": "className", "stroke-width": "strokeWidth", "stroke-linecap": "strokeLinecap", "stroke-dasharray": "strokeDasharray", "viewbox": "viewBox", "preserveaspectratio": "preserveAspectRatio", "vector-effect": "vectorEffect"}
@@ -55,13 +73,13 @@ def style_obj(css, W, H, phone, in_ov):
         if not in_ov and k in ("left", "right") and v.endswith("px"): v = f"{float(v[:-2]) / W * 100:.2f}%"
         if not in_ov and k in ("top", "bottom") and v.endswith("px"): v = f"{float(v[:-2]) / H * 100:.2f}%"
         # every other px length scales with the anchor (cqw of the stage width), so type and gaps keep the artboard's
-        # proportions at any size; type never goes under 10 px (the phone artboards' 7 and 9 px are not readable)
+        # proportions at any size; type never goes under 11 px (the phone artboards' 7 and 9 px are not readable)
         def scale(m):
             n = float(m.group(1))
             if n <= 1: return m.group(0)
             c = f"{n / W * 100:.4g}cqw"
-            return f"max(10px, {c})" if k == "font-size" else c
-        v = re.sub(r"(\d+(?:\.\d+)?)px", scale, v)
+            return f"max(11px, {c})" if k == "font-size" else c
+        v = re.sub(r"(\d*\.?\d+)px", scale, v)
         d.pop(camel(k), None); d[camel(k)] = v
     return d
 
@@ -102,6 +120,8 @@ for f in sorted(glob.glob(os.path.join(SRC, "S0*.dc.html"))):
     style = s[s.index("<style>") + 7:s.index("</style>")]
     ov = s[s.index("</canvas>") + 9:s.index("</x-dc>")].strip()
     ov = ov[:ov.rindex("</div>")]              # the stage's own closing tag
+    for a, b_, *cnt in PATCH.get(vid, []):
+        assert ov.count(a) == (cnt[0] if cnt else 1), (vid, a); ov = ov.replace(a, b_)
     cfg = s[s.index("var CFG = ({") + 11:s.index("\n});", s.index("var CFG = ({")) + 3]
     # two evolving arrays are captured by closures; give them their types (strict mode)
     cfg = cfg.replace("var m=[];", "var m: Mv[] = [];").replace("var pts=[];", "var pts: number[][] = [];")

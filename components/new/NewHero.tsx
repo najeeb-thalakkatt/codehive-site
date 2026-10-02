@@ -2,7 +2,7 @@ import { BOOK } from "@/content/services";
 import s from "./NewHero.module.css";
 import v from "./v4.module.css";
 
-/** Hero for /new: oversized weight-400 headline, one amber pill, one text action; the swarm assembles the
+/** Hero: oversized weight-400 headline, one amber pill, one text action; the swarm assembles the
  *  logo cell in the right column. Copy is the live hero's, unchanged. */
 export default function NewHero() {
   return (

@@ -16,6 +16,7 @@ export type Scene = {
   stillT: number; // the time reduced motion shows: the finished state of the story
   count?: number;  // how many particles the figure uses; the rest stay in the ambient field (default: all)
   abs?: boolean;   // paint's second value is the particle's alpha itself, not a multiplier of its own
+  maxSize?: number; // the largest sprite (index into SIZES) a particle may use while this figure holds it
   T?: number;      // loop length in seconds, for the overlay's clock
   tick?: (t: number) => void; // moves the homes for time t (figures whose particles relocate during the loop)
 };
@@ -31,9 +32,12 @@ const hexEdge = (cx: number, cy: number, r: number, w: number, out: [number, num
 const alloc = (n: number): Scene => ({ x: new Float32Array(n), y: new Float32Array(n), m: new Float32Array(n), paint: (_m, _t, _i, baked) => [baked, 1], stillT: 0 });
 const P: [number, number] = [0, 0];
 
-/** 00 the logo cell: the hero. Colours are the particle's own. */
-export function cell(n: number): Scene {
-  const h = cellHomes(n); return { x: h.x, y: h.y, m: new Float32Array(n), paint: (_m, _t, _i, baked) => [baked, 1], stillT: 0 };
+/** 00 the logo cell: the hero and the bookend at contact. Colours are the particle's own. On a phone the figure is
+ *  about 230 px wide and the brace cut-out about 12: there the homes keep back from every edge and only the smallest
+ *  sprite is used, so the braces stay a clear cut-out. */
+export function cell(n: number, phone = false): Scene {
+  const h = cellHomes(n, Math.random, phone ? 2 : 0);
+  return { x: h.x, y: h.y, m: new Float32Array(n), paint: (_m, _t, _i, baked) => [baked, 1], stillT: 0, maxSize: phone ? 0 : undefined };
 }
 
 /** A small hive for the services index: a cell outline drawn by the swarm with a few bees inside. Every point is
@@ -45,4 +49,4 @@ export function hive(n: number): Scene {
   return s;
 }
 
-export const SCENES: Record<string, (n: number) => Scene> = { cell, hive, ...Object.fromEntries(Object.entries(CFGS).map(([k, c]) => [k, hybridScene(c)])) };
+export const SCENES: Record<string, (n: number, phone?: boolean) => Scene> = { cell, hive, ...Object.fromEntries(Object.entries(CFGS).map(([k, c]) => [k, hybridScene(c)])) };

@@ -50,12 +50,18 @@ service, the cell again beside the contact headline, and a sparse drifting field
   document space on mount, resize, load and whenever the page's height changes (a ResizeObserver on `body`), so a late
   font swap or the booking frame opening never leaves them stale. `data-swarm-fit="width"` sizes by width (the band).
 - The anchor nearest the middle of the viewport holds the particles: cohesion is full within 0.2 viewport heights and
-  gone by 0.5, so neighbours never smear each other. Between figures the flight is turbulent.
+  gone by 0.5, so neighbours never smear each other. Between figures the flight is turbulent. Two exceptions: the last
+  figure on the page takes hold a little early and stays held once it has passed the middle (a page that runs out of
+  scroll must not leave it half dissolved over the contact copy), and a group's hives hold one by one (below).
 - Counts: a base swarm of 2400 (700 at 820px and under) that every section shares, and 8000 (2300) for the logo cell
   so the braces read as a clear cut-out. The extras are live only while a cell is near; they never join the field or
-  a service figure. The founder picked these by eye; do not change them without asking.
+  a service figure. The founder picked these by eye; do not change them without asking. On phones the cell is about
+  230px wide and the brace cut-out about 12: its homes keep back from every edge (`cellHomes` `erode`) and it uses
+  only the smallest sprite (`Scene.maxSize`), or the braces close up.
 - `data-swarm-group` makes several anchors one group (the six hives of `NewIntro`); each `[data-bee]` ancestor wanders
-  on a bee's path, its transform set by the swarm.
+  on a bee's path, its transform set by the swarm. Each hive holds its particles for as long as its own item is on
+  screen (on phones the index is a list taller than the viewport) and keeps them even when a figure nearer the
+  middle wants them; the figure gets what the hive lets go of.
 - The swarm owns some inline styles (opacity of a figure's square, transform of a bee) and may set them before React
   hydrates: those elements carry `suppressHydrationWarning`.
 - Reduced motion and "Pause motion" draw the nearest formation's finished state once, locked to the page, and redraw
@@ -74,8 +80,10 @@ says what it means. They are the artboards of the "Codehive service animations" 
 - `engine.ts` runs a config as a `Scene` with a loop of `T` seconds: the swarm ticks it each frame while it is near
   (particles relocate on cue) and scrubs the overlay's CSS animations, which are paused in css, to the same loop time.
   One `getAnimations({ subtree: true })` per anchor when anchors are collected, never per frame.
-- Overlay positions are % of the square, other lengths `cqw` of it (type never under 10px); the phone overlays
-  (`.hy-phone`, 900px and under) carry at most two labels. 04 Production is a full-width band (`wide`).
+- Overlay positions are % of the square, other lengths `cqw` of it (type never under 11px); the phone overlays
+  (`.hy-phone`, 900px and under) carry two or three labels. 04 Production is a full-width band (`wide`).
+- The phone figure is the desktop config scaled, so a phone artboard's label can land on particles. Corrections go in
+  `PATCH` in the script (each with its reason), never in the generated files.
 - Reduced motion shows each figure's held final frame (`stillT`), which is the message of the loop.
 
 ### Play on enter (the text column)
@@ -100,6 +108,9 @@ says what it means. They are the artboards of the "Codehive service animations" 
   the live site or a server that gzips; `python3 -m http.server` inflates LCP. Keep resting text at full opacity
   (dimmed text failed the contrast audit once, 1.6:1).
 - Phone: no horizontal overflow at 375; overlay labels may reach past a figure's square, the block clips them.
+  Judge phone layout at 430x731 (a large phone with both browser bars showing), not at the full screen height: the
+  hero pill must end well above that fold. A block reads title, figure, conversation (the eyebrow is its own grid
+  item, outside the text column); contact reads copy, booking row, then the cell. `checks/page.mjs` asserts these.
 
 ### Previous page (v3), not mounted
 `LiquidHero`/`LiquidCell` (the WebGL shader), `HiveCanvas`, `ServicesIntro`, `Cell`, `ServiceAnimation`,

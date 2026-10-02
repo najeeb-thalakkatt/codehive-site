@@ -95,6 +95,36 @@ const twin = (r, W) => { const L = r.x - 24, R = W - r.x - r.width - 24; return 
   await p.screenshot({ path: "shots/new-cell02-375.png" });
   await p.close();
 }
+// --- phone, at the size of a large phone with both browser bars showing (430 x 731): the review of 2026-10-02
+{
+  const p = await b.newPage({ viewport: { width: 430, height: 731 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
+  await p.goto(BASE, { waitUntil: "networkidle" }); await p.waitForTimeout(3500);
+  const cta = await p.$eval('#top a[href="#book"]', (e) => Math.round(e.getBoundingClientRect().bottom));
+  ok(cta <= 731 - 40, `phone: the hero pill ends well above the fold (bottom ${cta} of 731)`);
+  // the braces are a cut-out: the brace channel is much emptier than the cell around it
+  const cr = await rectOf(p, '#top [data-swarm-scene]'), u = cr.width / 2, cx = cr.x + u, cy = cr.y + u;
+  const brace = await lit(p, { x: cx - 0.325 * u - 3, y: cy + 0.14 * u, width: 6, height: 0.2 * u }), fill = await lit(p, { x: cx - 0.7 * u, y: cy + 0.14 * u, width: 0.2 * u, height: 0.2 * u });
+  ok(brace < 0.35 * fill, `phone: the braces read as a cut-out (${(brace * 100).toFixed(0)}% lit in the brace vs ${(fill * 100).toFixed(0)}% beside it)`);
+  // the services index is taller than the screen: a hive is drawn whenever its item is on screen, the last one too
+  await p.evaluate(() => { const e = document.querySelector("#services [data-bee]:last-child"); window.scrollTo(0, e.getBoundingClientRect().top + scrollY - 220); }); await p.waitForTimeout(1800);
+  const h6 = await lit(p, await rectOf(p, '#services [data-bee]:last-child [data-swarm-scene]'));
+  ok(h6 > 0.03, `phone: the last hive of the index is drawn while its item is on screen (${(h6 * 100).toFixed(1)}% lit)`);
+  // 03: the three model names sit side by side, none on top of another
+  await p.evaluate(() => document.querySelector("#cell-03 [data-swarm-scene]").scrollIntoView({ block: "center", behavior: "instant" })); await p.waitForTimeout(600);
+  const names = await p.$$eval("#cell-03 .hy-phone .hy-ov:first-child span", (els) => els.map((e) => { const r = e.getBoundingClientRect(); return [Math.round(r.left), Math.round(r.right)]; }));
+  ok(names.length === 3 && names[0][1] < names[1][0] && names[1][1] < names[2][0], `phone: 03 model names do not overlap (${names.map((n) => n.join("-")).join(", ")})`);
+  const small = await p.$$eval(".hy-phone span, .hy-phone div", (els) => els.filter((e) => [...e.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())).map((e) => parseFloat(getComputedStyle(e).fontSize)).filter((f) => f < 11).length);
+  ok(small === 0, `phone: no overlay label under 11 px (${small})`);
+  // a block leads with its title, then the figure
+  const order = await p.$eval("#cell-02", (el) => { const y = (s) => el.querySelector(s).getBoundingClientRect().top; return y(".eyebrow") < y("[data-swarm-scene]") && y("[data-swarm-scene]") < y("h2"); });
+  ok(order, "phone: a block reads title, figure, conversation");
+  // the end of the page: the cell is formed under the booking row, nothing lies over the contact copy
+  await p.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight)); await p.waitForTimeout(3000);
+  const er = await rectOf(p, '#contact [data-swarm-scene]'), cell = await lit(p, er), copy = await lit(p, await rectOf(p, "#contact p"));
+  ok((await p.getAttribute("canvas", "data-swarm-at")) === "cell" && er.y > 80 && er.y + er.height < 731 && cell > 0.2 && copy < 0.05, `phone: at the end of the page the cell is whole and on screen (${(cell * 100).toFixed(0)}% lit, top ${Math.round(er.y)}), the copy is clear (${(copy * 100).toFixed(1)}% lit)`);
+  await p.screenshot({ path: "shots/page-end-430.png" });
+  await p.close();
+}
 // --- Pause motion
 {
   const p = await b.newPage({ viewport: { width: 1280, height: 720 } });

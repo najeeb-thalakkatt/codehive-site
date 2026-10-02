@@ -22,8 +22,10 @@ export default function ServiceBlock({ data, flip = false, wide = false }: { dat
   const key = PICK[data.id];
   return (
     <section className={`wrap ${s.block} ${wide ? s.wide : ""}`} id={`cell-${data.id}`} aria-label={data.name} data-flip={(flip && !wide) || undefined}>
+      {/* outside the text column: on phones the title leads and the figure follows it, so a figure is never read as
+          the previous service's */}
+      <p className={`eyebrow ${s.head}`}><span className={s.num}>{data.id}</span>{data.name}</p>
       <div ref={text} className={s.text}>
-        <p className={`eyebrow ${s.head}`}><span className={s.num}>{data.id}</span>{data.name}</p>
         <p className={s.who}>you</p>
         <h2 className={s.h2}><Stream text={data.question} t0={-0.1} t1={-0.02} /></h2>
         <p className={s.p}><Stream text={data.problem} t0={0.02} t1={0.24} /></p>

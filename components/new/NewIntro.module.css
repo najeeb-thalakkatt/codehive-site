@@ -17,8 +17,8 @@
   .intro { grid-template-columns: 1fr; gap: 24px; }
   .text { order: -1; }
   /* a plain column on phones: the field becomes a list */
-  .field { height: auto; display: flex; flex-direction: column; gap: 14px; }
-  .item { position: static !important; }
-  .hive { width: 76px; height: 76px; }
+  .field { height: auto; display: flex; flex-direction: column; gap: 26px; padding-left: 8px; }
+  .item { position: static !important; gap: 16px; }
+  .hive { width: 60px; height: 60px; }
   .name { white-space: normal; font-size: 20px; }
 }

@@ -14,8 +14,10 @@ export type Homes = { x: Float32Array; y: Float32Array }; // unit space: the hex
 
 /** The cell from public/codehive-cell.svg, drawn in code: a pointy-top hexagon (r 320 in a 720 space)
  *  with the two braces (stroke 34, round caps) cut out. Sampled on a 192 px raster: 70 % of the homes
- *  from the inside, 30 % from the edge pixels, so the silhouette reads while the fill stays airy. */
-export function cellHomes(n: number, rnd: () => number = Math.random): Homes {
+ *  from the inside, 30 % from the edge pixels, so the silhouette reads while the fill stays airy.
+ *  `erode` (raster px) pulls every home that far back from all edges: on a phone the brace is about 15 px wide and a
+ *  particle up to 8, so homes on the edge would close the cut-out. */
+export function cellHomes(n: number, rnd: () => number = Math.random, erode = 0): Homes {
   const S = 192, k = S / 720;
   const c = document.createElement("canvas"); c.width = S; c.height = S;
   const g = c.getContext("2d");
@@ -29,7 +31,17 @@ export function cellHomes(n: number, rnd: () => number = Math.random): Homes {
   g.stroke(brace); g.scale(-1, 1); g.stroke(brace);
   g.setTransform(1, 0, 0, 1, 0, 0);
   const d = g.getImageData(0, 0, S, S).data;
-  const on = (i: number, j: number) => i >= 0 && j >= 0 && i < S && j < S && d[(j * S + i) * 4 + 3] > 128;
+  const raw = (i: number, j: number) => i >= 0 && j >= 0 && i < S && j < S && d[(j * S + i) * 4 + 3] > 128;
+  let on = raw;
+  if (erode > 0) {
+    const e = Math.ceil(erode), keep = new Uint8Array(S * S);
+    for (let j = 0; j < S; j++) for (let i = 0; i < S; i++) {
+      let ok = raw(i, j);
+      for (let dy = -e; ok && dy <= e; dy++) for (let dx = -e; ok && dx <= e; dx++) if (dx * dx + dy * dy <= erode * erode && !raw(i + dx, j + dy)) ok = false;
+      keep[j * S + i] = ok ? 1 : 0;
+    }
+    on = (i, j) => i >= 0 && j >= 0 && i < S && j < S && keep[j * S + i] === 1;
+  }
   const inside: number[] = [], edge: number[] = [];
   for (let j = 0; j < S; j++) for (let i = 0; i < S; i++) if (on(i, j)) (on(i - 1, j) && on(i + 1, j) && on(i, j - 1) && on(i, j + 1) ? inside : edge).push(j * S + i);
   if (!inside.length) return hexHomes(n, rnd);

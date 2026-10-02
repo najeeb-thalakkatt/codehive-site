@@ -18,7 +18,11 @@ What the check covers (`page.mjs`, the home page):
   overlay's paused animations are scrubbed by the swarm, the text plays on entry and finishes in 4 s, the
   figure is drawn (looked for across its loop: a story can start dim);
 - the cell forms again at contact, the nav pill appears past the hero, no horizontal overflow at 375,
-  "Pause motion" and reduced motion draw the still finished state.
+  "Pause motion" and reduced motion draw the still finished state;
+- at 430x731 (a large phone with both browser bars): the hero pill ends above the fold, the braces are a
+  cut-out, the last hive of the index is drawn while on screen, 03's model names do not overlap, no overlay
+  label is under 11px, a block reads title, figure, conversation, and at the end of the page the cell is whole
+  with nothing over the contact copy.
 `hero.mjs` and `cards.mjs` test the previous page (v3) and are not run.
 
 Rules learned the hard way:

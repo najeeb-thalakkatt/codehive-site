@@ -5,7 +5,7 @@ import { BASE_DESK, BASE_PHONE, CELL, HERO_DESK, HERO_PHONE, PHONE_W, ROT_STEPS,
 import { COL_VARS, SCENES, type Scene } from "./scenes";
 
 /** One hive of a group: its own centre and size, the element that wanders with it (`[data-bee]`), its bee phase and offset. */
-type Member = { el: HTMLElement; cx: number; cy: number; S: number; bee: HTMLElement | null; ph: number; ox: number; oy: number };
+type Member = { el: HTMLElement; cx: number; cy: number; S: number; bee: HTMLElement | null; ph: number; ox: number; oy: number; d: number };
 /** A formation's place on the page. A group (`data-swarm-group`) is one anchor with several members: the first
  *  `count` particles are dealt round-robin to the members, each forming the scene at its own spot; the rest stay ambient. */
 type Anchor = { key: string; el: HTMLElement; cx: number; cy: number; S: number; scene: Scene; members?: Member[]; count: number; anims: Animation[]; op: number };
@@ -30,7 +30,11 @@ type Anchor = { key: string; el: HTMLElement; cx: number; cy: number; S: number;
  *  Two counts: `n` is the base swarm (2400, 700 on phones) that every section shares; the logo cell is sampled for
  *  more (8000, 2300 on phones) so its braces read clearly. The extras above `n` are live only while a cell is near:
  *  they fade in as it takes hold and out as it lets go, and never join the field or a service figure.
- *  `data-swarm-n` reports how many particles the last frame ran. */
+ *  `data-swarm-n` reports how many particles the last frame ran.
+ *  A group's hives hold their particles one by one, each for as long as its own item is on screen (a phone shows the
+ *  services index as a list taller than the viewport), and a hive keeps its particles until then even when a figure
+ *  nearer the middle wants them. The last figure on the page takes hold a little early and stays held once it has passed the middle: nothing
+ *  follows it, and a page that runs out of scroll must not leave it half dissolved over the contact copy. */
 export default function Swarm() {
   const ref = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
@@ -83,10 +87,10 @@ export default function Swarm() {
       const groups = new Map<string, Anchor>();
       anchors = [...document.querySelectorAll<HTMLElement>("[data-swarm-scene]")].flatMap((el) => {
         const key = el.dataset.swarmScene || "", make = SCENES[key], cnt = key === "cell" ? (phone ? HERO_PHONE : HERO_DESK) : n, id = `${key}:${cnt}`; if (!make) return [];
-        if (!scenes.has(id)) scenes.set(id, make(cnt));
+        if (!scenes.has(id)) scenes.set(id, make(cnt, phone));
         const g = el.dataset.swarmGroup;
         if (!g) { const sc = scenes.get(id)!; return [{ key, el, cx: 0, cy: 0, S: 0, scene: sc, count: sc.count ?? cnt, anims: [], op: -1 }]; }
-        const mb: Member = { el, cx: 0, cy: 0, S: 0, bee: el.closest<HTMLElement>("[data-bee]"), ph: 0, ox: 0, oy: 0 };
+        const mb: Member = { el, cx: 0, cy: 0, S: 0, bee: el.closest<HTMLElement>("[data-bee]"), ph: 0, ox: 0, oy: 0, d: 9 };
         const have = groups.get(g);
         if (have) { mb.ph = have.members!.length * 1.7; have.members!.push(mb); have.count = Math.min(n, have.members!.length * (phone ? 56 : 110)); return []; }
         const a: Anchor = { key, el, cx: 0, cy: 0, S: 0, scene: scenes.get(id)!, members: [mb], count: phone ? 56 : 110, anims: [], op: -1 };
@@ -109,6 +113,7 @@ export default function Swarm() {
         }
         const r = a.el.getBoundingClientRect(); a.cx = r.left + r.width / 2; a.cy = r.top + r.height / 2 + window.scrollY; a.S = a.el.dataset.swarmFit === "width" ? 0.5 * r.width : 0.5 * Math.min(r.width, r.height);
       }
+      lastA = null; for (const a of anchors) if (!lastA || a.cy > lastA.cy) lastA = a;
     };
     const resize = () => {
       dpr = Math.min(2, window.devicePixelRatio || 1); W = window.innerWidth; H = window.innerHeight; phone = W <= PHONE_W;
@@ -161,6 +166,9 @@ export default function Swarm() {
       ctx.globalAlpha = 1;
     };
     const near: { a: Anchor; d: number }[] = [];
+    let lastA: Anchor | null = null; // the lowest figure on the page
+    // a hive holds its particles while its item is within GROUP_IN of the middle and lets go by GROUP_OUT (just off screen)
+    const GROUP_IN = 0.4, GROUP_OUT = 0.58;
     let lastLive = -1;
     /** One frame. `stat` draws the rest state (no hover, no entrance, no spring, each story at its end). */
     const draw = (dt: number, stat: boolean) => {
@@ -175,7 +183,16 @@ export default function Swarm() {
       // full inside a quarter viewport and gone by half, so two neighbouring formations blend only in the
       // stretch between them (a morph on the way) and never smear each other
       near.length = 0;
-      for (const a of anchors) { const d = Math.abs(a.cy - scrollY - H / 2) / H; if (d < 0.5) near.push({ a, d }); }
+      let groups = false;
+      for (const a of anchors) {
+        if (a.members) { // a group is as near as its nearest hive; every hive keeps its own distance
+          let d = 9; for (const m of a.members) { m.d = Math.abs(m.cy - scrollY - H / 2) / H; if (m.d < d) d = m.d; }
+          if (d < GROUP_OUT) { near.push({ a, d }); groups = true; }
+          continue;
+        }
+        const s = (a.cy - scrollY - H / 2) / H, d = a === lastA ? Math.max(0, s - 0.1) : Math.abs(s);
+        if (d < 0.5) near.push({ a, d });
+      }
       near.sort((p, q) => p.d - q.d);
       const dom = near[0]?.a; cv.dataset.swarmAt = dom ? dom.key : "";
       // an overlay belongs to its figure: it fades with the swarm's hold on that anchor, so labels never hang in the
@@ -211,13 +228,15 @@ export default function Swarm() {
       for (let i = 0; i < live; i++) {
         // targets: each nearby formation pulls with its own cohesion (particles peel off in waves, by jitter);
         // what is left goes to the ambient field, which wraps down the page
-        let tx = 0, ty = 0, K = 0, kd = 0, bz = 0;
+        let tx = 0, ty = 0, K = 0, kd = 0, bz = 0, kg = 0, held: Anchor | null = null;
+        // how firmly a hive holds this particle: a figure gets only what the hive lets go of
+        if (groups) for (let q = 0; q < near.length; q++) { const a = near[q].a; if (!a.members || i >= a.count) continue; const g = 1 - smoothstep(GROUP_IN + 0.08 * jk[i], GROUP_OUT, a.members[i % a.members.length].d); if (g > kg) kg = g; }
         for (let q = 0; q < near.length; q++) {
           const { a, d } = near[q]; if (i >= a.count) continue;
-          const k = 1 - smoothstep(0.2 + 0.15 * jk[i], 0.5, d); if (k <= 0) continue;
-          if (q === 0) kd = k;
           // a group deals its particles round-robin to its hives; each hive carries its bee offset
           const m = a.members ? a.members[i % a.members.length] : null;
+          const k = m ? 1 - smoothstep(GROUP_IN + 0.08 * jk[i], GROUP_OUT, m.d) : (1 - smoothstep(0.2 + 0.15 * jk[i], 0.5, d)) * (1 - kg); if (k <= 0) continue;
+          if (k > kd) { kd = k; held = a; } // the figure with the firmest hold paints the particle
           const acx = m ? m.cx + m.ox : a.cx, acy = m ? m.cy + m.oy : a.cy, aS = m ? m.S : a.S;
           // how hard this particle buzzes here: scaled down on small figures, and stirred by a wave of agitation that
           // sweeps across the formation every few seconds, so the shape resolves, stirs and resolves again
@@ -255,7 +274,8 @@ export default function Swarm() {
         // blends), a dimming change eases with the same time constant. Still mode jumps to the end state.
         let pc = col[i], pm = 1;
         // (a figure with absolute alphas replaces the particle's own; the blend by kd keeps the hand-over smooth)
-        if (dom && kd > 0.5) { const r = dom.scene.paint(dom.scene.m[i], stat ? dom.scene.stillT : t, i, col[i]); pc = r[0]; pm = dom.scene.abs ? 1 + (r[1] / al[i] - 1) * kd : 1 + (r[1] - 1) * kd; }
+        let si: number = sz[i];
+        if (held && kd > 0.5) { const sc = held.scene, r = sc.paint(sc.m[i], stat ? sc.stillT : t, i, col[i]); pc = r[0]; pm = sc.abs ? 1 + (r[1] / al[i] - 1) * kd : 1 + (r[1] - 1) * kd; if (sc.maxSize !== undefined && si > sc.maxSize) si = sc.maxSize; }
         if (pc !== curCol[i]) { prevCol[i] = curCol[i]; curCol[i] = pc; blend[i] = 0; }
         if (stat) { blend[i] = 1; mulE[i] = pm; } else { blend[i] = Math.min(1, blend[i] + dt / 0.18); mulE[i] += (pm - mulE[i]) * (1 - Math.exp(-dt / 0.18)); }
         const a = al[i] * mulE[i] * (K > 0.02 ? 1 : 0.5) * (i < n && i % 3 === 0 ? 1 : K);
@@ -265,9 +285,9 @@ export default function Swarm() {
         const X = x[i] + A * (Math.sin(t * w + p0) + 0.55 * Math.sin(t * w * 2.31 + p0 * 1.7)), Y = y[i] + A * (Math.cos(t * w * 0.83 + p0) + 0.55 * Math.sin(t * w * 1.87 + p0 * 2.3));
         if (a < 0.02 || X < -cs || Y < -cs || X > W + cs || Y > H + cs) continue;
         const rot = rs[i] ? Math.floor(((((t * rs[i] + 60 * ph[i]) % 60) + 60) % 60) / 10) : 0, b = blend[i];
-        if (b < 1) { ctx.globalAlpha = a * (1 - b); ctx.drawImage(atlas, (prevCol[i] * ROT_STEPS + rot) * cd, sz[i] * cd, cd, cd, X - half, Y - half, cs, cs); }
+        if (b < 1) { ctx.globalAlpha = a * (1 - b); ctx.drawImage(atlas, (prevCol[i] * ROT_STEPS + rot) * cd, si * cd, cd, cd, X - half, Y - half, cs, cs); }
         ctx.globalAlpha = a * b;
-        ctx.drawImage(atlas, (curCol[i] * ROT_STEPS + rot) * cd, sz[i] * cd, cd, cd, X - half, Y - half, cs, cs);
+        ctx.drawImage(atlas, (curCol[i] * ROT_STEPS + rot) * cd, si * cd, cd, cd, X - half, Y - half, cs, cs);
       }
       ctx.globalAlpha = 1;
       if (entering && allIn) setStage("settled");

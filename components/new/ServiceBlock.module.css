@@ -1,10 +1,15 @@
 /* A service as a two-column block floating on the void: no card, no border, no fill. Text left, the swarm's
    formation right (an empty square the canvas measures), mirrored on every other block above 900px (DOM order stays text first for reading and the
    play hook). The conversation framing stays as two small labels, "you" and "codehive", instead of bubbles. */
-.block { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 48px; align-items: center; padding-top: calc(var(--gap-section) / 2); padding-bottom: calc(var(--gap-section) / 2); scroll-margin-top: 80px; }
-@media (min-width: 901px) { .block[data-flip] { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); } .block[data-flip] > :last-child { order: -1; } }
+/* Three items: the eyebrow, the text column, the figure. The eyebrow and the text stack in one column and the figure
+   spans beside them; the two 1fr rows keep the stack centred against the figure. */
+.block { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); grid-template-rows: 1fr auto auto 1fr; column-gap: 48px; align-items: center; padding-top: calc(var(--gap-section) / 2); padding-bottom: calc(var(--gap-section) / 2); scroll-margin-top: 80px; }
+.head { grid-column: 1; grid-row: 2; }
+.text { grid-column: 1; grid-row: 3; }
+.vis { grid-column: 2; grid-row: 1 / -1; }
+@media (min-width: 901px) { .block[data-flip] { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); } .block[data-flip] .head, .block[data-flip] .text { grid-column: 2; } .block[data-flip] .vis { grid-column: 1; } }
 .text { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
-.head { margin: 0 0 6px; gap: 12px; }
+.head { margin: 0 0 18px; gap: 12px; }
 .num { color: var(--ink1); font-variant-numeric: tabular-nums; }
 .who { margin: 0; font-family: var(--font-mono); font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: var(--ink3); }
 .us { color: var(--amber); margin-top: 10px; animation-name: usin; }
@@ -19,18 +24,21 @@
 /* a size container: the overlay's type and gaps are in cqw of this square, so they scale with it like the figure */
 .scene { position: relative; width: min(100%, 84svh); aspect-ratio: 1; container-type: inline-size; }
 /* the wide band: the formation spans the page, the copy sits centred under it */
-.wide { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 40px; }
-.wide .vis { order: -1; width: 100%; }
+.wide { grid-template-columns: 1fr; grid-template-rows: none; justify-items: center; text-align: center; }
+.wide .vis { grid-column: 1; grid-row: 1; width: 100%; }
+.wide .head { grid-row: 2; margin-top: 40px; justify-content: center; }
+.wide .text { grid-row: 3; }
 .wide .scene { width: 100%; aspect-ratio: 4 / 1; }
 .wide .text { align-items: center; max-width: 720px; }
-.wide .head { justify-content: center; }
 .wide .chips { justify-content: center; }
 @keyframes usin { 0%, 32% { opacity: 0; transform: translateY(6px); } 36%, 100% { opacity: 1; transform: none; } }
 @media (max-width: 900px) {
-  .block { grid-template-columns: 1fr; gap: 24px; padding-top: calc(var(--gap-section) / 3); padding-bottom: calc(var(--gap-section) / 3); }
+  /* one column: the title, the formation, then the conversation */
+  .block { grid-template-columns: 1fr; grid-template-rows: none; padding-top: calc(var(--gap-section) / 3); padding-bottom: calc(var(--gap-section) / 3); }
+  .block .head { grid-column: 1; grid-row: 1; margin: 0 0 16px; }
+  .block .vis { grid-column: 1; grid-row: 2; max-width: 100%; margin-bottom: 24px; }
+  .block .text { grid-column: 1; grid-row: 3; }
   .h3 { font-size: 21px; }
-  /* the formation above the text, like the hero */
-  .vis { order: -1; max-width: 100%; }
   /* overlay labels may reach past the square; they must never widen the page */
   .block { overflow-x: clip; }
   .scene { width: min(78vw, 42svh); max-width: none; }
