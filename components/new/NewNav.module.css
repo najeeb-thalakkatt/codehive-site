@@ -5,9 +5,12 @@
 .row { height: 80px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
 .logo { pointer-events: auto; display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink1); font-family: var(--font-display); font-weight: 700; font-size: 20px; letter-spacing: -.5px; }
 .links { pointer-events: auto; display: flex; align-items: center; gap: 28px; font-family: var(--font-mono); font-size: var(--t-nav, 13px); letter-spacing: 1px; text-transform: uppercase; }
-.links a { padding: 12px 0; }
+/* the text links only: on the pill this would remove its side padding and cut the label at both ends */
+.links a:not(.pill) { padding: 12px 0; }
 /* enters in 200 ms, leaves in 120 ms: exits are quieter than enters */
-.pill { min-height: 44px; padding: 14px 22px; font-size: 15px; text-transform: none; letter-spacing: 0; opacity: 0; visibility: hidden; transform: translateY(-4px); transition: opacity 120ms var(--ease-out), transform 120ms var(--ease-out), visibility 0s 120ms; }
+/* its size is set through .links so it wins over both the link padding above and the page's larger .pill */
+.links .pill { min-height: 44px; padding: 14px 22px; font-size: 15px; }
+.pill { text-transform: none; letter-spacing: 0; opacity: 0; visibility: hidden; transform: translateY(-4px); transition: opacity 120ms var(--ease-out), transform 120ms var(--ease-out), visibility 0s 120ms; }
 .nav[data-past-hero] .pill { opacity: 1; visibility: visible; transform: none; transition: opacity 200ms var(--ease-out), transform 200ms var(--ease-out), visibility 0s; }
 @media (prefers-reduced-motion: reduce) { .pill { transition: none; } }
 :global(html[data-motion="off"]) .pill { transition: none; }
