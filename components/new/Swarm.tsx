@@ -8,7 +8,7 @@ import { COL_VARS, SCENES, type Scene } from "./scenes";
 type Member = { el: HTMLElement; cx: number; cy: number; S: number; bee: HTMLElement | null; ph: number; ox: number; oy: number };
 /** A formation's place on the page. A group (`data-swarm-group`) is one anchor with several members: the first
  *  `count` particles are dealt round-robin to the members, each forming the scene at its own spot; the rest stay ambient. */
-type Anchor = { key: string; el: HTMLElement; cx: number; cy: number; S: number; scene: Scene; members?: Member[]; count: number };
+type Anchor = { key: string; el: HTMLElement; cx: number; cy: number; S: number; scene: Scene; members?: Member[]; count: number; anims: Animation[]; op: number };
 
 /** The /new background: one swarm of tiny outlined hexagons for the whole page. On load they fly in and
  *  settle into the logo cell over the hero's right column; as you scroll, the section nearest the middle
@@ -24,7 +24,9 @@ type Anchor = { key: string; el: HTMLElement; cx: number; cy: number; S: number;
  *  ignored: a scrolling finger is not a pointer. In the still branch every layer moves with the page (no parallax).
  *  The motion is a swarm's, not a drift: every particle buzzes around its home on two frequencies, one in eight is a
  *  scout that ranges further, the flight between formations is turbulent, and grouped hives (the services index) wander
- *  like bees, taking their `[data-bee]` element (the label) with them. */
+ *  like bees, taking their `[data-bee]` element (the label) with them.
+ *  A figure can also run a story on a loop (hybrid/engine.ts): the swarm ticks it each frame while it is near, so its
+ *  particles relocate on cue, and scrubs the CSS animations of the overlay inside its anchor to the same loop time. */
 export default function Swarm() {
   const ref = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
@@ -79,14 +81,18 @@ export default function Swarm() {
         const key = el.dataset.swarmScene || "", make = SCENES[key], id = `${key}:${n}`; if (!make) return [];
         if (!scenes.has(id)) scenes.set(id, make(n));
         const g = el.dataset.swarmGroup;
-        if (!g) return [{ key, el, cx: 0, cy: 0, S: 0, scene: scenes.get(id)!, count: n }];
+        if (!g) { const sc = scenes.get(id)!; return [{ key, el, cx: 0, cy: 0, S: 0, scene: sc, count: sc.count ?? n, anims: [], op: -1 }]; }
         const mb: Member = { el, cx: 0, cy: 0, S: 0, bee: el.closest<HTMLElement>("[data-bee]"), ph: 0, ox: 0, oy: 0 };
         const have = groups.get(g);
         if (have) { mb.ph = have.members!.length * 1.7; have.members!.push(mb); have.count = Math.min(n, have.members!.length * (phone ? 56 : 110)); return []; }
-        const a: Anchor = { key, el, cx: 0, cy: 0, S: 0, scene: scenes.get(id)!, members: [mb], count: phone ? 56 : 110 };
+        const a: Anchor = { key, el, cx: 0, cy: 0, S: 0, scene: scenes.get(id)!, members: [mb], count: phone ? 56 : 110, anims: [], op: -1 };
         groups.set(g, a); return [a];
       });
+      collectAnims();
     };
+    // the overlay inside an anchor: its CSS animations (paused in css) are scrubbed to the figure's loop time. One
+    // getAnimations per anchor, here, never per frame; the free-running wander is left alone
+    const collectAnims = () => { for (const a of anchors) a.anims = a.scene.T ? a.el.getAnimations({ subtree: true }).filter((an) => an instanceof CSSAnimation && !an.animationName.endsWith("wander")) : []; };
     // `data-swarm-fit="width"` sizes the formation by the anchor's width (a wide band) instead of its shorter side
     const measure = () => {
       for (const a of anchors) {
@@ -97,7 +103,7 @@ export default function Swarm() {
           a.cx = sx / a.members.length; a.cy = sy / a.members.length; a.S = a.members[0].S;
           continue;
         }
-        const r = a.el.getBoundingClientRect(); a.cx = r.left + r.width / 2; a.cy = r.top + r.height / 2 + window.scrollY; a.S = a.el.dataset.swarmFit === "width" ? 0.475 * r.width : 0.5 * Math.min(r.width, r.height);
+        const r = a.el.getBoundingClientRect(); a.cx = r.left + r.width / 2; a.cy = r.top + r.height / 2 + window.scrollY; a.S = a.el.dataset.swarmFit === "width" ? 0.5 * r.width : 0.5 * Math.min(r.width, r.height);
       }
     };
     const resize = () => {
@@ -106,7 +112,7 @@ export default function Swarm() {
       seedField();
       cv.width = W * dpr; cv.height = H * dpr; cv.style.width = `${W}px`; cv.style.height = `${H}px`;
       if (atlasDpr !== dpr) { const cs = getComputedStyle(document.documentElement); colours = COL_VARS.map((v) => cs.getPropertyValue(v).trim()); atlas = buildAtlas(dpr, colours); atlasDpr = dpr; }
-      measure();
+      measure(); collectAnims();
       if (off) still();
     };
     // scatter starts: polar around the first figure, 1.6–3.4 radii out, a third of them from beyond the viewport
@@ -167,6 +173,21 @@ export default function Swarm() {
       for (const a of anchors) { const d = Math.abs(a.cy - scrollY - H / 2) / H; if (d < 0.5) near.push({ a, d }); }
       near.sort((p, q) => p.d - q.d);
       const dom = near[0]?.a; cv.dataset.swarmAt = dom ? dom.key : "";
+      // an overlay belongs to its figure: it fades with the swarm's hold on that anchor, so labels never hang in the
+      // air after the particles have left
+      for (const a of anchors) {
+        if (!a.scene.T) continue;
+        const o = 1 - smoothstep(0.2, 0.5, Math.abs(a.cy - scrollY - H / 2) / H);
+        if (Math.abs(o - a.op) > 0.01 || (o !== a.op && (o === 0 || o === 1))) { a.op = o; a.el.style.opacity = o.toFixed(2); }
+      }
+      // figures with a story: move their homes to this moment of the loop, and put their overlay on the same clock
+      for (const { a } of near) {
+        if (!a.scene.T) continue;
+        const lt = stat ? a.scene.stillT : t;
+        a.scene.tick?.(lt);
+        const ms = (lt % a.scene.T) * 1000;
+        for (const an of a.anims) an.currentTime = ms;
+      }
       // grouped hives wander like bees (a slow loop with a quicker wobble on it) and carry their label along; still
       // mode parks them where the layout put them
       for (const a of anchors) {
@@ -193,7 +214,7 @@ export default function Swarm() {
           // how hard this particle buzzes here: scaled down on small figures, and stirred by a wave of agitation that
           // sweeps across the formation every few seconds, so the shape resolves, stirs and resolves again
           const sx0 = a.scene.x[i], sy0 = a.scene.y[i], wv = Math.sin(t * 0.9 - (sx0 * 2 + sy0) * 1.4 + q);
-          bz += k * (aS < 117 ? 0.5 : aS > 260 ? 1 : aS / 260) * (0.5 + (wv > 0 ? 1.1 * wv * wv : 0));
+          bz += k * (m ? 0.5 : Math.min(1, Math.max(0.3, aS / 420))) * (0.5 + (wv > 0 ? 1.1 * wv * wv : 0));
           tx += k * (acx + mx * 36 + sx0 * aS * (1 + mx * 0.08));
           ty += k * (acy - scrollY + my * 24 + sy0 * aS);
           K += k;
@@ -225,7 +246,8 @@ export default function Swarm() {
         // the story's colour and dimming for this particle; a change cross-fades over 180 ms (two draws while it
         // blends), a dimming change eases with the same time constant. Still mode jumps to the end state.
         let pc = col[i], pm = 1;
-        if (dom && kd > 0.5) { const r = dom.scene.paint(dom.scene.m[i], stat ? dom.scene.stillT : t, i, col[i]); pc = r[0]; pm = 1 + (r[1] - 1) * kd; }
+        // (a figure with absolute alphas replaces the particle's own; the blend by kd keeps the hand-over smooth)
+        if (dom && kd > 0.5) { const r = dom.scene.paint(dom.scene.m[i], stat ? dom.scene.stillT : t, i, col[i]); pc = r[0]; pm = dom.scene.abs ? 1 + (r[1] / al[i] - 1) * kd : 1 + (r[1] - 1) * kd; }
         if (pc !== curCol[i]) { prevCol[i] = curCol[i]; curCol[i] = pc; blend[i] = 0; }
         if (stat) { blend[i] = 1; mulE[i] = pm; } else { blend[i] = Math.min(1, blend[i] + dt / 0.18); mulE[i] += (pm - mulE[i]) * (1 - Math.exp(-dt / 0.18)); }
         const a = al[i] * mulE[i] * (K > 0.02 ? 1 : 0.5) * (i % 3 === 0 ? 1 : K);
@@ -269,7 +291,10 @@ export default function Swarm() {
     if (off) { setStage("still"); still(); }
     else { scatter(); t0 = performance.now() / 1000; now = t0; setStage("entering"); start(); }
 
-    const onLoad = () => { measure(); if (off) still(); };
+    const onLoad = () => { measure(); collectAnims(); if (off) still(); };
+    // a block swapped its figure (the lab's A/B switch): read the anchors again
+    const onRefresh = () => { collect(); measure(); if (off) still(); };
+    window.addEventListener("codehive:swarm-refresh", onRefresh);
     window.addEventListener("resize", resize); window.addEventListener("load", onLoad);
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("pointermove", onMove, { passive: true }); document.addEventListener("pointerleave", onLeave); window.addEventListener("pointercancel", onLeave);
@@ -278,6 +303,7 @@ export default function Swarm() {
     return () => {
       cancelAnimationFrame(raf); cancelAnimationFrame(scrollRaf); unsub();
       for (const an of anchors) for (const m of an.members ?? []) if (m.bee) m.bee.style.transform = "";
+      window.removeEventListener("codehive:swarm-refresh", onRefresh);
       window.removeEventListener("resize", resize); window.removeEventListener("load", onLoad); window.removeEventListener("scroll", onScroll);
       window.removeEventListener("pointermove", onMove); document.removeEventListener("pointerleave", onLeave); window.removeEventListener("pointercancel", onLeave); document.removeEventListener("visibilitychange", onVis);
     };

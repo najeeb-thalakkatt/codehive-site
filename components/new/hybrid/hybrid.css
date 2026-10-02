@@ -1,0 +1,21 @@
+/* Overlay layer of the hybrid service figures (the Claude Design canvas's ".ov" elements). The swarm drives every
+   animation here: they are paused, and Swarm.tsx sets their currentTime to the figure's loop time each frame, so
+   labels and particles share one clock. Per-variant keyframes are in generated.css. */
+.hy { position: absolute; inset: 0; pointer-events: none; --line1: var(--line1); }
+.hy-ov { position: absolute; opacity: 0; animation-iteration-count: 1; animation-fill-mode: both; animation-timing-function: linear; animation-play-state: paused; will-change: opacity, transform; }
+/* a typed line: revealed by a clip, so nothing reflows while it types */
+.hy-typed { display: inline-block; white-space: nowrap; vertical-align: bottom; clip-path: inset(0 100% 0 0); animation-iteration-count: 1; animation-fill-mode: both; animation-play-state: paused; }
+/* a slow wander for the content lines, free-running */
+.hy-wander { animation: hy-wander 7s ease-in-out infinite; }
+@keyframes hy-wander { 0%, 100% { translate: 0 0; } 50% { translate: 2px -3px; } }
+@media (prefers-reduced-motion: reduce) { .hy-wander { animation: none; } }
+html[data-motion="off"] .hy-wander { animation: none; }
+/* leader lines: an svg in the stage's own coordinates, stretched over the anchor */
+.hy-svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; }
+/* desktop and phone overlays live side by side; the block's breakpoint picks one */
+.hy-phone { display: none; }
+@media (max-width: 900px) {
+  .hy-desk { display: none; } .hy-phone { display: block; }
+  /* a phone column is narrower than a typed line at readable size: let it wrap inside its box */
+  .hy-phone .hy-typed { white-space: normal; }
+}

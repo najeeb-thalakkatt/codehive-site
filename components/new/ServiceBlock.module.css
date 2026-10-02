@@ -14,10 +14,19 @@
 /* the chips as two plain mono columns: no boxes, no separators */
 .chips { list-style: none; margin: 4px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, max-content)); gap: 4px 32px; font-family: var(--font-mono); font-size: 13px; letter-spacing: .3px; color: var(--ink2); }
 .text :global(.act) { padding: 0; }
-.scene { width: min(100%, 84svh); aspect-ratio: 1; justify-self: center; }
+/* the figure's column: the square the swarm fills (its overlay inside), and the lab's A/B switch under it */
+.vis { display: flex; flex-direction: column; align-items: center; gap: 14px; min-width: 0; }
+/* a size container: the overlay's type and gaps are in cqw of this square, so they scale with it like the figure */
+.scene { position: relative; width: min(100%, 84svh); aspect-ratio: 1; container-type: inline-size; }
+.ab { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 18px; }
+.abBtn { background: none; border: 0; padding: 6px 0; min-height: 32px; font-family: var(--font-mono); font-size: 12px; letter-spacing: .5px; text-transform: uppercase; color: var(--ink3); cursor: pointer; transition: color 150ms var(--ease-out); }
+.abBtn:hover { color: var(--ink1); }
+.abBtn[aria-pressed="true"] { color: var(--amber); }
+.abBtn:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: var(--radius-sm); }
 /* the wide band: the formation spans the page, the copy sits centred under it */
 .wide { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 40px; }
-.wide .scene { order: -1; width: 100%; aspect-ratio: auto; height: 40svh; }
+.wide .vis { order: -1; width: 100%; }
+.wide .scene { width: 100%; aspect-ratio: 4 / 1; }
 .wide .text { align-items: center; max-width: 720px; }
 .wide .head { justify-content: center; }
 .wide .chips { justify-content: center; }
@@ -26,7 +35,10 @@
   .block { grid-template-columns: 1fr; gap: 24px; padding-top: calc(var(--gap-section) / 3); padding-bottom: calc(var(--gap-section) / 3); }
   .h3 { font-size: 21px; }
   /* the formation above the text, like the hero */
-  .scene { order: -1; width: min(64vw, 38svh); max-width: none; }
-  .wide .scene { width: 100%; height: 26svh; }
+  .vis { order: -1; max-width: 100%; }
+  /* overlay labels may reach past the square; they must never widen the page */
+  .block { overflow-x: clip; }
+  .scene { width: min(78vw, 42svh); max-width: none; }
+  .wide .scene { width: 100%; aspect-ratio: 350 / 190; }
   .chips { grid-template-columns: 1fr; }
 }

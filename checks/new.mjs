@@ -5,7 +5,7 @@ import { chromium } from "playwright";
 import { mkdirSync } from "node:fs";
 mkdirSync(new URL("./shots/", import.meta.url).pathname, { recursive: true });
 process.chdir(new URL("./", import.meta.url).pathname);
-const BASE = process.env.BASE ?? "http://localhost:3000/new/";
+const BASE = process.env.BASE ?? (process.env.CHECK_ORIGIN ?? "http://localhost:3000") + "/new/";
 const fails = []; const ok = (c, m) => { if (!c) fails.push(m); console.log(`${c ? "ok  " : "FAIL"} ${m}`); };
 const b = await chromium.launch({ args: ["--use-gl=swiftshader", "--ignore-gpu-blocklist"] });
 // drawn pixels of a viewport rect, read straight off the swarm canvas (alpha > 12 %): the page's text does
@@ -53,6 +53,10 @@ const twin = (r, W) => { const L = r.x - 24, R = W - r.x - r.width - 24; return 
     ok(s.scene === s.key, `block ${id}: swarm holds its formation (${s.scene} vs ${s.key})`);
     const sr = await rectOf(p, `${sel} [data-swarm-scene]`), sIn = await lit(p, sr), sOut = await lit(p, twin(sr, 1280));
     ok(sIn > 0.01 && sIn > 3 * sOut, `block ${id}: figure drawn in the scene column (${(sIn * 100).toFixed(1)}% lit vs ${(sOut * 100).toFixed(1)}%)`);
+    // the overlay runs on the swarm's clock: its animations are paused in css and their time moves anyway
+    const ov = () => p.evaluate((s) => document.querySelector(s).getAnimations({ subtree: true }).filter((x) => x.animationName && !x.animationName.endsWith("wander")).map((x) => [x.playState, Math.round(x.currentTime)]), `${sel} [data-swarm-scene]`);
+    const o1 = await ov(); await p.waitForTimeout(400); const o2 = await ov();
+    ok(o1.length > 0 && o1.every((x) => x[0] === "paused") && o1.some((x, i) => x[1] !== o2[i][1]), `block ${id}: overlay scrubbed by the swarm (${o1.length} animations, t ${o1[0]?.[1]} to ${o2[0]?.[1]} ms)`);
     // the text: bring its column fully into view (the wide band's copy sits below its formation) and it plays once
     await p.evaluate((s) => document.querySelector(s).querySelector('[class*="text"]').scrollIntoView({ block: "end", behavior: "instant" }), sel); await p.waitForTimeout(500);
     s = await p.evaluate((s) => { const el = document.querySelector(s); const t = el.querySelector('[class*="text"]').getAnimations({ subtree: true }); return { tn: t.length, trun: t.filter((x) => x.playState === "running").length, cta: +getComputedStyle(el.querySelector(".act")).opacity }; }, sel);
@@ -63,6 +67,13 @@ const twin = (r, W) => { const L = r.x - 24, R = W - r.x - r.width - 24; return 
   }
   await p.evaluate(() => document.querySelector("#contact").scrollIntoView({ block: "start", behavior: "instant" })); await p.waitForTimeout(1800);
   ok((await p.evaluate(() => document.querySelector("canvas").dataset.swarmAt)) === "cell", "contact: the swarm forms the cell again (bookend)");
+  // the lab's A/B switch swaps the figure and the swarm follows
+  await p.evaluate(() => document.querySelector("#cell-05 [data-swarm-scene]").scrollIntoView({ block: "center", behavior: "instant" })); await p.waitForTimeout(800);
+  const before = await p.getAttribute("canvas", "data-swarm-at");
+  await p.click('#cell-05 button[aria-pressed="false"]'); await p.waitForTimeout(800);
+  const after = await p.getAttribute("canvas", "data-swarm-at");
+  ok(/^s05[ab]$/.test(before) && /^s05[ab]$/.test(after) && before !== after, `lab: A/B switch swaps the figure (${before} to ${after})`);
+  await p.click('#cell-05 button[aria-pressed="false"]'); await p.waitForTimeout(300);
   ok(await p.$eval("header", (h) => h.hasAttribute("data-past-hero")), "nav: pill shown once past the hero");
   await p.screenshot({ path: "shots/new-contact-1280.png" });
   ok(errs.length === 0, `no page errors ${errs.join(";")}`);
@@ -105,7 +116,9 @@ const twin = (r, W) => { const L = r.x - 24, R = W - r.x - r.width - 24; return 
   ok(r.tend && r.cta > 0.9 && r.run === 0, `reduced motion: block text finished, nothing running (cta ${r.cta}, running ${r.run})`);
   await p.evaluate(() => document.querySelector("#cell-04").scrollIntoView({ block: "center", behavior: "instant" })); await p.waitForTimeout(400);
   const rm = await p.evaluate(() => document.querySelector("canvas").dataset.swarmAt);
-  ok(rm === "production", `reduced motion: formation follows scroll while still (${rm})`);
+  ok(/^s04[ab]$/.test(rm), `reduced motion: formation follows scroll while still (${rm})`);
+  const held = await p.evaluate(() => { const sc = document.querySelector("#cell-04 [data-swarm-scene]"); const an = sc.getAnimations({ subtree: true }).filter((x) => x.animationName && !x.animationName.endsWith("wander")); const vis = [...sc.querySelectorAll(".hy-desk .hy-ov")].filter((e) => +getComputedStyle(e).opacity > 0.9).length; return { t: Math.round(an[0]?.currentTime ?? -1), moving: an.filter((x) => x.playState === "running").length, vis }; });
+  ok(held.t >= 10000 && held.moving === 0 && held.vis >= 2, `reduced motion: overlay parked on the held frame (t=${held.t} ms, ${held.vis} labels shown)`);
   ok((await p.$$eval("#services [data-bee]", (els) => els.every((e) => !e.style.transform))), "reduced motion: the intro items do not wander");
   await p.screenshot({ path: "shots/new-hero-reduced.png" });
   await p.close();
