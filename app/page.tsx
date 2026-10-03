@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import Swarm from "@/components/new/Swarm";
 import NewNav from "@/components/new/NewNav";
+import WheelStops from "@/components/new/WheelStops";
 import NewHero from "@/components/new/NewHero";
 import NewIntro from "@/components/new/NewIntro";
 import ServiceBlock from "@/components/new/ServiceBlock";
@@ -17,6 +18,7 @@ export default function Page() {
     <>
       <Swarm />
       <NewNav />
+      <WheelStops />
       <main id="main" className={v.v4} data-snap>
         <NewHero />
         <NewIntro />

@@ -34,7 +34,8 @@
 @keyframes usin { 0%, 32% { opacity: 0; transform: translateY(6px); } 36%, 100% { opacity: 1; transform: none; } }
 @media (max-width: 900px) {
   /* one column: the title, the formation, then the conversation */
-  .block { grid-template-columns: 1fr; grid-template-rows: none; padding-top: calc(var(--gap-section) / 3); padding-bottom: calc(var(--gap-section) / 3); }
+  /* bottom padding: at least the next section's --snap-top (56px on phones) plus air, see the snapping rule in globals.css */
+  .block { grid-template-columns: 1fr; grid-template-rows: none; padding-top: calc(var(--gap-section) / 3); padding-bottom: 72px; }
   .block .head { grid-column: 1; grid-row: 1; margin: 0 0 16px; }
   .block .vis { grid-column: 1; grid-row: 2; max-width: 100%; margin-bottom: 24px; }
   .block .text { grid-column: 1; grid-row: 3; }

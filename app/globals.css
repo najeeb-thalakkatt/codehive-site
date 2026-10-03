@@ -41,20 +41,25 @@ button.act { background: none; border: 0; padding: 10px 0; font: inherit; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .reveal { opacity: 1; transform: none; transition: none; } }
 /* "Pause motion" in the footer (lib/motion.ts) means the same as reduced motion */
 html[data-motion="off"] { scroll-behavior: auto; } html[data-motion="off"] .reveal { opacity: 1; transform: none; transition: none; }
-/* On touch screens the home page stops at each section (`main[data-snap]`): hero, services index, each service,
+/* The home page stops at each section (`main[data-snap]`): hero, services index, each service,
    contact. Scrolling comes to rest with one section on screen instead of the tail of one and the head of the next,
    and a fling never skips a section (`scroll-snap-stop`). A section taller than the screen scrolls freely inside
    itself and stops at the next one's start. `--snap-top` is where a section's top edge rests below the viewport's
-   (its own padding does the rest); it is set against the 96px of scroll-padding above, and anchors land there too.
+   (its own padding does the rest); anchors land there too.
    The footer is the last stop, so the end of the page stays reachable.
-   Touch only: with a mouse wheel Chrome snaps to the nearest stop after every notch, so one slow notch springs back
-   to where it started and the page feels stuck (measured 2026-10-02, with mandatory and with proximity).
+   With a mouse wheel the browser snaps to the nearest stop after every notch, so one slow notch would spring back
+   to where it started: components/new/WheelStops.tsx sends a wheel turn to the next stop instead.
    Reduced motion and "Pause motion" scroll plainly: a page that moves by itself is motion. */
-main[data-snap] > section { --snap-top: 24px; scroll-snap-align: start; scroll-snap-stop: always; scroll-margin-top: calc(var(--snap-top) - 96px - env(safe-area-inset-top, 0px)); }
+/* How far a section taller than the screen may scroll before the next stop takes over differs by engine, measured
+   2026-10-03: WebKit leaves scroll-padding out of the sum, so this page has none (the stop is the section's
+   scroll-margin alone); Chromium will not rest once the next section's margin has entered the screen, so the last
+   `--snap-top` px of a section cannot rest on screen. Rule: a section's bottom padding is at least the next
+   section's `--snap-top`, so that strip is always empty. */
+main[data-snap] > section { --snap-top: 24px; scroll-snap-align: start; scroll-snap-stop: always; scroll-margin-top: var(--snap-top); }
 main[data-snap] > section:first-child, main[data-snap] > section:last-child { --snap-top: 0px; }
 main[data-snap] ~ footer { scroll-snap-align: end; }
 /* phones: a title rests clear of the nav; the index rests higher so its sixth item is on the first screen */
 @media (max-width: 900px) { main[data-snap] > section { --snap-top: 56px; } main[data-snap] > section:first-child { --snap-top: 0px; } main[data-snap] > section:nth-child(2) { --snap-top: 16px; } main[data-snap] > section:last-child { --snap-top: 24px; } }
-@media (hover: none) and (pointer: coarse) { html:has(main[data-snap]) { scroll-snap-type: y mandatory; } }
+html:has(main[data-snap]) { scroll-snap-type: y mandatory; scroll-padding-top: 0; }
 @media (prefers-reduced-motion: reduce) { html:has(main[data-snap]) { scroll-snap-type: none; } }
 html[data-motion="off"]:has(main[data-snap]) { scroll-snap-type: none; }

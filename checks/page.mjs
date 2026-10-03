@@ -29,7 +29,12 @@ const twin = (r, W) => { const L = r.x - 24, R = W - r.x - r.width - 24; return 
   ok(title === "Ship the AI feature.", `page: the home page is the swarm design (h1 "${title}")`);
   const swarmed = await p.waitForSelector('canvas[data-swarm="settled"]', { timeout: 5000 }).then(() => true).catch(() => false);
   ok(swarmed, "swarm: settled within 5 s");
-  ok((await p.evaluate(() => getComputedStyle(document.documentElement).scrollSnapType)) === "none", "desktop: no scroll snapping with a mouse (a wheel notch must not spring back)");
+  // one slow wheel notch goes to the next section and stays there (left to the browser it springs back), and back
+  await p.mouse.move(640, 360); await p.mouse.wheel(0, 120); await p.waitForTimeout(1600);
+  const w1 = await p.evaluate(() => Math.round(document.querySelector("#services").getBoundingClientRect().top));
+  await p.mouse.wheel(0, -120); await p.waitForTimeout(1600);
+  const w2 = await p.evaluate(() => Math.round(scrollY));
+  ok(w1 === 24 && w2 === 0, `desktop: a wheel notch stops at the next section (index ${w1}px from the top) and one back returns to the hero (scroll ${w2})`);
   await p.waitForTimeout(300);
   const tr = await rectOf(p, '[data-swarm-scene="cell"]');
   const inside = await lit(p, tr), outside = await lit(p, twin(tr, 1280));

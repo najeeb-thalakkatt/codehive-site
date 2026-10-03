@@ -101,16 +101,21 @@ says what it means. They are the artboards of the "Codehive service animations" 
   moves must honour both (`motionOff()` / `onMotionChange()` in `lib/motion.ts`, or the attribute selector in CSS).
 - Anything that reparents a block's DOM after mount recreates its CSS animations and orphans the hook's handles.
 
-### Scrolling stops at each section (touch screens)
+### Scrolling stops at each section
 `main[data-snap]` in `app/page.tsx` turns on native CSS scroll snapping (`app/globals.css`): hero, services index, each
 service and contact are stops, the footer is the last one, and a fling never skips a section. A section taller than
 the screen scrolls freely inside itself. `--snap-top` sets where a section's top rests; anchors land there too.
-- Touch only (`hover: none` and `pointer: coarse`). With a mouse wheel Chrome snaps to the nearest stop after every
-  notch, so one slow notch springs back and the page feels stuck; this was measured with both `mandatory` and
-  `proximity`. Do not enable it for fine pointers without solving that.
-- No JavaScript scroll handling. Reduced motion and "Pause motion" turn snapping off.
-- With snapping on, a programmatic scroll to an arbitrary offset is moved to a stop: checks on touch contexts must
-  scroll to a section, or to a point inside a section taller than the screen.
+- Mouse wheel: left alone, the browser snaps to the nearest stop after every notch, so one slow notch springs back.
+  `components/new/WheelStops.tsx` (fine pointers only) sends a wheel turn to the next stop when it is within one
+  screen, scrolls a taller section by the wheel's own amount, and ignores input until the jump is done and the wheel
+  is quiet. It does nothing when snapping is off. It is the only JavaScript scroll handling; keep it that small.
+- Engines disagree on how far a tall section may scroll (measured 2026-10-03). WebKit leaves `scroll-padding` out of
+  the sum, so this page sets none. Chromium will not rest once the next section's `scroll-margin` is on screen. Rule:
+  a section's bottom padding is at least the next section's `--snap-top`, so the strip that cannot rest is empty.
+  Break it and a service's action link cannot come to rest on screen in one engine or the other.
+- Reduced motion and "Pause motion" turn snapping off.
+- With snapping on, a programmatic scroll to an arbitrary offset is moved to a stop: checks must scroll to a
+  section, or to a point inside a section taller than the screen.
 
 ### Shared pieces and the budget
 - `components/Booking.tsx` (click-to-load Calendly frame, opened by `#book`), `Footer`, `MotionToggle`, `Stream`,
