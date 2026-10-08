@@ -1,0 +1,12 @@
+/* A hairline figure's place: the 5:4 stage the kernel sizes, and its read-out under it. The kernel's palette is five
+   variables; here they are the site's tokens: the ground is the page, the bright stroke is the amber accent, the
+   silhouette and creases are the greys. One accent, no fills, no glow (the figure's own rules match the brand's). */
+.fig { width: min(100%, 100svh); margin: 0 auto; display: flex; flex-direction: column; gap: 6px; }
+.stage {
+  --hairline-plate: var(--bg0); --hairline-hi: var(--amber); --hairline-edge: var(--ink3); --hairline-mid: var(--line2); --hairline-lo: var(--line1);
+  --hairline-stroke: 1;
+  width: 100%;
+}
+.read { display: flex; justify-content: flex-end; gap: 12px; font-family: var(--font-mono); font-size: 12px; letter-spacing: 1px; color: var(--ink3); font-variant-numeric: tabular-nums; min-height: 1.2em; padding-right: 4px; }
+.read > span:last-child { color: var(--ink2); }
+.label { text-transform: uppercase; }

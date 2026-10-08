@@ -1,5 +1,5 @@
 "use client";
-import { useRef } from "react";
+import { useRef, type ReactNode } from "react";
 import { ASK, type Service } from "@/content/services";
 import { usePlayOnEnter } from "@/lib/usePlayOnEnter";
 import Stream from "../Stream";
@@ -15,8 +15,9 @@ import s from "./ServiceBlock.module.css";
  *  The visual is a hybrid figure from the Claude Design canvas: the swarm draws the structure in the empty
  *  square (`data-swarm-scene` names the figure, e.g. `s02a`), and a thin overlay of labels inside the square says
  *  what it means. The canvas has two options per service; the chosen one is `PICK` (scripts/port-hybrid.py).
- *  `wide` lays the block out as a full-width band with the copy centred beneath (the 1600 x 400 stage). */
-export default function ServiceBlock({ data, flip = false, wide = false }: { data: Service; flip?: boolean; wide?: boolean }) {
+ *  `wide` lays the block out as a full-width band with the copy centred beneath (the 1600 x 400 stage).
+ *  `figure` puts something else in the visual column instead of the swarm's square (the /hairline lab route). */
+export default function ServiceBlock({ data, flip = false, wide = false, figure }: { data: Service; flip?: boolean; wide?: boolean; figure?: ReactNode }) {
   const text = useRef<HTMLDivElement>(null);
   usePlayOnEnter(text, 3);
   const key = PICK[data.id];
@@ -41,12 +42,14 @@ export default function ServiceBlock({ data, flip = false, wide = false }: { dat
           onClick={() => window.dispatchEvent(new CustomEvent("codehive:book", { detail: data.name }))}>{ASK}</a>
       </div>
       <div className={s.vis}>
+        {figure ?? <>
         {/* the swarm owns this element's inline opacity (it fades the overlay with its hold on the figure) and may set it
             before React hydrates this block: tell React not to compare the style attribute */}
         <div className={s.scene} data-swarm-scene={key} data-swarm-fit="width" aria-hidden="true" suppressHydrationWarning>
           <div className={`hy hy-desk hy-${key}`}>{OVERLAYS[key]}</div>
           <div className={`hy hy-phone hy-${key}p`}>{OVERLAYS[`${key}p`]}</div>
         </div>
+        </>}
       </div>
     </section>
   );
